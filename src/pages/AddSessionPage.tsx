@@ -1,0 +1,28 @@
+
+import React from 'react';
+import StudyLogForm from '@/components/StudyLog/StudyLogForm';
+import Navbar from '@/components/Navigation/Navbar';
+import { useNavigate } from 'react-router-dom';
+
+const AddSessionPage = () => {
+  const navigate = useNavigate();
+
+  const handleSuccess = () => {
+    navigate('/study-logs');
+  };
+
+  return (
+    <div className="min-h-screen bg-gray-50">
+      <Navbar />
+      <div className="max-w-2xl mx-auto px-4 py-8">
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold text-gray-900">Add Study Session</h1>
+          <p className="text-gray-600">Log a new study session</p>
+        </div>
+        <StudyLogForm onSuccess={handleSuccess} />
+      </div>
+    </div>
+  );
+};
+
+export default AddSessionPage;
