@@ -16,7 +16,7 @@ export type Database = {
           created_at: string | null
           date: string | null
           duration: number | null
-          id: number | null
+          id: number
           subject: string | null
           time: string | null
           user_id: string | null
@@ -27,7 +27,7 @@ export type Database = {
           created_at?: string | null
           date?: string | null
           duration?: number | null
-          id?: number | null
+          id?: number
           subject?: string | null
           time?: string | null
           user_id?: string | null
@@ -38,7 +38,7 @@ export type Database = {
           created_at?: string | null
           date?: string | null
           duration?: number | null
-          id?: number | null
+          id?: number
           subject?: string | null
           time?: string | null
           user_id?: string | null
