@@ -11,7 +11,6 @@ import { Badge } from '@/components/ui/badge';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
@@ -21,6 +20,7 @@ import { toast } from '@/hooks/use-toast';
 import { format } from 'date-fns';
 import { cn } from '@/lib/utils';
 import Navbar from '@/components/Navigation/Navbar';
+import BottomNav from '@/components/Navigation/BottomNav';
 
 const StudyPlanPage = () => {
   const { user } = useAuth();
@@ -274,11 +274,12 @@ const StudyPlanPage = () => {
     return (
       <div className="min-h-screen bg-gray-50">
         <Navbar />
-        <div className="max-w-7xl mx-auto px-4 py-8">
+        <div className="max-w-7xl mx-auto px-4 py-8 pb-20">
           <div className="flex items-center justify-center">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
           </div>
         </div>
+        <BottomNav />
       </div>
     );
   }
@@ -286,7 +287,7 @@ const StudyPlanPage = () => {
   return (
     <div className="min-h-screen bg-gray-50">
       <Navbar />
-      <div className="max-w-7xl mx-auto px-4 py-8">
+      <div className="max-w-7xl mx-auto px-4 py-8 pb-20">
         <div className="flex justify-between items-center mb-8">
           <div>
             <h1 className="text-2xl md:text-3xl font-bold text-gray-900">Study Plan</h1>
@@ -311,130 +312,124 @@ const StudyPlanPage = () => {
         <div className="space-y-4">
           {goals?.map((goal) => (
             <Card key={goal.id} className="overflow-hidden">
-              <CardHeader className="pb-4">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center space-x-2">
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => toggleGoalExpansion(goal.id)}
-                      className="p-1"
-                    >
-                      {expandedGoals.has(goal.id) ? 
-                        <ChevronDown className="h-4 w-4" /> : 
-                        <ChevronRight className="h-4 w-4" />
-                      }
-                    </Button>
-                    <Target className="h-5 w-5 text-blue-600" />
-                    <CardTitle className="text-lg">{goal.goal_name}</CardTitle>
-                  </div>
-                  <div className="flex space-x-1">
-                    <Button variant="ghost" size="sm">
-                      <Edit className="h-4 w-4" />
-                    </Button>
-                    <Button variant="ghost" size="sm">
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
-                  </div>
-                </div>
-              </CardHeader>
-              
-              {expandedGoals.has(goal.id) && (
-                <CardContent className="pt-0">
-                  <div className="ml-6 space-y-3">
-                    {getSubjectsForGoal(goal.id).map((subject) => (
-                      <Card key={subject.id} className="border-l-4 border-l-green-500">
-                        <CardHeader className="pb-2">
-                          <div className="flex items-center justify-between">
-                            <div className="flex items-center space-x-2">
-                              <Button
-                                variant="ghost"
-                                size="sm"
-                                onClick={() => toggleSubjectExpansion(subject.id)}
-                                className="p-1"
-                              >
-                                {expandedSubjects.has(subject.id) ? 
-                                  <ChevronDown className="h-4 w-4" /> : 
-                                  <ChevronRight className="h-4 w-4" />
-                                }
-                              </Button>
-                              <BookOpen className="h-4 w-4 text-green-600" />
-                              <CardTitle className="text-base">{subject.subject_name}</CardTitle>
-                            </div>
-                            <div className="flex items-center space-x-2">
-                              {getExpertiseBadge(subject.expertise_level)}
-                              <Badge variant="outline">{subject.planned_hours}h planned</Badge>
-                              <Badge variant="outline">{subject.actual_hours}h actual</Badge>
-                            </div>
-                          </div>
-                        </CardHeader>
-                        
-                        {expandedSubjects.has(subject.id) && (
-                          <CardContent className="pt-0">
-                            <div className="ml-6 space-y-2">
-                              {getCoursesForSubject(subject.id).map((course) => (
-                                <Card key={course.id} className="border-l-4 border-l-purple-500">
-                                  <CardContent className="p-4">
-                                    <div className="flex items-start justify-between">
-                                      <div className="flex-1">
-                                        <div className="flex items-center space-x-2 mb-2">
-                                          <PlayCircle className="h-4 w-4 text-purple-600" />
-                                          <h4 className="font-medium">{course.resource_name}</h4>
-                                          {course.watched && <Badge className="bg-green-100 text-green-800">✅ Watched</Badge>}
-                                        </div>
-                                        <div className="grid grid-cols-2 md:grid-cols-4 gap-2 text-sm text-gray-600">
-                                          <div>Source: {course.source_type}</div>
-                                          <div>Duration: {course.duration_hours}h</div>
-                                          {course.trainer && <div>Trainer: {course.trainer}</div>}
-                                          {course.link && (
-                                            <div className="flex items-center space-x-1">
-                                              <ExternalLink className="h-3 w-3" />
-                                              <a href={course.link} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
-                                                Link
-                                              </a>
+              <Collapsible>
+                <CardHeader className="pb-4">
+                  <CollapsibleTrigger asChild>
+                    <div className="flex items-center justify-between cursor-pointer">
+                      <div className="flex items-center space-x-2">
+                        {expandedGoals.has(goal.id) ? 
+                          <ChevronDown className="h-4 w-4" /> : 
+                          <ChevronRight className="h-4 w-4" />
+                        }
+                        <Target className="h-5 w-5 text-blue-600" />
+                        <CardTitle className="text-lg">{goal.goal_name}</CardTitle>
+                      </div>
+                      <div className="flex space-x-1">
+                        <Button variant="ghost" size="sm">
+                          <Edit className="h-4 w-4" />
+                        </Button>
+                        <Button variant="ghost" size="sm">
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    </div>
+                  </CollapsibleTrigger>
+                </CardHeader>
+                
+                <CollapsibleContent>
+                  <CardContent className="pt-0">
+                    <div className="ml-6 space-y-3">
+                      {getSubjectsForGoal(goal.id).map((subject) => (
+                        <Card key={subject.id} className="border-l-4 border-l-green-500">
+                          <Collapsible>
+                            <CardHeader className="pb-2">
+                              <CollapsibleTrigger asChild>
+                                <div className="flex items-center justify-between cursor-pointer">
+                                  <div className="flex items-center space-x-2">
+                                    {expandedSubjects.has(subject.id) ? 
+                                      <ChevronDown className="h-4 w-4" /> : 
+                                      <ChevronRight className="h-4 w-4" />
+                                    }
+                                    <BookOpen className="h-4 w-4 text-green-600" />
+                                    <CardTitle className="text-base">{subject.subject_name}</CardTitle>
+                                  </div>
+                                  <div className="flex items-center space-x-2">
+                                    {getExpertiseBadge(subject.expertise_level)}
+                                    <Badge variant="outline">{subject.planned_hours}h planned</Badge>
+                                    <Badge variant="outline">{subject.actual_hours}h actual</Badge>
+                                  </div>
+                                </div>
+                              </CollapsibleTrigger>
+                            </CardHeader>
+                            
+                            <CollapsibleContent>
+                              <CardContent className="pt-0">
+                                <div className="ml-6 space-y-2">
+                                  {getCoursesForSubject(subject.id).map((course) => (
+                                    <Card key={course.id} className="border-l-4 border-l-purple-500">
+                                      <CardContent className="p-4">
+                                        <div className="flex items-start justify-between">
+                                          <div className="flex-1">
+                                            <div className="flex items-center space-x-2 mb-2">
+                                              <PlayCircle className="h-4 w-4 text-purple-600" />
+                                              <h4 className="font-medium">{course.resource_name}</h4>
+                                              {course.watched && <Badge className="bg-green-100 text-green-800">✅ Watched</Badge>}
                                             </div>
-                                          )}
-                                        </div>
-                                        {course.notes && (
-                                          <div className="mt-2 text-sm text-gray-600">
-                                            <strong>Notes:</strong> {course.notes}
+                                            <div className="grid grid-cols-2 md:grid-cols-4 gap-2 text-sm text-gray-600">
+                                              <div>Source: {course.source_type}</div>
+                                              <div>Duration: {course.duration_hours}h</div>
+                                              {course.trainer && <div>Trainer: {course.trainer}</div>}
+                                              {course.link && (
+                                                <div className="flex items-center space-x-1">
+                                                  <ExternalLink className="h-3 w-3" />
+                                                  <a href={course.link} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
+                                                    Link
+                                                  </a>
+                                                </div>
+                                              )}
+                                            </div>
+                                            {course.notes && (
+                                              <div className="mt-2 text-sm text-gray-600">
+                                                <strong>Notes:</strong> {course.notes}
+                                              </div>
+                                            )}
                                           </div>
-                                        )}
-                                      </div>
-                                      <div className="flex flex-col space-y-2 ml-4">
-                                        <div className="flex items-center space-x-2">
-                                          <Checkbox
-                                            checked={course.watched}
-                                            onCheckedChange={(checked) => {
-                                              updateCourseWatchedMutation.mutate({
-                                                courseId: course.id,
-                                                watched: !!checked
-                                              });
-                                            }}
-                                          />
-                                          <span className="text-sm">Watched</span>
+                                          <div className="flex flex-col space-y-2 ml-4">
+                                            <div className="flex items-center space-x-2">
+                                              <Checkbox
+                                                checked={course.watched}
+                                                onCheckedChange={(checked) => {
+                                                  updateCourseWatchedMutation.mutate({
+                                                    courseId: course.id,
+                                                    watched: !!checked
+                                                  });
+                                                }}
+                                              />
+                                              <span className="text-sm">Watched</span>
+                                            </div>
+                                            <Button 
+                                              size="sm" 
+                                              variant="outline"
+                                              onClick={() => handleAssignDate(course)}
+                                            >
+                                              <CalendarIcon className="h-3 w-3 mr-1" />
+                                              Assign Date
+                                            </Button>
+                                          </div>
                                         </div>
-                                        <Button 
-                                          size="sm" 
-                                          variant="outline"
-                                          onClick={() => handleAssignDate(course)}
-                                        >
-                                          <CalendarIcon className="h-3 w-3 mr-1" />
-                                          Assign Date
-                                        </Button>
-                                      </div>
-                                    </div>
-                                  </CardContent>
-                                </Card>
-                              ))}
-                            </div>
-                          </CardContent>
-                        )}
-                      </Card>
-                    ))}
-                  </div>
-                </CardContent>
-              )}
+                                      </CardContent>
+                                    </Card>
+                                  ))}
+                                </div>
+                              </CardContent>
+                            </CollapsibleContent>
+                          </Collapsible>
+                        </Card>
+                      ))}
+                    </div>
+                  </CardContent>
+                </CollapsibleContent>
+              </Collapsible>
             </Card>
           ))}
         </div>
@@ -680,6 +675,7 @@ const StudyPlanPage = () => {
           </DialogContent>
         </Dialog>
       </div>
+      <BottomNav />
     </div>
   );
 };
