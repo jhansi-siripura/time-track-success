@@ -2,7 +2,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { BookOpen, BarChart3, FileText, Plus } from 'lucide-react';
+import { BookOpen, BarChart3, FileText, Plus, Target } from 'lucide-react';
 import MobileNavbar from '@/components/Navigation/MobileNavbar';
 import BottomNav from '@/components/Navigation/BottomNav';
 
@@ -17,6 +17,14 @@ const HomePage = () => {
       iconColor: 'text-blue-600'
     },
     {
+      title: 'Study Goals',
+      description: 'Manage your learning objectives and track progress',
+      icon: Target,
+      path: '/study-goals',
+      color: 'bg-purple-50 border-purple-200',
+      iconColor: 'text-purple-600'
+    },
+    {
       title: 'Add Study Session',
       description: 'Log a new study session',
       icon: Plus,
@@ -29,8 +37,8 @@ const HomePage = () => {
       description: 'Browse and manage all your study sessions',
       icon: FileText,
       path: '/study-logs',
-      color: 'bg-purple-50 border-purple-200',
-      iconColor: 'text-purple-600'
+      color: 'bg-orange-50 border-orange-200',
+      iconColor: 'text-orange-600'
     }
   ];
 
@@ -43,11 +51,11 @@ const HomePage = () => {
             Welcome to Study Tracker
           </h1>
           <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-            Track your study sessions, monitor your progress, and stay motivated on your learning journey.
+            Track your study sessions, manage your learning goals, and monitor your progress on your educational journey.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6">
           {navigationCards.map((card) => {
             const Icon = card.icon;
             return (
@@ -73,17 +81,26 @@ const HomePage = () => {
         <div className="mt-12 text-center">
           <div className="bg-white rounded-lg p-6 shadow-sm border">
             <BookOpen className="h-12 w-12 text-blue-600 mx-auto mb-4" />
-            <h2 className="text-xl font-semibold text-gray-900 mb-2">Ready to Start Studying?</h2>
+            <h2 className="text-xl font-semibold text-gray-900 mb-2">Ready to Start Learning?</h2>
             <p className="text-gray-600 mb-4">
-              Begin by adding your first study session or check your progress on the dashboard.
+              Begin by setting up your study goals or log your first study session to track your progress.
             </p>
-            <Link 
-              to="/add-session"
-              className="inline-flex items-center space-x-2 bg-blue-600 text-white px-6 py-3 rounded-md hover:bg-blue-700 transition-colors font-medium"
-            >
-              <Plus className="h-4 w-4" />
-              <span>Add Your First Session</span>
-            </Link>
+            <div className="flex flex-col sm:flex-row gap-3 justify-center">
+              <Link 
+                to="/study-goals"
+                className="inline-flex items-center justify-center space-x-2 bg-purple-600 text-white px-6 py-3 rounded-md hover:bg-purple-700 transition-colors font-medium"
+              >
+                <Target className="h-4 w-4" />
+                <span>Set Your Goals</span>
+              </Link>
+              <Link 
+                to="/add-session"
+                className="inline-flex items-center justify-center space-x-2 bg-blue-600 text-white px-6 py-3 rounded-md hover:bg-blue-700 transition-colors font-medium"
+              >
+                <Plus className="h-4 w-4" />
+                <span>Log Study Session</span>
+              </Link>
+            </div>
           </div>
         </div>
       </div>

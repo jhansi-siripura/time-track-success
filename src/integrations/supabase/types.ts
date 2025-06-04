@@ -9,6 +9,81 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      courses: {
+        Row: {
+          created_at: string
+          duration_hours: number | null
+          id: string
+          link: string | null
+          notes: string | null
+          resource_name: string
+          source_type: string
+          subject_id: string
+          trainer: string | null
+          watched: boolean | null
+        }
+        Insert: {
+          created_at?: string
+          duration_hours?: number | null
+          id?: string
+          link?: string | null
+          notes?: string | null
+          resource_name: string
+          source_type: string
+          subject_id: string
+          trainer?: string | null
+          watched?: boolean | null
+        }
+        Update: {
+          created_at?: string
+          duration_hours?: number | null
+          id?: string
+          link?: string | null
+          notes?: string | null
+          resource_name?: string
+          source_type?: string
+          subject_id?: string
+          trainer?: string | null
+          watched?: boolean | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "courses_subject_id_fkey"
+            columns: ["subject_id"]
+            isOneToOne: false
+            referencedRelation: "subject_stats"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "courses_subject_id_fkey"
+            columns: ["subject_id"]
+            isOneToOne: false
+            referencedRelation: "subjects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      study_goals: {
+        Row: {
+          created_at: string
+          goal_name: string
+          id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          goal_name: string
+          id?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          goal_name?: string
+          id?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       study_logs: {
         Row: {
           achievements: string | null
@@ -45,9 +120,98 @@ export type Database = {
         }
         Relationships: []
       }
+      subjects: {
+        Row: {
+          created_at: string
+          goal_id: string
+          id: string
+          subject_name: string
+        }
+        Insert: {
+          created_at?: string
+          goal_id: string
+          id?: string
+          subject_name: string
+        }
+        Update: {
+          created_at?: string
+          goal_id?: string
+          id?: string
+          subject_name?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "subjects_goal_id_fkey"
+            columns: ["goal_id"]
+            isOneToOne: false
+            referencedRelation: "study_goals"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      todos: {
+        Row: {
+          actual_duration: number | null
+          assigned_date: string
+          completed: boolean | null
+          course_id: string
+          created_at: string
+          id: string
+          task_type: string
+          user_id: string
+        }
+        Insert: {
+          actual_duration?: number | null
+          assigned_date: string
+          completed?: boolean | null
+          course_id: string
+          created_at?: string
+          id?: string
+          task_type: string
+          user_id: string
+        }
+        Update: {
+          actual_duration?: number | null
+          assigned_date?: string
+          completed?: boolean | null
+          course_id?: string
+          created_at?: string
+          id?: string
+          task_type?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "todos_course_id_fkey"
+            columns: ["course_id"]
+            isOneToOne: false
+            referencedRelation: "courses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
-      [_ in never]: never
+      subject_stats: {
+        Row: {
+          actual_hours: number | null
+          created_at: string | null
+          expertise_level: string | null
+          goal_id: string | null
+          id: string | null
+          planned_hours: number | null
+          subject_name: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "subjects_goal_id_fkey"
+            columns: ["goal_id"]
+            isOneToOne: false
+            referencedRelation: "study_goals"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Functions: {
       [_ in never]: never

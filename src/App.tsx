@@ -11,6 +11,9 @@ import HomePage from "@/pages/HomePage";
 import DashboardPage from "@/pages/DashboardPage";
 import StudyLogsPage from "@/pages/StudyLogsPage";
 import AddSessionPage from "@/pages/AddSessionPage";
+import StudyGoalsPage from "@/pages/StudyGoalsPage";
+import SubjectsPage from "@/pages/SubjectsPage";
+import CoursesPage from "@/pages/CoursesPage";
 
 const queryClient = new QueryClient();
 
@@ -31,6 +34,21 @@ const App = () => (
             <Route path="/dashboard" element={
               <ProtectedRoute>
                 <DashboardPage />
+              </ProtectedRoute>
+            } />
+            <Route path="/study-goals" element={
+              <ProtectedRoute>
+                <StudyGoalsPage />
+              </ProtectedRoute>
+            } />
+            <Route path="/goals/:goalId/subjects" element={
+              <ProtectedRoute>
+                <SubjectsPage />
+              </ProtectedRoute>
+            } />
+            <Route path="/subjects/:subjectId/courses" element={
+              <ProtectedRoute>
+                <CoursesPage />
               </ProtectedRoute>
             } />
             <Route path="/study-logs" element={

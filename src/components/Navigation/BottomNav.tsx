@@ -1,42 +1,45 @@
 
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { BookOpen, BarChart3, FileText, Home } from 'lucide-react';
+import { Home, BarChart3, Target, Plus, FileText } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 const BottomNav = () => {
   const location = useLocation();
-
+  
   const navItems = [
-    { path: '/home', label: 'Home', icon: Home },
-    { path: '/dashboard', label: 'Dashboard', icon: BarChart3 },
-    { path: '/add-session', label: 'Add Log', icon: BookOpen },
-    { path: '/study-logs', label: 'View Logs', icon: FileText },
+    { name: 'Home', href: '/home', icon: Home },
+    { name: 'Dashboard', href: '/dashboard', icon: BarChart3 },
+    { name: 'Goals', href: '/study-goals', icon: Target },
+    { name: 'Add', href: '/add-session', icon: Plus },
+    { name: 'Logs', href: '/study-logs', icon: FileText },
   ];
 
   return (
-    <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 px-2 py-1 z-50">
-      <div className="flex items-center justify-around">
+    <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 md:hidden z-40">
+      <div className="grid grid-cols-5 gap-1">
         {navItems.map((item) => {
           const Icon = item.icon;
-          const isActive = location.pathname === item.path;
+          const isActive = location.pathname === item.href;
           
           return (
             <Link
-              key={item.path}
-              to={item.path}
-              className={`flex flex-col items-center space-y-1 px-2 py-2 rounded-md text-xs font-medium transition-colors min-w-0 flex-1 ${
-                isActive
-                  ? 'text-blue-700'
-                  : 'text-gray-600'
-              }`}
+              key={item.name}
+              to={item.href}
+              className={cn(
+                "flex flex-col items-center justify-center py-2 px-1 text-xs font-medium transition-colors",
+                isActive 
+                  ? "text-blue-600 bg-blue-50" 
+                  : "text-gray-600 hover:text-gray-900"
+              )}
             >
-              <Icon className={`h-5 w-5 ${isActive ? 'text-blue-700' : 'text-gray-500'}`} />
-              <span className="truncate">{item.label}</span>
+              <Icon className={cn("h-5 w-5 mb-1", isActive && "text-blue-600")} />
+              <span className="truncate">{item.name}</span>
             </Link>
           );
         })}
       </div>
-    </nav>
+    </div>
   );
 };
 
