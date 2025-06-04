@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Home, BarChart3, Target, Plus, FileText } from 'lucide-react';
+import { Home, BarChart3, Target, CheckSquare, FileText } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 const BottomNav = () => {
@@ -10,8 +10,8 @@ const BottomNav = () => {
   const navItems = [
     { name: 'Home', href: '/home', icon: Home },
     { name: 'Dashboard', href: '/dashboard', icon: BarChart3 },
-    { name: 'Goals', href: '/study-goals', icon: Target },
-    { name: 'Add', href: '/add-session', icon: Plus },
+    { name: 'Plan', href: '/study-plan', icon: Target },
+    { name: 'To-Do', href: '/todos', icon: CheckSquare },
     { name: 'Logs', href: '/study-logs', icon: FileText },
   ];
 

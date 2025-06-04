@@ -13,6 +13,8 @@ import AddSessionPage from "@/pages/AddSessionPage";
 import StudyGoalsPage from "@/pages/StudyGoalsPage";
 import SubjectsPage from "@/pages/SubjectsPage";
 import CoursesPage from "@/pages/CoursesPage";
+import StudyPlanPage from "@/pages/StudyPlanPage";
+import TodosPage from "@/pages/TodosPage";
 
 const queryClient = new QueryClient();
 
@@ -32,6 +34,16 @@ const App = () => (
           <Route path="/dashboard" element={
             <ProtectedRoute>
               <DashboardPage />
+            </ProtectedRoute>
+          } />
+          <Route path="/study-plan" element={
+            <ProtectedRoute>
+              <StudyPlanPage />
+            </ProtectedRoute>
+          } />
+          <Route path="/todos" element={
+            <ProtectedRoute>
+              <TodosPage />
             </ProtectedRoute>
           } />
           <Route path="/study-goals" element={

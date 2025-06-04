@@ -3,7 +3,7 @@ import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/contexts/AuthContext';
-import { BookOpen, BarChart3, FileText, LogOut } from 'lucide-react';
+import { BarChart3, FileText, Plus, Target, CheckSquare, LogOut } from 'lucide-react';
 
 const Navbar = () => {
   const { user, signOut } = useAuth();
@@ -13,15 +13,17 @@ const Navbar = () => {
 
   const navItems = [
     { path: '/dashboard', label: 'Dashboard', icon: BarChart3 },
-    { path: '/study-logs', label: 'Study Logs', icon: FileText },
-    { path: '/add-session', label: 'Add Session', icon: BookOpen },
+    { path: '/add-session', label: 'Add Study Log', icon: Plus },
+    { path: '/study-logs', label: 'View Logs', icon: FileText },
+    { path: '/study-plan', label: 'Study Plan', icon: Target },
+    { path: '/todos', label: 'To-Do', icon: CheckSquare },
   ];
 
   return (
-    <nav className="bg-white border-b border-gray-200 px-4 py-3">
+    <nav className="bg-white border-b border-gray-200 px-4 py-3 sticky top-0 z-40">
       <div className="max-w-7xl mx-auto flex items-center justify-between">
         <div className="flex items-center space-x-8">
-          <Link to="/dashboard" className="text-xl font-bold text-gray-900">
+          <Link to="/dashboard" className="text-xl font-bold text-blue-600">
             Study Tracker
           </Link>
           
@@ -49,7 +51,7 @@ const Navbar = () => {
         </div>
 
         <div className="flex items-center space-x-4">
-          <span className="text-sm text-gray-600">
+          <span className="text-sm text-gray-600 hidden md:block">
             {user.email}
           </span>
           <Button 
@@ -59,7 +61,7 @@ const Navbar = () => {
             className="flex items-center space-x-2"
           >
             <LogOut className="h-4 w-4" />
-            <span>Sign Out</span>
+            <span className="hidden md:inline">Sign Out</span>
           </Button>
         </div>
       </div>
