@@ -1,20 +1,62 @@
-import React from 'react';
+
+import React, { useState, useMemo } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Checkbox } from '@/components/ui/checkbox';
+import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { CheckSquare, Calendar, Clock, BookOpen } from 'lucide-react';
+import { CheckSquare, AlertTriangle } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
-import { format } from 'date-fns';
+import { format, isAfter, isSameDay, parseISO } from 'date-fns';
 import Navbar from '@/components/Navigation/Navbar';
 import BottomNav from '@/components/Navigation/BottomNav';
+import TodoFilters from '@/components/Todo/TodoFilters';
+import TodoSummary from '@/components/Todo/TodoSummary';
+import TodoEditDialog from '@/components/Todo/TodoEditDialog';
+import TodoCard from '@/components/Todo/TodoCard';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
+
+interface Todo {
+  id: string;
+  title: string | null;
+  task_type: string;
+  assigned_date: string;
+  completed: boolean;
+  revision_round: number | null;
+  actual_duration: number | null;
+  notes: string | null;
+  courses?: {
+    resource_name: string;
+    source_type: string;
+    trainer: string | null;
+    duration_hours: number | null;
+  };
+}
 
 const TodosPage = () => {
   const { user } = useAuth();
   const queryClient = useQueryClient();
+  
+  // Filter states
+  const [dateFilter, setDateFilter] = useState(format(new Date(), 'yyyy-MM-dd'));
+  const [subjectFilter, setSubjectFilter] = useState('all');
+  const [taskTypeFilter, setTaskTypeFilter] = useState('all');
+  const [statusFilter, setStatusFilter] = useState('all');
+  
+  // Dialog states
+  const [editingTodo, setEditingTodo] = useState<Todo | null>(null);
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const [deletingTodoId, setDeletingTodoId] = useState<string | null>(null);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
 
   const { data: todos, isLoading } = useQuery({
     queryKey: ['todos', user?.id],
@@ -34,16 +76,16 @@ const TodosPage = () => {
         .order('assigned_date', { ascending: true });
       
       if (error) throw error;
-      return data;
+      return data as Todo[];
     },
     enabled: !!user?.id,
   });
 
   const updateTodoMutation = useMutation({
-    mutationFn: async ({ todoId, completed }: { todoId: string; completed: boolean }) => {
+    mutationFn: async ({ todoId, updates }: { todoId: string; updates: any }) => {
       const { data, error } = await supabase
         .from('todos')
-        .update({ completed })
+        .update(updates)
         .eq('id', todoId)
         .select()
         .single();
@@ -57,17 +99,124 @@ const TodosPage = () => {
     },
   });
 
-  const getTaskTypeBadge = (taskType: string) => {
-    const isRevision = taskType.startsWith('Revision');
-    return (
-      <Badge className={isRevision ? 'bg-purple-100 text-purple-800' : 'bg-blue-100 text-blue-800'}>
-        {taskType}
-      </Badge>
+  const deleteTodoMutation = useMutation({
+    mutationFn: async (todoId: string) => {
+      const { error } = await supabase
+        .from('todos')
+        .delete()
+        .eq('id', todoId);
+      
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['todos'] });
+      toast({ title: "Success", description: "Task deleted successfully!" });
+    },
+  });
+
+  // Filter and categorize todos
+  const { filteredTodos, overdueTodos, pendingTodos, completedTodos, subjects, summaryStats } = useMemo(() => {
+    if (!todos) return { 
+      filteredTodos: [], 
+      overdueTodos: [], 
+      pendingTodos: [], 
+      completedTodos: [], 
+      subjects: [],
+      summaryStats: { totalStudyTimeToday: 0, completedTasksToday: 0, revisionRoundsCompleted: 0, weeklyStreak: 0 }
+    };
+
+    const today = new Date();
+    const todayStr = format(today, 'yyyy-MM-dd');
+    
+    // Extract unique subjects
+    const uniqueSubjects = Array.from(new Set(
+      todos.map(todo => todo.courses?.resource_name).filter(Boolean)
+    )) as string[];
+
+    // Apply filters
+    let filtered = todos.filter(todo => {
+      const todoDate = todo.assigned_date;
+      const isDateMatch = dateFilter === '' || todoDate === dateFilter;
+      const isSubjectMatch = subjectFilter === 'all' || todo.courses?.resource_name === subjectFilter;
+      const isTaskTypeMatch = taskTypeFilter === 'all' || 
+        (taskTypeFilter === 'study' && todo.revision_round === 1) ||
+        (taskTypeFilter === 'revision' && (todo.revision_round || 1) > 1);
+      const isStatusMatch = statusFilter === 'all' ||
+        (statusFilter === 'pending' && !todo.completed) ||
+        (statusFilter === 'completed' && todo.completed) ||
+        (statusFilter === 'overdue' && !todo.completed && isAfter(today, parseISO(todoDate)));
+
+      return isDateMatch && isSubjectMatch && isTaskTypeMatch && isStatusMatch;
+    });
+
+    // Categorize todos
+    const overdue = filtered.filter(todo => 
+      !todo.completed && isAfter(today, parseISO(todo.assigned_date))
     );
-  };
+    const pending = filtered.filter(todo => 
+      !todo.completed && !isAfter(today, parseISO(todo.assigned_date))
+    );
+    const completed = filtered.filter(todo => todo.completed);
+
+    // Calculate summary stats
+    const todayTodos = todos.filter(todo => 
+      isSameDay(parseISO(todo.assigned_date), today)
+    );
+    const completedTodayTodos = todayTodos.filter(todo => todo.completed);
+    const totalStudyTimeToday = completedTodayTodos.reduce((sum, todo) => 
+      sum + (todo.actual_duration || todo.courses?.duration_hours || 0), 0
+    );
+    const revisionRoundsCompleted = completedTodayTodos.filter(todo => 
+      (todo.revision_round || 1) > 1
+    ).length;
+    
+    // Simple weekly streak calculation (mock for now)
+    const weeklyStreak = 5; // This would require more complex date calculations
+
+    return {
+      filteredTodos: filtered,
+      overdueTodos: overdue,
+      pendingTodos: pending,
+      completedTodos: completed,
+      subjects: uniqueSubjects,
+      summaryStats: {
+        totalStudyTimeToday,
+        completedTasksToday: completedTodayTodos.length,
+        revisionRoundsCompleted,
+        weeklyStreak
+      }
+    };
+  }, [todos, dateFilter, subjectFilter, taskTypeFilter, statusFilter]);
 
   const handleToggleComplete = (todoId: string, completed: boolean) => {
-    updateTodoMutation.mutate({ todoId, completed: !completed });
+    updateTodoMutation.mutate({ todoId, updates: { completed: !completed } });
+  };
+
+  const handleEditTodo = (todo: Todo) => {
+    setEditingTodo(todo);
+    setIsEditDialogOpen(true);
+  };
+
+  const handleSaveTodo = (todoId: string, updates: any) => {
+    updateTodoMutation.mutate({ todoId, updates });
+  };
+
+  const handleDeleteTodo = (todoId: string) => {
+    setDeletingTodoId(todoId);
+    setIsDeleteDialogOpen(true);
+  };
+
+  const confirmDelete = () => {
+    if (deletingTodoId) {
+      deleteTodoMutation.mutate(deletingTodoId);
+      setDeletingTodoId(null);
+      setIsDeleteDialogOpen(false);
+    }
+  };
+
+  const handleReschedule = (todoId: string) => {
+    const tomorrow = format(new Date(Date.now() + 24 * 60 * 60 * 1000), 'yyyy-MM-dd');
+    updateTodoMutation.mutate({ todoId, updates: { assigned_date: tomorrow } });
   };
 
   if (isLoading) {
@@ -84,9 +233,6 @@ const TodosPage = () => {
     );
   }
 
-  const pendingTodos = todos?.filter(todo => !todo.completed) || [];
-  const completedTodos = todos?.filter(todo => todo.completed) || [];
-
   return (
     <div className="min-h-screen bg-gray-50">
       <Navbar />
@@ -96,10 +242,49 @@ const TodosPage = () => {
             <CheckSquare className="h-8 w-8 mr-3 text-blue-600" />
             To-Do List
           </h1>
-          <p className="text-gray-600">Manage your assigned study tasks</p>
+          <p className="text-gray-600">Manage your assigned study tasks and revisions</p>
         </div>
 
+        {/* Summary Dashboard */}
+        <TodoSummary {...summaryStats} />
+
+        {/* Filters */}
+        <TodoFilters
+          dateFilter={dateFilter}
+          subjectFilter={subjectFilter}
+          taskTypeFilter={taskTypeFilter}
+          statusFilter={statusFilter}
+          subjects={subjects}
+          onDateFilterChange={setDateFilter}
+          onSubjectFilterChange={setSubjectFilter}
+          onTaskTypeFilterChange={setTaskTypeFilter}
+          onStatusFilterChange={setStatusFilter}
+        />
+
         <div className="grid gap-8">
+          {/* Overdue Tasks */}
+          {overdueTodos.length > 0 && (
+            <div>
+              <h2 className="text-xl font-semibold text-red-600 mb-4 flex items-center">
+                <AlertTriangle className="h-5 w-5 mr-2" />
+                Overdue Tasks ({overdueTodos.length})
+              </h2>
+              <div className="space-y-4">
+                {overdueTodos.map((todo) => (
+                  <TodoCard
+                    key={todo.id}
+                    todo={todo}
+                    isOverdue={true}
+                    onToggleComplete={handleToggleComplete}
+                    onEdit={handleEditTodo}
+                    onDelete={handleDeleteTodo}
+                    onReschedule={handleReschedule}
+                  />
+                ))}
+              </div>
+            </div>
+          )}
+
           {/* Pending Tasks */}
           <div>
             <h2 className="text-xl font-semibold text-gray-900 mb-4">
@@ -108,52 +293,19 @@ const TodosPage = () => {
             {pendingTodos.length === 0 ? (
               <Card>
                 <CardContent className="py-8 text-center text-gray-500">
-                  No pending tasks. Great job staying on top of your studies!
+                  No pending tasks for the selected filters.
                 </CardContent>
               </Card>
             ) : (
               <div className="space-y-4">
                 {pendingTodos.map((todo) => (
-                  <Card key={todo.id} className="border-l-4 border-l-orange-500">
-                    <CardContent className="p-4">
-                      <div className="flex items-start justify-between">
-                        <div className="flex items-start space-x-3">
-                          <Checkbox
-                            checked={todo.completed}
-                            onCheckedChange={() => handleToggleComplete(todo.id, todo.completed)}
-                            className="mt-1"
-                          />
-                          <div className="flex-1">
-                            <h3 className="font-medium text-lg">{todo.courses?.resource_name}</h3>
-                            <div className="flex items-center space-x-4 mt-2 text-sm text-gray-600">
-                              <div className="flex items-center space-x-1">
-                                <Calendar className="h-4 w-4" />
-                                <span>{format(new Date(todo.assigned_date), 'MMM dd, yyyy')}</span>
-                              </div>
-                              <div className="flex items-center space-x-1">
-                                <BookOpen className="h-4 w-4" />
-                                <span>{todo.courses?.source_type}</span>
-                              </div>
-                              {todo.courses?.duration_hours && (
-                                <div className="flex items-center space-x-1">
-                                  <Clock className="h-4 w-4" />
-                                  <span>{todo.courses.duration_hours}h</span>
-                                </div>
-                              )}
-                            </div>
-                            {todo.courses?.trainer && (
-                              <p className="text-sm text-gray-600 mt-1">
-                                Trainer: {todo.courses.trainer}
-                              </p>
-                            )}
-                          </div>
-                        </div>
-                        <div className="flex flex-col items-end space-y-2">
-                          {getTaskTypeBadge(todo.task_type)}
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
+                  <TodoCard
+                    key={todo.id}
+                    todo={todo}
+                    onToggleComplete={handleToggleComplete}
+                    onEdit={handleEditTodo}
+                    onDelete={handleDeleteTodo}
+                  />
                 ))}
               </div>
             )}
@@ -167,58 +319,50 @@ const TodosPage = () => {
             {completedTodos.length === 0 ? (
               <Card>
                 <CardContent className="py-8 text-center text-gray-500">
-                  No completed tasks yet. Keep working on your goals!
+                  No completed tasks for the selected filters.
                 </CardContent>
               </Card>
             ) : (
               <div className="space-y-4">
                 {completedTodos.map((todo) => (
-                  <Card key={todo.id} className="border-l-4 border-l-green-500 opacity-75">
-                    <CardContent className="p-4">
-                      <div className="flex items-start justify-between">
-                        <div className="flex items-start space-x-3">
-                          <Checkbox
-                            checked={todo.completed}
-                            onCheckedChange={() => handleToggleComplete(todo.id, todo.completed)}
-                            className="mt-1"
-                          />
-                          <div className="flex-1">
-                            <h3 className="font-medium text-lg line-through">{todo.courses?.resource_name}</h3>
-                            <div className="flex items-center space-x-4 mt-2 text-sm text-gray-600">
-                              <div className="flex items-center space-x-1">
-                                <Calendar className="h-4 w-4" />
-                                <span>{format(new Date(todo.assigned_date), 'MMM dd, yyyy')}</span>
-                              </div>
-                              <div className="flex items-center space-x-1">
-                                <BookOpen className="h-4 w-4" />
-                                <span>{todo.courses?.source_type}</span>
-                              </div>
-                              {todo.courses?.duration_hours && (
-                                <div className="flex items-center space-x-1">
-                                  <Clock className="h-4 w-4" />
-                                  <span>{todo.courses.duration_hours}h</span>
-                                </div>
-                              )}
-                            </div>
-                            {todo.courses?.trainer && (
-                              <p className="text-sm text-gray-600 mt-1">
-                                Trainer: {todo.courses.trainer}
-                              </p>
-                            )}
-                          </div>
-                        </div>
-                        <div className="flex flex-col items-end space-y-2">
-                          {getTaskTypeBadge(todo.task_type)}
-                          <Badge className="bg-green-100 text-green-800">✅ Completed</Badge>
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
+                  <TodoCard
+                    key={todo.id}
+                    todo={todo}
+                    onToggleComplete={handleToggleComplete}
+                    onEdit={handleEditTodo}
+                    onDelete={handleDeleteTodo}
+                  />
                 ))}
               </div>
             )}
           </div>
         </div>
+
+        {/* Edit Dialog */}
+        <TodoEditDialog
+          todo={editingTodo}
+          isOpen={isEditDialogOpen}
+          onClose={() => setIsEditDialogOpen(false)}
+          onSave={handleSaveTodo}
+        />
+
+        {/* Delete Confirmation Dialog */}
+        <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Delete Task</AlertDialogTitle>
+              <AlertDialogDescription>
+                Are you sure you want to delete this task? This action cannot be undone.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Cancel</AlertDialogCancel>
+              <AlertDialogAction onClick={confirmDelete} className="bg-red-600 hover:bg-red-700">
+                Delete
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
       </div>
       <BottomNav />
     </div>

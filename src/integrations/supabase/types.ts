@@ -157,7 +157,11 @@ export type Database = {
           course_id: string
           created_at: string
           id: string
+          notes: string | null
+          parent_todo_id: string | null
+          revision_round: number | null
           task_type: string
+          title: string | null
           user_id: string
         }
         Insert: {
@@ -167,7 +171,11 @@ export type Database = {
           course_id: string
           created_at?: string
           id?: string
+          notes?: string | null
+          parent_todo_id?: string | null
+          revision_round?: number | null
           task_type: string
+          title?: string | null
           user_id: string
         }
         Update: {
@@ -177,7 +185,11 @@ export type Database = {
           course_id?: string
           created_at?: string
           id?: string
+          notes?: string | null
+          parent_todo_id?: string | null
+          revision_round?: number | null
           task_type?: string
+          title?: string | null
           user_id?: string
         }
         Relationships: [
@@ -186,6 +198,13 @@ export type Database = {
             columns: ["course_id"]
             isOneToOne: false
             referencedRelation: "courses"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "todos_parent_todo_id_fkey"
+            columns: ["parent_todo_id"]
+            isOneToOne: false
+            referencedRelation: "todos"
             referencedColumns: ["id"]
           },
         ]
