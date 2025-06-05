@@ -3,7 +3,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { BookOpen, BarChart3, FileText, Plus, Target } from 'lucide-react';
-import MobileNavbar from '@/components/Navigation/MobileNavbar';
+import Navbar from '@/components/Navigation/Navbar';
 import BottomNav from '@/components/Navigation/BottomNav';
 
 const HomePage = () => {
@@ -17,10 +17,10 @@ const HomePage = () => {
       iconColor: 'text-blue-600'
     },
     {
-      title: 'Study Goals',
-      description: 'Manage your learning objectives and track progress',
+      title: 'Study Plan',
+      description: 'Manage your learning goals, subjects, and courses',
       icon: Target,
-      path: '/study-goals',
+      path: '/study-plan',
       color: 'bg-purple-50 border-purple-200',
       iconColor: 'text-purple-600'
     },
@@ -44,7 +44,7 @@ const HomePage = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <MobileNavbar />
+      <Navbar />
       <div className="max-w-6xl mx-auto px-4 py-8 pb-20 md:pb-8">
         <div className="text-center mb-8">
           <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
@@ -83,15 +83,15 @@ const HomePage = () => {
             <BookOpen className="h-12 w-12 text-blue-600 mx-auto mb-4" />
             <h2 className="text-xl font-semibold text-gray-900 mb-2">Ready to Start Learning?</h2>
             <p className="text-gray-600 mb-4">
-              Begin by setting up your study goals or log your first study session to track your progress.
+              Begin by setting up your study plan or log your first study session to track your progress.
             </p>
             <div className="flex flex-col sm:flex-row gap-3 justify-center">
               <Link 
-                to="/study-goals"
+                to="/study-plan"
                 className="inline-flex items-center justify-center space-x-2 bg-purple-600 text-white px-6 py-3 rounded-md hover:bg-purple-700 transition-colors font-medium"
               >
                 <Target className="h-4 w-4" />
-                <span>Set Your Goals</span>
+                <span>Set Your Plan</span>
               </Link>
               <Link 
                 to="/add-session"
