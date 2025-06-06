@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
@@ -112,14 +111,14 @@ const Dashboard = () => {
       .sort((a, b) => b.hours - a.hours);
   };
 
-  // Calculate weekly distribution
+  // Calculate weekly distribution - updated to show full week
   const calculateWeeklyDistribution = () => {
     const startOfWeek = new Date();
     const dayOfWeek = startOfWeek.getDay();
     const diff = startOfWeek.getDate() - dayOfWeek + (dayOfWeek === 0 ? -6 : 1);
     startOfWeek.setDate(diff);
 
-    const weekDays = Array.from({ length: 6 }, (_, i) => {
+    const weekDays = Array.from({ length: 7 }, (_, i) => {
       const date = new Date(startOfWeek);
       date.setDate(startOfWeek.getDate() + i);
       return {
@@ -133,7 +132,7 @@ const Dashboard = () => {
     
     return weekDays.map(({ day, date }) => {
       const dayData: any = { 
-        day: `${day}\n${new Date(date).getDate()}`, 
+        day: day,
         date 
       };
       
@@ -175,7 +174,7 @@ const Dashboard = () => {
     return weeks;
   };
 
-  // Calculate 12-month trend
+  // Calculate 12-month trend - fixed to include current month properly
   const calculateTwelveMonthTrend = () => {
     if (studyLogs.length === 0) return [];
     
@@ -186,24 +185,27 @@ const Dashboard = () => {
     const months = [];
     const startDate = new Date(firstLogDate.getFullYear(), firstLogDate.getMonth(), 1);
     
-    for (let i = 0; i < 12; i++) {
-      const monthDate = new Date(startDate);
-      monthDate.setMonth(startDate.getMonth() + i);
-      
-      // Don't show future months
-      if (monthDate > currentDate) break;
-      
-      const monthKey = monthDate.toISOString().slice(0, 7); // YYYY-MM format
-      const monthLabel = monthDate.toLocaleDateString('en-US', { month: 'short', year: '2-digit' });
+    // Calculate months from first log until current month (inclusive)
+    let monthIterator = new Date(startDate);
+    while (monthIterator <= currentDate) {
+      const monthKey = monthIterator.toISOString().slice(0, 7); // YYYY-MM format
+      const monthLabel = monthIterator.toLocaleDateString('en-US', { month: 'short', year: '2-digit' });
       
       const monthHours = studyLogs
         .filter(log => log.date.startsWith(monthKey))
         .reduce((sum, log) => sum + log.duration, 0) / 60;
       
       months.push({ month: monthLabel, hours: monthHours });
+      
+      // Move to next month
+      monthIterator.setMonth(monthIterator.getMonth() + 1);
+      
+      // Limit to 12 months maximum
+      if (months.length >= 12) break;
     }
     
-    return months;
+    // If we have more than 12 months, take the last 12
+    return months.slice(-12);
   };
 
   if (loading) {

@@ -5,7 +5,6 @@ import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContaine
 
 interface WeeklyData {
   day: string;
-  date: string;
   [subject: string]: string | number;
 }
 
