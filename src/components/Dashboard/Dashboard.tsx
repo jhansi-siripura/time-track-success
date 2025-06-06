@@ -20,6 +20,18 @@ const Dashboard = () => {
   const [loading, setLoading] = useState(true);
   const { user } = useAuth();
 
+  // Define consistent colors for subjects
+  const subjectColors = [
+    '#8884d8', '#82ca9d', '#ffc658', '#ff7c7c', '#8dd1e1', 
+    '#d084d0', '#ffb347', '#87ceeb', '#dda0dd', '#98fb98'
+  ];
+
+  // Get color for a specific subject
+  const getSubjectColor = (subject: string, subjects: string[]) => {
+    const index = subjects.indexOf(subject);
+    return subjectColors[index % subjectColors.length];
+  };
+
   useEffect(() => {
     const fetchStudyLogs = async () => {
       if (!user) return;
@@ -174,7 +186,7 @@ const Dashboard = () => {
     return weeks;
   };
 
-  // Calculate 12-month trend - fixed to include current month properly
+  // Calculate 12-month trend - fixed month calculation logic
   const calculateTwelveMonthTrend = () => {
     if (studyLogs.length === 0) return [];
     
@@ -183,12 +195,15 @@ const Dashboard = () => {
     const currentDate = new Date();
     
     const months = [];
-    const startDate = new Date(firstLogDate.getFullYear(), firstLogDate.getMonth(), 1);
+    
+    // Start from the first log month
+    let monthIterator = new Date(firstLogDate.getFullYear(), firstLogDate.getMonth(), 1);
     
     // Calculate months from first log until current month (inclusive)
-    let monthIterator = new Date(startDate);
     while (monthIterator <= currentDate) {
-      const monthKey = monthIterator.toISOString().slice(0, 7); // YYYY-MM format
+      const year = monthIterator.getFullYear();
+      const month = monthIterator.getMonth() + 1; // getMonth() returns 0-11, we need 1-12
+      const monthKey = `${year}-${month.toString().padStart(2, '0')}`; // YYYY-MM format
       const monthLabel = monthIterator.toLocaleDateString('en-US', { month: 'short', year: '2-digit' });
       
       const monthHours = studyLogs
@@ -237,7 +252,11 @@ const Dashboard = () => {
 
       {/* Third Row - Three equal widgets */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <WeeklyDistributionWidget data={weeklyData} subjects={subjects} />
+        <WeeklyDistributionWidget 
+          data={weeklyData} 
+          subjects={subjects}
+          getSubjectColor={getSubjectColor}
+        />
         <FourWeekConsistencyWidget data={fourWeekData} />
         <TwelveMonthTrendWidget data={twelveMonthData} />
       </div>

@@ -11,14 +11,10 @@ interface WeeklyData {
 interface WeeklyDistributionWidgetProps {
   data: WeeklyData[];
   subjects: string[];
+  getSubjectColor: (subject: string, subjects: string[]) => string;
 }
 
-const WeeklyDistributionWidget = ({ data, subjects }: WeeklyDistributionWidgetProps) => {
-  const colors = [
-    '#8884d8', '#82ca9d', '#ffc658', '#ff7c7c', '#8dd1e1', 
-    '#d084d0', '#ffb347', '#87ceeb', '#dda0dd', '#98fb98'
-  ];
-
+const WeeklyDistributionWidget = ({ data, subjects, getSubjectColor }: WeeklyDistributionWidgetProps) => {
   return (
     <Card>
       <CardHeader className="pb-3">
@@ -40,14 +36,23 @@ const WeeklyDistributionWidget = ({ data, subjects }: WeeklyDistributionWidgetPr
                 />
                 <YAxis fontSize={12} />
                 <Tooltip 
-                  formatter={(value: number, name: string) => [`${value.toFixed(1)}h`, name]}
+                  formatter={(value: number, name: string) => [
+                    `${value.toFixed(1)}h`, 
+                    name
+                  ]}
+                  labelStyle={{ color: '#000' }}
+                  contentStyle={{ 
+                    backgroundColor: '#fff', 
+                    border: '1px solid #ccc',
+                    borderRadius: '6px'
+                  }}
                 />
-                {subjects.map((subject, index) => (
+                {subjects.map((subject) => (
                   <Bar 
                     key={subject}
                     dataKey={subject}
                     stackId="a"
-                    fill={colors[index % colors.length]}
+                    fill={getSubjectColor(subject, subjects)}
                   />
                 ))}
               </BarChart>
