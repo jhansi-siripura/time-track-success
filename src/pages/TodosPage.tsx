@@ -1,4 +1,3 @@
-
 import React, { useState, useMemo } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
@@ -7,7 +6,8 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { CheckSquare, AlertTriangle } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
-import { format, isAfter, isSameDay, parseISO } from 'date-fns';
+import { format, isAfter, parseISO } from 'date-fns';
+import { getTodayDate, isToday, isDateSame } from '@/lib/dateUtils';
 import Navbar from '@/components/Navigation/Navbar';
 import BottomNav from '@/components/Navigation/BottomNav';
 import TodoFilters from '@/components/Todo/TodoFilters';
@@ -46,8 +46,8 @@ const TodosPage = () => {
   const { user } = useAuth();
   const queryClient = useQueryClient();
   
-  // Filter states
-  const [dateFilter, setDateFilter] = useState(format(new Date(), 'yyyy-MM-dd'));
+  // Filter states - use timezone-aware today date
+  const [dateFilter, setDateFilter] = useState(getTodayDate());
   const [subjectFilter, setSubjectFilter] = useState('all');
   const [taskTypeFilter, setTaskTypeFilter] = useState('all');
   const [statusFilter, setStatusFilter] = useState('all');
@@ -114,7 +114,7 @@ const TodosPage = () => {
     },
   });
 
-  // Filter and categorize todos
+  // Filter and categorize todos using timezone-aware utilities
   const { filteredTodos, overdueTodos, pendingTodos, completedTodos, subjects, summaryStats } = useMemo(() => {
     if (!todos) return { 
       filteredTodos: [], 
@@ -125,8 +125,7 @@ const TodosPage = () => {
       summaryStats: { totalStudyTimeToday: 0, completedTasksToday: 0, revisionRoundsCompleted: 0, weeklyStreak: 0 }
     };
 
-    const today = new Date();
-    const todayStr = format(today, 'yyyy-MM-dd');
+    const today = getTodayDate();
     
     // Extract unique subjects
     const uniqueSubjects = Array.from(new Set(
@@ -144,24 +143,22 @@ const TodosPage = () => {
       const isStatusMatch = statusFilter === 'all' ||
         (statusFilter === 'pending' && !todo.completed) ||
         (statusFilter === 'completed' && todo.completed) ||
-        (statusFilter === 'overdue' && !todo.completed && isAfter(today, parseISO(todoDate)));
+        (statusFilter === 'overdue' && !todo.completed && todoDate < today);
 
       return isDateMatch && isSubjectMatch && isTaskTypeMatch && isStatusMatch;
     });
 
-    // Categorize todos
+    // Categorize todos using timezone-aware comparison
     const overdue = filtered.filter(todo => 
-      !todo.completed && isAfter(today, parseISO(todo.assigned_date))
+      !todo.completed && todo.assigned_date < today
     );
     const pending = filtered.filter(todo => 
-      !todo.completed && !isAfter(today, parseISO(todo.assigned_date))
+      !todo.completed && todo.assigned_date >= today
     );
     const completed = filtered.filter(todo => todo.completed);
 
-    // Calculate summary stats
-    const todayTodos = todos.filter(todo => 
-      isSameDay(parseISO(todo.assigned_date), today)
-    );
+    // Calculate summary stats using timezone-aware today check
+    const todayTodos = todos.filter(todo => isToday(todo.assigned_date));
     const completedTodayTodos = todayTodos.filter(todo => todo.completed);
     const totalStudyTimeToday = completedTodayTodos.reduce((sum, todo) => 
       sum + (todo.actual_duration || todo.courses?.duration_hours || 0), 0
@@ -215,8 +212,10 @@ const TodosPage = () => {
   };
 
   const handleReschedule = (todoId: string) => {
-    const tomorrow = format(new Date(Date.now() + 24 * 60 * 60 * 1000), 'yyyy-MM-dd');
-    updateTodoMutation.mutate({ todoId, updates: { assigned_date: tomorrow } });
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    const tomorrowStr = tomorrow.toLocaleDateString('en-CA');
+    updateTodoMutation.mutate({ todoId, updates: { assigned_date: tomorrowStr } });
   };
 
   if (isLoading) {
@@ -361,7 +360,7 @@ const TodosPage = () => {
                 Delete
               </AlertDialogAction>
             </AlertDialogFooter>
-          </AlertDialogContent>
+          </AlertDialogFooter>
         </AlertDialog>
       </div>
       <BottomNav />

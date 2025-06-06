@@ -1,7 +1,9 @@
+
 import React, { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { toast } from '@/hooks/use-toast';
+import { getTodayDate, getYesterdayDate, getLastNDates, getStartOfWeek, getCurrentMonth } from '@/lib/dateUtils';
 import DailyTargetWidget from './DailyTargetWidget';
 import StudySummaryWidget from './StudySummaryWidget';
 import SubjectBarChartWidget from './SubjectBarChartWidget';
@@ -65,20 +67,12 @@ const Dashboard = () => {
     fetchStudyLogs();
   }, [user]);
 
-  // Calculate daily target data
+  // Calculate daily target data using timezone-aware utilities
   const calculateDailyTargets = () => {
-    const today = new Date().toISOString().split('T')[0];
-    const yesterday = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString().split('T')[0];
-    
-    const last21Days = Array.from({ length: 21 }, (_, i) => {
-      const date = new Date(Date.now() - i * 24 * 60 * 60 * 1000);
-      return date.toISOString().split('T')[0];
-    });
-    
-    const last7Days = Array.from({ length: 7 }, (_, i) => {
-      const date = new Date(Date.now() - i * 24 * 60 * 60 * 1000);
-      return date.toISOString().split('T')[0];
-    });
+    const today = getTodayDate();
+    const yesterday = getYesterdayDate();
+    const last21Days = getLastNDates(21);
+    const last7Days = getLastNDates(7);
 
     const getDailyTotal = (date: string) => {
       return studyLogs
@@ -123,19 +117,16 @@ const Dashboard = () => {
       .sort((a, b) => b.hours - a.hours);
   };
 
-  // Calculate weekly distribution - updated to show full week
+  // Calculate weekly distribution using timezone-aware start of week
   const calculateWeeklyDistribution = () => {
-    const startOfWeek = new Date();
-    const dayOfWeek = startOfWeek.getDay();
-    const diff = startOfWeek.getDate() - dayOfWeek + (dayOfWeek === 0 ? -6 : 1);
-    startOfWeek.setDate(diff);
+    const startOfWeek = getStartOfWeek();
 
     const weekDays = Array.from({ length: 7 }, (_, i) => {
       const date = new Date(startOfWeek);
       date.setDate(startOfWeek.getDate() + i);
       return {
         day: date.toLocaleDateString('en-US', { weekday: 'short' }),
-        date: date.toISOString().split('T')[0],
+        date: date.toLocaleDateString('en-CA'),
         fullDate: date
       };
     });
@@ -159,24 +150,26 @@ const Dashboard = () => {
     });
   };
 
-  // Calculate 4-week consistency
+  // Calculate 4-week consistency using timezone-aware dates
   const calculateFourWeekConsistency = () => {
     const weeks = [];
-    const now = new Date();
+    const today = new Date();
     
     for (let i = 3; i >= 0; i--) {
-      const weekStart = new Date(now);
-      weekStart.setDate(now.getDate() - (i * 7) - now.getDay() + 1);
+      const weekStart = new Date(today);
+      weekStart.setDate(today.getDate() - (i * 7) - today.getDay() + 1);
       
       const weekEnd = new Date(weekStart);
       weekEnd.setDate(weekStart.getDate() + 6);
       
       const weekLabel = i === 0 ? 'W4' : `W${4 - i}`;
       
+      const weekStartStr = weekStart.toLocaleDateString('en-CA');
+      const weekEndStr = weekEnd.toLocaleDateString('en-CA');
+      
       const weekHours = studyLogs
         .filter(log => {
-          const logDate = new Date(log.date);
-          return logDate >= weekStart && logDate <= weekEnd;
+          return log.date >= weekStartStr && log.date <= weekEndStr;
         })
         .reduce((sum, log) => sum + log.duration, 0) / 60;
       
@@ -186,7 +179,7 @@ const Dashboard = () => {
     return weeks;
   };
 
-  // Calculate 12-month trend - fixed month calculation logic
+  // Calculate 12-month trend using timezone-aware month calculation
   const calculateTwelveMonthTrend = () => {
     if (studyLogs.length === 0) return [];
     
@@ -202,8 +195,8 @@ const Dashboard = () => {
     // Calculate months from first log until current month (inclusive)
     while (monthIterator <= currentDate) {
       const year = monthIterator.getFullYear();
-      const month = monthIterator.getMonth() + 1; // getMonth() returns 0-11, we need 1-12
-      const monthKey = `${year}-${month.toString().padStart(2, '0')}`; // YYYY-MM format
+      const month = monthIterator.getMonth() + 1;
+      const monthKey = `${year}-${month.toString().padStart(2, '0')}`;
       const monthLabel = monthIterator.toLocaleDateString('en-US', { month: 'short', year: '2-digit' });
       
       const monthHours = studyLogs

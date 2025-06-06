@@ -19,7 +19,7 @@ const TodoSummary = ({
   const summaryCards = [
     {
       title: 'Study Time Today',
-      value: `${totalStudyTimeToday}h`,
+      value: `${totalStudyTimeToday.toFixed(1)}h`,
       icon: Clock,
       color: 'text-blue-600',
       bgColor: 'bg-blue-50',
