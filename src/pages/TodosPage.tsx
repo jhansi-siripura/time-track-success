@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { CheckSquare, AlertTriangle } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
 import { format, isAfter, parseISO } from 'date-fns';
-import { getTodayDate, isToday, isDateSame } from '@/lib/dateUtils';
+import { getTodayDate, isToday } from '@/lib/dateUtils';
 import Navbar from '@/components/Navigation/Navbar';
 import BottomNav from '@/components/Navigation/BottomNav';
 import TodoFilters from '@/components/Todo/TodoFilters';

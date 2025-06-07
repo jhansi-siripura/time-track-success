@@ -66,6 +66,13 @@ export const isSameDay = (date1: string, date2: string): boolean => {
 };
 
 /**
+ * Alternative name for isSameDay - kept for compatibility
+ */
+export const isDateSame = (date1: string, date2: string): boolean => {
+  return isSameDay(date1, date2);
+};
+
+/**
  * Check if a date string represents today
  */
 export const isToday = (dateString: string): boolean => {
