@@ -360,7 +360,7 @@ const TodosPage = () => {
                 Delete
               </AlertDialogAction>
             </AlertDialogFooter>
-          </AlertDialogFooter>
+          </AlertDialogContent>
         </AlertDialog>
       </div>
       <BottomNav />
