@@ -26,6 +26,10 @@ const RecapFilters: React.FC<RecapFiltersProps> = ({
   onSubjectFilterChange,
   onTopicFilterChange,
 }) => {
+  // Filter out empty, null, or undefined values
+  const validSubjects = subjects.filter(subject => subject && subject.trim() !== '');
+  const validTopics = topics.filter(topic => topic && topic.trim() !== '');
+
   return (
     <Card>
       <CardContent className="pt-6">
@@ -48,7 +52,7 @@ const RecapFilters: React.FC<RecapFiltersProps> = ({
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">All Subjects</SelectItem>
-                {subjects.map((subject) => (
+                {validSubjects.map((subject) => (
                   <SelectItem key={subject} value={subject}>
                     {subject}
                   </SelectItem>
@@ -65,7 +69,7 @@ const RecapFilters: React.FC<RecapFiltersProps> = ({
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">All Topics</SelectItem>
-                {topics.map((topic) => (
+                {validTopics.map((topic) => (
                   <SelectItem key={topic} value={topic}>
                     {topic}
                   </SelectItem>
