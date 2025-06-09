@@ -33,7 +33,7 @@ const RecapCardEditor: React.FC<RecapCardEditorProps> = ({ log, onSave, onCancel
     duration: log.duration.toString(),
     subject: log.subject,
     topic: log.topic || '',
-    source: log.source || '',
+    source: log.source || 'none',
     comments: log.comments,
     achievements: log.achievements,
   });
@@ -64,7 +64,7 @@ const RecapCardEditor: React.FC<RecapCardEditorProps> = ({ log, onSave, onCancel
       duration: parseInt(formData.duration) || 0,
       subject: formData.subject,
       topic: formData.topic || null,
-      source: formData.source || null,
+      source: formData.source === 'none' ? null : formData.source,
       comments: formData.comments,
       achievements: formData.achievements,
     };
@@ -147,7 +147,7 @@ const RecapCardEditor: React.FC<RecapCardEditorProps> = ({ log, onSave, onCancel
                 <SelectValue placeholder="Select source" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">No source</SelectItem>
+                <SelectItem value="none">No source</SelectItem>
                 {sourceOptions.map((source) => (
                   <SelectItem key={source} value={source}>
                     {source}
