@@ -130,34 +130,35 @@ const StudyLogTable = () => {
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Date</TableHead>
-                  <TableHead>Time</TableHead>
-                  <TableHead>Duration</TableHead>
-                  <TableHead>Subject</TableHead>
-                  <TableHead>Topic</TableHead>
-                  <TableHead>Source</TableHead>
-                  <TableHead>Achievements</TableHead>
-                  <TableHead>Comments</TableHead>
-                  <TableHead>Actions</TableHead>
+                  <TableHead className="w-24">Date</TableHead>
+                  <TableHead className="w-20">Time</TableHead>
+                  <TableHead className="w-20">Duration</TableHead>
+                  <TableHead className="w-28">Subject</TableHead>
+                  <TableHead className="w-32">Topic</TableHead>
+                  <TableHead className="w-24">Source</TableHead>
+                  <TableHead className="w-32 max-w-32">Achievements</TableHead>
+                  <TableHead className="w-32 max-w-32">Comments</TableHead>
+                  <TableHead className="w-20">Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {studyLogs.map((log) => (
                   <TableRow key={log.id}>
-                    <TableCell>{log.date}</TableCell>
-                    <TableCell>{log.time}</TableCell>
-                    <TableCell>{formatDuration(log.duration)}</TableCell>
-                    <TableCell>{log.subject}</TableCell>
-                    <TableCell className="max-w-xs truncate">{log.topic || '-'}</TableCell>
-                    <TableCell className="max-w-xs truncate">{log.source || '-'}</TableCell>
-                    <TableCell className="max-w-xs truncate">{log.achievements}</TableCell>
-                    <TableCell className="max-w-xs truncate">{log.comments}</TableCell>
-                    <TableCell>
-                      <div className="flex gap-2">
+                    <TableCell className="w-24">{log.date}</TableCell>
+                    <TableCell className="w-20">{log.time}</TableCell>
+                    <TableCell className="w-20">{formatDuration(log.duration)}</TableCell>
+                    <TableCell className="w-28">{log.subject}</TableCell>
+                    <TableCell className="w-32 truncate">{log.topic || '-'}</TableCell>
+                    <TableCell className="w-24 truncate">{log.source || '-'}</TableCell>
+                    <TableCell className="w-32 max-w-32 truncate">{log.achievements}</TableCell>
+                    <TableCell className="w-32 max-w-32 truncate">{log.comments}</TableCell>
+                    <TableCell className="w-20">
+                      <div className="flex gap-1">
                         <Button
                           variant="outline"
                           size="sm"
                           onClick={() => handleEdit(log)}
+                          className="h-7 w-7 p-0"
                         >
                           <Pencil className="h-3 w-3" />
                         </Button>
@@ -165,6 +166,7 @@ const StudyLogTable = () => {
                           variant="outline"
                           size="sm"
                           onClick={() => handleDelete(log.id)}
+                          className="h-7 w-7 p-0"
                         >
                           <Trash2 className="h-3 w-3" />
                         </Button>

@@ -2,7 +2,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { BookOpen, BarChart3, FileText, Plus, Target } from 'lucide-react';
+import { BookOpen, BarChart3, FileText, Plus, Target, Calendar } from 'lucide-react';
 import Navbar from '@/components/Navigation/Navbar';
 import BottomNav from '@/components/Navigation/BottomNav';
 
@@ -39,6 +39,14 @@ const HomePage = () => {
       path: '/study-logs',
       color: 'bg-orange-50 border-orange-200',
       iconColor: 'text-orange-600'
+    },
+    {
+      title: 'Recap',
+      description: 'Review and edit your daily study sessions',
+      icon: Calendar,
+      path: '/recap',
+      color: 'bg-indigo-50 border-indigo-200',
+      iconColor: 'text-indigo-600'
     }
   ];
 
@@ -55,7 +63,7 @@ const HomePage = () => {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-6">
           {navigationCards.map((card) => {
             const Icon = card.icon;
             return (

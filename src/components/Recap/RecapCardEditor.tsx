@@ -47,6 +47,7 @@ const RecapCardEditor: React.FC<RecapCardEditorProps> = ({ log, onSave, onCancel
     'Course Material',
     'Practice Problems',
     'Tutorial',
+    'LinkedIn',
     'Other'
   ];
 

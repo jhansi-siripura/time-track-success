@@ -39,6 +39,7 @@ const StudyLogForm: React.FC<StudyLogFormProps> = ({ editingLog, onSuccess, onCa
     'Course Material',
     'Practice Problems',
     'Tutorial',
+    'LinkedIn',
     'Other'
   ];
 
@@ -200,16 +201,6 @@ const StudyLogForm: React.FC<StudyLogFormProps> = ({ editingLog, onSuccess, onCa
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="topic">Topic (Optional)</Label>
-              <Input
-                id="topic"
-                type="text"
-                placeholder="e.g., Java 8 Streams, Calculus Integration"
-                value={formData.topic}
-                onChange={(e) => handleInputChange('topic', e.target.value)}
-              />
-            </div>
-            <div className="space-y-2">
               <Label htmlFor="source">Source</Label>
               <Select value={formData.source} onValueChange={(value) => handleInputChange('source', value)}>
                 <SelectTrigger>
@@ -223,6 +214,16 @@ const StudyLogForm: React.FC<StudyLogFormProps> = ({ editingLog, onSuccess, onCa
                   ))}
                 </SelectContent>
               </Select>
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="topic">Topic (Optional)</Label>
+              <Input
+                id="topic"
+                type="text"
+                placeholder="e.g., Java 8 Streams, Calculus Integration"
+                value={formData.topic}
+                onChange={(e) => handleInputChange('topic', e.target.value)}
+              />
             </div>
           </div>
 
