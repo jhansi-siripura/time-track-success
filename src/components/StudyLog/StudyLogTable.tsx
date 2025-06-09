@@ -134,6 +134,8 @@ const StudyLogTable = () => {
                   <TableHead>Time</TableHead>
                   <TableHead>Duration</TableHead>
                   <TableHead>Subject</TableHead>
+                  <TableHead>Topic</TableHead>
+                  <TableHead>Source</TableHead>
                   <TableHead>Achievements</TableHead>
                   <TableHead>Comments</TableHead>
                   <TableHead>Actions</TableHead>
@@ -146,6 +148,8 @@ const StudyLogTable = () => {
                     <TableCell>{log.time}</TableCell>
                     <TableCell>{formatDuration(log.duration)}</TableCell>
                     <TableCell>{log.subject}</TableCell>
+                    <TableCell className="max-w-xs truncate">{log.topic || '-'}</TableCell>
+                    <TableCell className="max-w-xs truncate">{log.source || '-'}</TableCell>
                     <TableCell className="max-w-xs truncate">{log.achievements}</TableCell>
                     <TableCell className="max-w-xs truncate">{log.comments}</TableCell>
                     <TableCell>

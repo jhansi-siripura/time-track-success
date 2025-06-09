@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { toast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
@@ -21,11 +22,25 @@ const StudyLogForm: React.FC<StudyLogFormProps> = ({ editingLog, onSuccess, onCa
     time: '',
     duration: '',
     subject: '',
+    topic: '',
+    source: '',
     comments: '',
     achievements: '',
   });
   const [loading, setLoading] = useState(false);
   const { user } = useAuth();
+
+  const sourceOptions = [
+    'YouTube',
+    'Udemy',
+    'Book',
+    'ChatGPT',
+    'Documentation',
+    'Course Material',
+    'Practice Problems',
+    'Tutorial',
+    'Other'
+  ];
 
   useEffect(() => {
     if (editingLog) {
@@ -34,6 +49,8 @@ const StudyLogForm: React.FC<StudyLogFormProps> = ({ editingLog, onSuccess, onCa
         time: editingLog.time || '',
         duration: editingLog.duration?.toString() || '',
         subject: editingLog.subject || '',
+        topic: editingLog.topic || '',
+        source: editingLog.source || '',
         comments: editingLog.comments || '',
         achievements: editingLog.achievements || '',
       });
@@ -69,6 +86,8 @@ const StudyLogForm: React.FC<StudyLogFormProps> = ({ editingLog, onSuccess, onCa
       time: formData.time,
       duration: parseInt(formData.duration) || 0,
       subject: formData.subject,
+      topic: formData.topic || null,
+      source: formData.source || null,
       comments: formData.comments,
       achievements: formData.achievements,
     };
@@ -104,6 +123,8 @@ const StudyLogForm: React.FC<StudyLogFormProps> = ({ editingLog, onSuccess, onCa
           time: '',
           duration: '',
           subject: '',
+          topic: '',
+          source: '',
           comments: '',
           achievements: '',
         });
@@ -174,6 +195,34 @@ const StudyLogForm: React.FC<StudyLogFormProps> = ({ editingLog, onSuccess, onCa
                 onChange={(e) => handleInputChange('subject', e.target.value)}
                 required
               />
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="topic">Topic (Optional)</Label>
+              <Input
+                id="topic"
+                type="text"
+                placeholder="e.g., Java 8 Streams, Calculus Integration"
+                value={formData.topic}
+                onChange={(e) => handleInputChange('topic', e.target.value)}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="source">Source</Label>
+              <Select value={formData.source} onValueChange={(value) => handleInputChange('source', value)}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select learning source" />
+                </SelectTrigger>
+                <SelectContent>
+                  {sourceOptions.map((source) => (
+                    <SelectItem key={source} value={source}>
+                      {source}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
           </div>
 
