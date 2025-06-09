@@ -12,6 +12,7 @@ import StudyLogsPage from "@/pages/StudyLogsPage";
 import AddSessionPage from "@/pages/AddSessionPage";
 import StudyPlanPage from "@/pages/StudyPlanPage";
 import TodosPage from "@/pages/TodosPage";
+import RecapPage from "@/pages/RecapPage";
 
 const queryClient = new QueryClient();
 
@@ -51,6 +52,11 @@ const App = () => (
           <Route path="/add-session" element={
             <ProtectedRoute>
               <AddSessionPage />
+            </ProtectedRoute>
+          } />
+          <Route path="/recap" element={
+            <ProtectedRoute>
+              <RecapPage />
             </ProtectedRoute>
           } />
           <Route path="/" element={<Navigate to="/home" replace />} />

@@ -4,7 +4,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
-import { Menu, Home, BarChart3, FileText, Plus, Target, CheckSquare, LogOut } from 'lucide-react';
+import { Menu, Home, BarChart3, FileText, Plus, Target, CheckSquare, LogOut, BookOpen } from 'lucide-react';
 
 const MobileNavbar = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -24,6 +24,7 @@ const MobileNavbar = () => {
     { name: 'To-Do', href: '/todos', icon: CheckSquare },
     { name: 'Add Study Session', href: '/add-session', icon: Plus },
     { name: 'View Study Logs', href: '/study-logs', icon: FileText },
+    { name: 'Recap', href: '/recap', icon: BookOpen },
   ];
 
   return (

@@ -3,7 +3,7 @@ import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/contexts/AuthContext';
-import { BarChart3, FileText, Plus, Target, CheckSquare, LogOut } from 'lucide-react';
+import { BarChart3, FileText, Plus, Target, CheckSquare, LogOut, BookOpen } from 'lucide-react';
 
 const Navbar = () => {
   const { user, signOut } = useAuth();
@@ -15,6 +15,7 @@ const Navbar = () => {
     { path: '/dashboard', label: 'Dashboard', icon: BarChart3 },
     { path: '/add-session', label: 'Add Study Log', icon: Plus },
     { path: '/study-logs', label: 'View Logs', icon: FileText },
+    { path: '/recap', label: 'Recap', icon: BookOpen },
     { path: '/study-plan', label: 'Study Plan', icon: Target },
     { path: '/todos', label: 'To-Do', icon: CheckSquare },
   ];
