@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
@@ -14,6 +13,7 @@ import TwelveMonthTrendWidget from './TwelveMonthTrendWidget';
 interface StudyLog {
   date: string;
   subject: string;
+  topic?: string;
   duration: number;
 }
 
@@ -41,7 +41,7 @@ const Dashboard = () => {
       try {
         const { data, error } = await supabase
           .from('study_logs')
-          .select('date, subject, duration')
+          .select('date, subject, topic, duration')
           .eq('user_id', user.id);
 
         if (error) throw error;
@@ -49,6 +49,7 @@ const Dashboard = () => {
         const processedLogs = (data || []).map(log => ({
           date: log.date || '',
           subject: log.subject || 'Unknown',
+          topic: log.topic || undefined,
           duration: log.duration || 0,
         }));
 
@@ -97,24 +98,13 @@ const Dashboard = () => {
     return { totalSessions, totalHours, totalSubjects };
   };
 
-  // Calculate subject data for bar chart
+  // Calculate subject data for stacked bar chart
   const calculateSubjectData = () => {
-    const subjectMap = new Map();
-    
-    studyLogs.forEach(log => {
-      const subject = log.subject || 'Unknown';
-      const hours = log.duration / 60;
-      
-      if (subjectMap.has(subject)) {
-        subjectMap.set(subject, subjectMap.get(subject) + hours);
-      } else {
-        subjectMap.set(subject, hours);
-      }
-    });
-
-    return Array.from(subjectMap.entries())
-      .map(([subject, hours]) => ({ subject, hours }))
-      .sort((a, b) => b.hours - a.hours);
+    return studyLogs.map(log => ({
+      subject: log.subject || 'Unknown',
+      topic: log.topic || 'General',
+      hours: log.duration / 60
+    }));
   };
 
   // Calculate weekly distribution using timezone-aware start of week
