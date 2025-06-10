@@ -39,16 +39,18 @@ const RecapCardEditor: React.FC<RecapCardEditorProps> = ({ log, onSave, onCancel
   });
 
   const sourceOptions = [
-    'YouTube',
-    'Udemy',
     'Book',
     'ChatGPT',
-    'Documentation',
     'Course Material',
+    'Documentation',
+    'HackerRank',
+    'LeetCode',
+    'LinkedIn',
+    'Other',
     'Practice Problems',
     'Tutorial',
-    'LinkedIn',
-    'Other'
+    'Udemy',
+    'YouTube'
   ];
 
   const handleInputChange = (field: string, value: string) => {

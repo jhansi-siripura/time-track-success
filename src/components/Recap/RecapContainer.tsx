@@ -35,8 +35,8 @@ const RecapContainer = () => {
         .from('study_logs')
         .select('*')
         .eq('user_id', user.id)
-        .order('date', { ascending: false })
-        .order('time', { ascending: false });
+        .order('date', { ascending: true })
+        .order('time', { ascending: true }); // Changed to ascending order
 
       if (error) throw error;
 

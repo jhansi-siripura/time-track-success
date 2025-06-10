@@ -31,16 +31,18 @@ const StudyLogForm: React.FC<StudyLogFormProps> = ({ editingLog, onSuccess, onCa
   const { user } = useAuth();
 
   const sourceOptions = [
-    'YouTube',
-    'Udemy',
     'Book',
     'ChatGPT',
-    'Documentation',
     'Course Material',
+    'Documentation',
+    'HackerRank',
+    'LeetCode',
+    'LinkedIn',
+    'Other',
     'Practice Problems',
     'Tutorial',
-    'LinkedIn',
-    'Other'
+    'Udemy',
+    'YouTube'
   ];
 
   useEffect(() => {

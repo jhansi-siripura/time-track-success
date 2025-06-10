@@ -1,9 +1,8 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Pencil, Trash2, Save, X, ChevronDown, ChevronUp } from 'lucide-react';
+import { Pencil, ChevronDown, ChevronUp } from 'lucide-react';
 import RecapCardEditor from './RecapCardEditor';
 
 interface StudyLog {
@@ -26,7 +25,7 @@ interface RecapCardProps {
 
 const RecapCard: React.FC<RecapCardProps> = ({ log, onUpdate, onDelete }) => {
   const [isEditing, setIsEditing] = useState(false);
-  const [isExpanded, setIsExpanded] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(true); // Changed to true for expanded by default
 
   const formatDuration = (minutes: number) => {
     const hours = Math.floor(minutes / 60);
