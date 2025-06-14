@@ -26,24 +26,28 @@ interface RecapCardProps {
 
 const RecapCard: React.FC<RecapCardProps> = ({ log, onUpdate, onDelete }) => {
   const [isEditing, setIsEditing] = useState(false);
-  const [isExpanded, setIsExpanded] = useState(true); // Changed to true for expanded by default
+  const [isExpanded, setIsExpanded] = useState(true);
 
-  const formatDuration = (minutes: number) => {
-    const hours = Math.floor(minutes / 60);
-    const mins = minutes % 60;
-    if (hours > 0) {
-      return `${hours}h ${mins}m`;
+  // Helper to format date and time as: 8-Jun-2025 10 AM
+  const formatDateTime = (dateStr: string, timeStr: string) => {
+    try {
+      // dateStr is "YYYY-MM-DD", timeStr is "HH:mm", combine into JS Date
+      const [year, month, day] = dateStr.split('-').map(Number);
+      const [hour, minute] = timeStr.split(':').map(Number);
+      const dateObj = new Date(year, month - 1, day, hour, minute);
+
+      // Get day, abbreviated month, year, 12h hour and AM/PM
+      const dayNum = dateObj.getDate();
+      const monthShort = dateObj.toLocaleString('en-US', { month: 'short' });
+      const yearNum = dateObj.getFullYear();
+      let hourNum = dateObj.getHours();
+      const ampm = hourNum >= 12 ? 'PM' : 'AM';
+      const hour12 = hourNum % 12 === 0 ? 12 : hourNum % 12;
+
+      return `${dayNum}-${monthShort}-${yearNum} ${hour12} ${ampm}`;
+    } catch (e) {
+      return dateStr + ' ' + timeStr;
     }
-    return `${mins}m`;
-  };
-
-  const formatDate = (dateStr: string) => {
-    const date = new Date(dateStr);
-    return date.toLocaleDateString('en-US', { 
-      weekday: 'short', 
-      month: 'short', 
-      day: 'numeric' 
-    });
   };
 
   const getSubjectColor = (subject: string) => {
@@ -97,11 +101,13 @@ const RecapCard: React.FC<RecapCardProps> = ({ log, onUpdate, onDelete }) => {
     <Card className="hover:shadow-md transition-shadow duration-200">
       <CardContent className="p-6">
         <div className="flex justify-between items-start mb-4">
-          <div className="flex items-center gap-3">
-            <div className="text-sm text-gray-600">
-              {formatDate(log.date)} • {log.time} • {formatDuration(log.duration)}
+          {/* DATE/TIME on the top-left */}
+          <div className="flex flex-col">
+            <div className="text-sm text-gray-600 font-medium tracking-tight">
+              {formatDateTime(log.date, log.time)}
             </div>
           </div>
+          {/* Subject and Topic on the top-right */}
           <div className="flex items-center gap-2">
             <div className="flex flex-wrap gap-2">
               <Badge className={getSubjectColor(log.subject)}>
@@ -119,6 +125,7 @@ const RecapCard: React.FC<RecapCardProps> = ({ log, onUpdate, onDelete }) => {
                 size="sm"
                 onClick={() => setIsEditing(true)}
                 className="h-8 w-8 p-0"
+                aria-label="Edit"
               >
                 <Pencil className="h-4 w-4" />
               </Button>
@@ -127,6 +134,7 @@ const RecapCard: React.FC<RecapCardProps> = ({ log, onUpdate, onDelete }) => {
                 size="sm"
                 onClick={() => setIsExpanded(!isExpanded)}
                 className="h-8 w-8 p-0"
+                aria-label={isExpanded ? 'Collapse' : 'Expand'}
               >
                 {isExpanded ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
               </Button>

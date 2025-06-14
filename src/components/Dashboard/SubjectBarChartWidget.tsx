@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
@@ -142,7 +141,7 @@ const SubjectBarChartWidget = ({ data }: SubjectBarChartWidgetProps) => {
         <CardTitle className="text-lg">Study Time by Subject</CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="h-80">
+        <div className="h-[30rem]">
           <ResponsiveContainer width="100%" height="100%">
             <BarChart 
               data={processedData} 
