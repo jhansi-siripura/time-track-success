@@ -86,7 +86,7 @@ const TwelveMonthTrendWidget = ({ data, getSubjectColor }: TwelveMonthTrendWidge
                   dataKey="month"
                   angle={-45}
                   textAnchor="end"
-                  height={60}
+                  height={50}
                   fontSize={10}
                 />
                 <YAxis fontSize={12} />
