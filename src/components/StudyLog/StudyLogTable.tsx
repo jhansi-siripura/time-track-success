@@ -36,6 +36,7 @@ const StudyLogTable = () => {
     achievements: '',
     date: ''
   });
+  const [openPopovers, setOpenPopovers] = useState<{[key: string]: boolean}>({});
   const { user } = useAuth();
 
   const fetchStudyLogs = async () => {
@@ -167,16 +168,16 @@ const StudyLogTable = () => {
       ...prev,
       [field]: tempFilters[field as keyof typeof tempFilters]
     }));
+    setOpenPopovers(prev => ({
+      ...prev,
+      [field]: false
+    }));
   };
 
   const handleFilterKeyPress = (e: React.KeyboardEvent, field: string) => {
     if (e.key === 'Enter') {
       applyFilter(field);
     }
-  };
-
-  const handleFilterBlur = (field: string) => {
-    applyFilter(field);
   };
 
   const clearColumnFilter = (field: string) => {
@@ -188,6 +189,22 @@ const StudyLogTable = () => {
       ...prev,
       [field]: ''
     }));
+    setOpenPopovers(prev => ({
+      ...prev,
+      [field]: false
+    }));
+  };
+
+  const handlePopoverOpenChange = (field: string, open: boolean) => {
+    setOpenPopovers(prev => ({
+      ...prev,
+      [field]: open
+    }));
+    
+    // If closing and there's a temp filter value, apply it
+    if (!open && tempFilters[field as keyof typeof tempFilters]) {
+      applyFilter(field);
+    }
   };
 
   const getSortIcon = (field: string) => {
@@ -221,11 +238,11 @@ const StudyLogTable = () => {
   };
 
   const FilterPopover = ({ field, placeholder }: { field: string, placeholder: string }) => {
-    const [isOpen, setIsOpen] = useState(false);
     const hasFilter = columnFilters[field as keyof typeof columnFilters];
+    const isOpen = openPopovers[field] || false;
 
     return (
-      <Popover open={isOpen} onOpenChange={setIsOpen}>
+      <Popover open={isOpen} onOpenChange={(open) => handlePopoverOpenChange(field, open)}>
         <PopoverTrigger asChild>
           <Button
             variant="ghost"
@@ -235,15 +252,15 @@ const StudyLogTable = () => {
             <Filter className="h-3 w-3" />
           </Button>
         </PopoverTrigger>
-        <PopoverContent className="w-64 p-2">
+        <PopoverContent className="w-64 p-2" onOpenAutoFocus={(e) => e.preventDefault()}>
           <div className="flex items-center gap-2">
             <Input
               placeholder={placeholder}
               value={tempFilters[field as keyof typeof tempFilters]}
               onChange={(e) => handleFilterChange(field, e.target.value)}
               onKeyPress={(e) => handleFilterKeyPress(e, field)}
-              onBlur={() => handleFilterBlur(field)}
               className="text-sm"
+              autoFocus
             />
             {hasFilter && (
               <Button
