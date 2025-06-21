@@ -298,12 +298,12 @@ const StudyLogTable = () => {
                             <FilterPopover field="date" placeholder="Filter date..." />
                           </div>
                         </TableHead>
-                        <TableHead className="w-24">
+                        <TableHead className="w-28">
                           <div className="flex items-center gap-1 cursor-pointer" onClick={() => handleSort('time')}>
                             Time {getSortIcon('time')}
                           </div>
                         </TableHead>
-                        <TableHead className="w-20">
+                        <TableHead className="w-24">
                           <div className="flex items-center gap-1 cursor-pointer" onClick={() => handleSort('duration')}>
                             Duration {getSortIcon('duration')}
                           </div>
