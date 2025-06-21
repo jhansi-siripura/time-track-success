@@ -37,7 +37,7 @@ const TwelveMonthTrendWidget = ({ data, getSubjectColor }: TwelveMonthTrendWidge
         return (
           <div className="bg-white p-3 border border-gray-200 rounded-lg shadow-lg">
             <p className="font-semibold text-gray-900">
-              {label} — {totalHours.toFixed(1)} hrs
+              {label} — Total: {totalHours.toFixed(1)} hrs
             </p>
           </div>
         );
@@ -46,7 +46,7 @@ const TwelveMonthTrendWidget = ({ data, getSubjectColor }: TwelveMonthTrendWidge
       return (
         <div className="bg-white p-3 border border-gray-200 rounded-lg shadow-lg">
           <p className="font-semibold text-gray-900 mb-2">
-            {label} — {totalHours.toFixed(1)} hrs
+            {label} — Total: {totalHours.toFixed(1)} hrs
           </p>
           <div className="space-y-1">
             {subjectData.map((item, index) => (
@@ -56,7 +56,7 @@ const TwelveMonthTrendWidget = ({ data, getSubjectColor }: TwelveMonthTrendWidge
                   style={{ backgroundColor: item.color }}
                 />
                 <span className="text-gray-700">
-                  {item.subject}: {item.hours.toFixed(1)} hrs
+                  • {item.subject}: {item.hours.toFixed(1)} hrs
                 </span>
               </div>
             ))}
@@ -86,7 +86,7 @@ const TwelveMonthTrendWidget = ({ data, getSubjectColor }: TwelveMonthTrendWidge
                   dataKey="month"
                   angle={-45}
                   textAnchor="end"
-                  height={30}
+                  height={35}
                   fontSize={10}
                 />
                 <YAxis fontSize={12} />
