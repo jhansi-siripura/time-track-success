@@ -136,7 +136,7 @@ const StudyLogTable = () => {
                   <TableHead className="w-28">Subject</TableHead>
                   <TableHead className="w-32">Topic</TableHead>
                   <TableHead className="w-24">Source</TableHead>
-                  <TableHead className="w-32 max-w-32">Achievements</TableHead>
+                  <TableHead className="w-32 max-w-64">Achievements</TableHead>
                   
                   <TableHead className="w-20">Actions</TableHead>
                 </TableRow>
@@ -150,7 +150,7 @@ const StudyLogTable = () => {
                     <TableCell className="w-28">{log.subject}</TableCell>
                     <TableCell className="w-32 truncate">{log.topic || '-'}</TableCell>
                     <TableCell className="w-24 truncate">{log.source || '-'}</TableCell>
-                    <TableCell className="w-32 max-w-32 truncate">{log.achievements}</TableCell>
+                    <TableCell className="w-32 max-w-64 truncate">{log.achievements}</TableCell>
                    
                     <TableCell className="w-20">
                       <div className="flex gap-1">
