@@ -6,6 +6,7 @@ import { toast } from '@/hooks/use-toast';
 import { getTodayDate } from '@/lib/dateUtils';
 import RecapFilters from './RecapFilters';
 import RecapCard from './RecapCard';
+import { validateAuthState, rateLimiter } from '@/lib/security';
 
 interface StudyLog {
   id: number;
@@ -30,18 +31,30 @@ const RecapContainer = () => {
   const fetchStudyLogs = async () => {
     if (!user) return;
 
+    // Validate authentication before fetching data
+    const authValidation = await validateAuthState();
+    if (!authValidation.isValid) {
+      toast({
+        title: "Authentication Error",
+        description: "Please log in again to view your study logs",
+        variant: "destructive",
+      });
+      return;
+    }
+
     try {
       const { data, error } = await supabase
         .from('study_logs')
         .select('*')
         .eq('user_id', user.id)
         .order('date', { ascending: true })
-        .order('time', { ascending: true }); // Changed to ascending order
+        .order('time', { ascending: true });
 
       if (error) throw error;
 
       setStudyLogs(data || []);
     } catch (error: any) {
+      console.error('Fetch study logs error:', error);
       toast({
         title: "Error",
         description: "Failed to fetch study logs",
@@ -80,11 +93,42 @@ const RecapContainer = () => {
   }, [studyLogs, dateFilter, subjectFilter, topicFilter]);
 
   const handleLogUpdate = async (logId: number, updatedData: Partial<StudyLog>) => {
+    if (!user) {
+      toast({
+        title: "Error",
+        description: "You must be logged in to update study logs",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Rate limiting check
+    if (!rateLimiter.canMakeRequest(user.id + '_update')) {
+      toast({
+        title: "Too Many Requests",
+        description: "Please wait before updating another study log",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Validate authentication
+    const authValidation = await validateAuthState();
+    if (!authValidation.isValid) {
+      toast({
+        title: "Authentication Error",
+        description: "Please log in again to update study logs",
+        variant: "destructive",
+      });
+      return;
+    }
+
     try {
       const { error } = await supabase
         .from('study_logs')
         .update(updatedData)
-        .eq('id', logId);
+        .eq('id', logId)
+        .eq('user_id', user.id); // Additional security check
 
       if (error) throw error;
 
@@ -95,6 +139,7 @@ const RecapContainer = () => {
 
       fetchStudyLogs();
     } catch (error: any) {
+      console.error('Update study log error:', error);
       toast({
         title: "Error",
         description: "Failed to update study log",
@@ -104,13 +149,44 @@ const RecapContainer = () => {
   };
 
   const handleLogDelete = async (logId: number) => {
+    if (!user) {
+      toast({
+        title: "Error",
+        description: "You must be logged in to delete study logs",
+        variant: "destructive",
+      });
+      return;
+    }
+
     if (!confirm('Are you sure you want to delete this study log?')) return;
+
+    // Rate limiting check
+    if (!rateLimiter.canMakeRequest(user.id + '_delete')) {
+      toast({
+        title: "Too Many Requests",
+        description: "Please wait before deleting another study log",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Validate authentication
+    const authValidation = await validateAuthState();
+    if (!authValidation.isValid) {
+      toast({
+        title: "Authentication Error",
+        description: "Please log in again to delete study logs",
+        variant: "destructive",
+      });
+      return;
+    }
 
     try {
       const { error } = await supabase
         .from('study_logs')
         .delete()
-        .eq('id', logId);
+        .eq('id', logId)
+        .eq('user_id', user.id); // Additional security check
 
       if (error) throw error;
 
@@ -121,6 +197,7 @@ const RecapContainer = () => {
 
       fetchStudyLogs();
     } catch (error: any) {
+      console.error('Delete study log error:', error);
       toast({
         title: "Error",
         description: "Failed to delete study log",

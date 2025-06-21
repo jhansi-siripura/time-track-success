@@ -11,6 +11,7 @@ import { Pencil, Trash2, Plus, ArrowUpDown, ArrowUp, ArrowDown, Filter, X } from
 import StudyLogForm from './StudyLogForm';
 import { Input } from '@/components/ui/input';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { validateAuthState, sanitizeInput, rateLimiter } from '@/lib/security';
 
 const StudyLogTable = () => {
   const [studyLogs, setStudyLogs] = useState<any[]>([]);
@@ -42,6 +43,17 @@ const StudyLogTable = () => {
   const fetchStudyLogs = async () => {
     if (!user) return;
 
+    // Validate authentication before fetching data
+    const authValidation = await validateAuthState();
+    if (!authValidation.isValid) {
+      toast({
+        title: "Authentication Error",
+        description: "Please log in again to view your study logs",
+        variant: "destructive",
+      });
+      return;
+    }
+
     try {
       const { data, error } = await supabase
         .from('study_logs')
@@ -52,6 +64,7 @@ const StudyLogTable = () => {
 
       setStudyLogs(data || []);
     } catch (error: any) {
+      console.error('Fetch study logs error:', error);
       toast({
         title: "Error",
         description: "Failed to fetch study logs",
@@ -106,13 +119,44 @@ const StudyLogTable = () => {
   }, [studyLogs, columnFilters, sortField, sortDirection]);
 
   const handleDelete = async (id: number) => {
+    if (!user) {
+      toast({
+        title: "Error",
+        description: "You must be logged in to delete study logs",
+        variant: "destructive",
+      });
+      return;
+    }
+
     if (!confirm('Are you sure you want to delete this study log?')) return;
+
+    // Rate limiting check
+    if (!rateLimiter.canMakeRequest(user.id + '_delete')) {
+      toast({
+        title: "Too Many Requests",
+        description: "Please wait before deleting another study log",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Validate authentication
+    const authValidation = await validateAuthState();
+    if (!authValidation.isValid) {
+      toast({
+        title: "Authentication Error",
+        description: "Please log in again to delete study logs",
+        variant: "destructive",
+      });
+      return;
+    }
 
     try {
       const { error } = await supabase
         .from('study_logs')
         .delete()
-        .eq('id', id);
+        .eq('id', id)
+        .eq('user_id', user.id); // Additional security check
 
       if (error) throw error;
 
@@ -123,6 +167,7 @@ const StudyLogTable = () => {
 
       fetchStudyLogs();
     } catch (error: any) {
+      console.error('Delete study log error:', error);
       toast({
         title: "Error",
         description: "Failed to delete study log",
@@ -157,9 +202,11 @@ const StudyLogTable = () => {
   };
 
   const handleFilterChange = (field: string, value: string) => {
+    // Sanitize filter input
+    const sanitizedValue = sanitizeInput(value);
     setTempFilters(prev => ({
       ...prev,
-      [field]: value
+      [field]: sanitizedValue
     }));
   };
 

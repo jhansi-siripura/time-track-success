@@ -1,106 +1,116 @@
 
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { toast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
+import { ArrowLeft } from 'lucide-react';
+import { validateAuthState, validateStudyLogData, sanitizeInput, rateLimiter } from '@/lib/security';
 
 interface StudyLogFormProps {
   editingLog?: any;
   onSuccess: () => void;
-  onCancel?: () => void;
+  onCancel: () => void;
 }
 
 const StudyLogForm: React.FC<StudyLogFormProps> = ({ editingLog, onSuccess, onCancel }) => {
   const [formData, setFormData] = useState({
-    date: '',
-    time: '',
-    duration: '',
     subject: '',
     topic: '',
     source: '',
-    comments: '',
+    date: new Date().toISOString().split('T')[0],
+    time: new Date().toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' }),
+    duration: 0,
     achievements: '',
+    comments: '',
   });
   const [loading, setLoading] = useState(false);
   const { user } = useAuth();
 
-  const sourceOptions = [
-    'Book',
-    'ChatGPT',
-    'Course Material',
-    'Documentation',
-    'HackerRank',
-    'LeetCode',
-    'LinkedIn',
-    'Other',
-    'Practice Problems',
-    'Tutorial',
-    'Udemy',
-    'YouTube'
-  ];
-
   useEffect(() => {
     if (editingLog) {
       setFormData({
-        date: editingLog.date || '',
-        time: editingLog.time || '',
-        duration: editingLog.duration?.toString() || '',
         subject: editingLog.subject || '',
         topic: editingLog.topic || '',
         source: editingLog.source || '',
-        comments: editingLog.comments || '',
+        date: editingLog.date || '',
+        time: editingLog.time || '',
+        duration: editingLog.duration || 0,
         achievements: editingLog.achievements || '',
+        comments: editingLog.comments || '',
       });
-    } else {
-      // Set current date and time for new entries
-      const now = new Date();
-      const currentDate = now.toISOString().split('T')[0];
-      const currentTime = now.toTimeString().slice(0, 5);
-      setFormData(prev => ({
-        ...prev,
-        date: currentDate,
-        time: currentTime,
-      }));
     }
   }, [editingLog]);
 
-  const handleInputChange = (field: string, value: string) => {
+  const handleInputChange = (field: string, value: string | number) => {
     setFormData(prev => ({
       ...prev,
-      [field]: value,
+      [field]: typeof value === 'string' ? sanitizeInput(value) : value
     }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!user) return;
+    
+    if (!user) {
+      toast({
+        title: "Error",
+        description: "You must be logged in to save study logs",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Rate limiting check
+    if (!rateLimiter.canMakeRequest(user.id)) {
+      toast({
+        title: "Too Many Requests",
+        description: "Please wait before submitting another study log",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Validate authentication state
+    const authValidation = await validateAuthState();
+    if (!authValidation.isValid) {
+      toast({
+        title: "Authentication Error",
+        description: authValidation.error || "Please log in again",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Validate form data
+    const validation = validateStudyLogData(formData);
+    if (!validation.isValid) {
+      toast({
+        title: "Validation Error",
+        description: validation.errors.join(', '),
+        variant: "destructive",
+      });
+      return;
+    }
 
     setLoading(true);
 
-    const studyLogData = {
-      user_id: user.id,
-      date: formData.date,
-      time: formData.time,
-      duration: parseInt(formData.duration) || 0,
-      subject: formData.subject,
-      topic: formData.topic || null,
-      source: formData.source || null,
-      comments: formData.comments,
-      achievements: formData.achievements,
-    };
-
     try {
+      const dataToSubmit = {
+        ...formData,
+        user_id: user.id, // Ensure user_id is always set
+      };
+
       if (editingLog) {
         const { error } = await supabase
           .from('study_logs')
-          .update(studyLogData)
-          .eq('id', editingLog.id);
+          .update(dataToSubmit)
+          .eq('id', editingLog.id)
+          .eq('user_id', user.id); // Additional security check
 
         if (error) throw error;
 
@@ -111,33 +121,22 @@ const StudyLogForm: React.FC<StudyLogFormProps> = ({ editingLog, onSuccess, onCa
       } else {
         const { error } = await supabase
           .from('study_logs')
-          .insert([studyLogData]);
+          .insert([dataToSubmit]);
 
         if (error) throw error;
 
         toast({
           title: "Success",
-          description: "Study log added successfully!",
-        });
-
-        // Reset form for new entries
-        setFormData({
-          date: formData.date,
-          time: '',
-          duration: '',
-          subject: '',
-          topic: '',
-          source: '',
-          comments: '',
-          achievements: '',
+          description: "Study log created successfully!",
         });
       }
 
       onSuccess();
     } catch (error: any) {
+      console.error('Study log submission error:', error);
       toast({
         title: "Error",
-        description: error.message,
+        description: error.message || "Failed to save study log",
         variant: "destructive",
       });
     } finally {
@@ -148,13 +147,64 @@ const StudyLogForm: React.FC<StudyLogFormProps> = ({ editingLog, onSuccess, onCa
   return (
     <Card>
       <CardHeader>
-        <CardTitle>{editingLog ? 'Edit Study Log' : 'Add Study Session'}</CardTitle>
+        <div className="flex items-center gap-2">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={onCancel}
+            className="p-2"
+          >
+            <ArrowLeft className="h-4 w-4" />
+          </Button>
+          <CardTitle>
+            {editingLog ? 'Edit Study Session' : 'Add Study Session'}
+          </CardTitle>
+        </div>
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="date">Date</Label>
+              <Label htmlFor="subject">Subject *</Label>
+              <Input
+                id="subject"
+                type="text"
+                value={formData.subject}
+                onChange={(e) => handleInputChange('subject', e.target.value)}
+                placeholder="e.g., Mathematics, Physics"
+                required
+                maxLength={100}
+              />
+            </div>
+            
+            <div className="space-y-2">
+              <Label htmlFor="topic">Topic</Label>
+              <Input
+                id="topic"
+                type="text"
+                value={formData.topic}
+                onChange={(e) => handleInputChange('topic', e.target.value)}
+                placeholder="e.g., Calculus, Thermodynamics"
+                maxLength={100}
+              />
+            </div>
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="source">Source</Label>
+            <Input
+              id="source"
+              type="text"
+              value={formData.source}
+              onChange={(e) => handleInputChange('source', e.target.value)}
+              placeholder="e.g., Textbook, Online Course, Video"
+              maxLength={200}
+            />
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="date">Date *</Label>
               <Input
                 id="date"
                 type="date"
@@ -163,8 +213,9 @@ const StudyLogForm: React.FC<StudyLogFormProps> = ({ editingLog, onSuccess, onCa
                 required
               />
             </div>
+            
             <div className="space-y-2">
-              <Label htmlFor="time">Time</Label>
+              <Label htmlFor="time">Time *</Label>
               <Input
                 id="time"
                 type="time"
@@ -173,58 +224,18 @@ const StudyLogForm: React.FC<StudyLogFormProps> = ({ editingLog, onSuccess, onCa
                 required
               />
             </div>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            
             <div className="space-y-2">
-              <Label htmlFor="duration">Duration (minutes)</Label>
+              <Label htmlFor="duration">Duration (minutes) *</Label>
               <Input
                 id="duration"
                 type="number"
                 min="1"
-                placeholder="60"
+                max="1440"
                 value={formData.duration}
-                onChange={(e) => handleInputChange('duration', e.target.value)}
+                onChange={(e) => handleInputChange('duration', parseInt(e.target.value) || 0)}
+                placeholder="e.g., 60"
                 required
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="subject">Subject</Label>
-              <Input
-                id="subject"
-                type="text"
-                placeholder="Mathematics, Physics, etc."
-                value={formData.subject}
-                onChange={(e) => handleInputChange('subject', e.target.value)}
-                required
-              />
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="source">Source</Label>
-              <Select value={formData.source} onValueChange={(value) => handleInputChange('source', value)}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select learning source" />
-                </SelectTrigger>
-                <SelectContent>
-                  {sourceOptions.map((source) => (
-                    <SelectItem key={source} value={source}>
-                      {source}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="topic">Topic (Optional)</Label>
-              <Input
-                id="topic"
-                type="text"
-                placeholder="e.g., Java 8 Streams, Calculus Integration"
-                value={formData.topic}
-                onChange={(e) => handleInputChange('topic', e.target.value)}
               />
             </div>
           </div>
@@ -233,10 +244,11 @@ const StudyLogForm: React.FC<StudyLogFormProps> = ({ editingLog, onSuccess, onCa
             <Label htmlFor="achievements">Achievements</Label>
             <Textarea
               id="achievements"
-              placeholder="What did you accomplish in this session?"
               value={formData.achievements}
               onChange={(e) => handleInputChange('achievements', e.target.value)}
+              placeholder="What did you accomplish in this session?"
               rows={3}
+              maxLength={500}
             />
           </div>
 
@@ -244,22 +256,31 @@ const StudyLogForm: React.FC<StudyLogFormProps> = ({ editingLog, onSuccess, onCa
             <Label htmlFor="comments">Comments</Label>
             <Textarea
               id="comments"
-              placeholder="Additional notes about this study session"
               value={formData.comments}
               onChange={(e) => handleInputChange('comments', e.target.value)}
+              placeholder="Any additional notes or observations"
               rows={3}
+              maxLength={500}
             />
           </div>
 
-          <div className="flex gap-2">
-            <Button type="submit" disabled={loading}>
-              {loading ? 'Saving...' : (editingLog ? 'Update' : 'Add Session')}
+          <div className="flex gap-2 pt-4">
+            <Button
+              type="submit"
+              disabled={loading}
+              className="flex-1"
+            >
+              {loading ? 'Saving...' : (editingLog ? 'Update Session' : 'Save Session')}
             </Button>
-            {onCancel && (
-              <Button type="button" variant="outline" onClick={onCancel}>
-                Cancel
-              </Button>
-            )}
+            <Button
+              type="button"
+              variant="outline"
+              onClick={onCancel}
+              disabled={loading}
+              className="flex-1"
+            >
+              Cancel
+            </Button>
           </div>
         </form>
       </CardContent>

@@ -96,7 +96,7 @@ export type Database = {
           subject: string | null
           time: string | null
           topic: string | null
-          user_id: string | null
+          user_id: string
         }
         Insert: {
           achievements?: string | null
@@ -109,7 +109,7 @@ export type Database = {
           subject?: string | null
           time?: string | null
           topic?: string | null
-          user_id?: string | null
+          user_id: string
         }
         Update: {
           achievements?: string | null
@@ -122,7 +122,7 @@ export type Database = {
           subject?: string | null
           time?: string | null
           topic?: string | null
-          user_id?: string | null
+          user_id?: string
         }
         Relationships: []
       }
