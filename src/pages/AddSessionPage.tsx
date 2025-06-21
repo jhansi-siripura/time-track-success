@@ -12,6 +12,10 @@ const AddSessionPage = () => {
     navigate('/study-logs');
   };
 
+  const handleCancel = () => {
+    navigate('/study-logs');
+  };
+
   return (
     <div className="min-h-screen bg-gray-50">
       <Navbar />
@@ -20,7 +24,7 @@ const AddSessionPage = () => {
           <h1 className="text-2xl md:text-3xl font-bold text-gray-900">Add Study Session</h1>
           <p className="text-gray-600">Log a new study session</p>
         </div>
-        <StudyLogForm onSuccess={handleSuccess} />
+        <StudyLogForm onSuccess={handleSuccess} onCancel={handleCancel} />
       </div>
       <BottomNav />
     </div>
