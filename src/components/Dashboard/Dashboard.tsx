@@ -157,13 +157,24 @@ const Dashboard = () => {
       const weekStartStr = weekStart.toLocaleDateString('en-CA');
       const weekEndStr = weekEnd.toLocaleDateString('en-CA');
       
-      const weekHours = studyLogs
-        .filter(log => {
-          return log.date >= weekStartStr && log.date <= weekEndStr;
-        })
-        .reduce((sum, log) => sum + log.duration, 0) / 60;
+      const weekLogs = studyLogs.filter(log => {
+        return log.date >= weekStartStr && log.date <= weekEndStr;
+      });
       
-      weeks.push({ week: weekLabel, hours: weekHours });
+      const weekHours = weekLogs.reduce((sum, log) => sum + log.duration, 0) / 60;
+      
+      // Calculate subject breakdown for this week
+      const subjects: { [subject: string]: number } = {};
+      weekLogs.forEach(log => {
+        const subject = log.subject;
+        subjects[subject] = (subjects[subject] || 0) + (log.duration / 60);
+      });
+      
+      weeks.push({ 
+        week: weekLabel, 
+        hours: weekHours,
+        subjects 
+      });
     }
     
     return weeks;
@@ -189,11 +200,21 @@ const Dashboard = () => {
       const monthKey = `${year}-${month.toString().padStart(2, '0')}`;
       const monthLabel = monthIterator.toLocaleDateString('en-US', { month: 'short', year: '2-digit' });
       
-      const monthHours = studyLogs
-        .filter(log => log.date.startsWith(monthKey))
-        .reduce((sum, log) => sum + log.duration, 0) / 60;
+      const monthLogs = studyLogs.filter(log => log.date.startsWith(monthKey));
+      const monthHours = monthLogs.reduce((sum, log) => sum + log.duration, 0) / 60;
       
-      months.push({ month: monthLabel, hours: monthHours });
+      // Calculate subject breakdown for this month
+      const subjects: { [subject: string]: number } = {};
+      monthLogs.forEach(log => {
+        const subject = log.subject;
+        subjects[subject] = (subjects[subject] || 0) + (log.duration / 60);
+      });
+      
+      months.push({ 
+        month: monthLabel, 
+        hours: monthHours,
+        subjects 
+      });
       
       // Move to next month
       monthIterator.setMonth(monthIterator.getMonth() + 1);
@@ -240,8 +261,14 @@ const Dashboard = () => {
           subjects={subjects}
           getSubjectColor={getSubjectColor}
         />
-        <FourWeekConsistencyWidget data={fourWeekData} />
-        <TwelveMonthTrendWidget data={twelveMonthData} />
+        <FourWeekConsistencyWidget 
+          data={fourWeekData} 
+          getSubjectColor={getSubjectColor}
+        />
+        <TwelveMonthTrendWidget 
+          data={twelveMonthData}
+          getSubjectColor={getSubjectColor}
+        />
       </div>
     </div>
   );
