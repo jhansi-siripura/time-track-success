@@ -8,9 +8,10 @@ import { Pagination, PaginationContent, PaginationItem, PaginationLink, Paginati
 import { toast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
-import { Pencil, Trash2, Plus, ArrowUpDown, ArrowUp, ArrowDown, Search } from 'lucide-react';
+import { Pencil, Trash2, Plus, ArrowUpDown, ArrowUp, ArrowDown, Filter, X } from 'lucide-react';
 import StudyLogForm from './StudyLogForm';
 import { Input } from '@/components/ui/input';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 
 const StudyLogTable = () => {
   const [studyLogs, setStudyLogs] = useState<any[]>([]);
@@ -22,7 +23,7 @@ const StudyLogTable = () => {
   const [itemsPerPage, setItemsPerPage] = useState(10);
   const [sortField, setSortField] = useState<string>('date');
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('desc');
-  const [filters, setFilters] = useState({
+  const [columnFilters, setColumnFilters] = useState({
     subject: '',
     topic: '',
     source: '',
@@ -61,11 +62,11 @@ const StudyLogTable = () => {
   useEffect(() => {
     let filtered = studyLogs.filter(log => {
       return (
-        (!filters.subject || log.subject?.toLowerCase().includes(filters.subject.toLowerCase())) &&
-        (!filters.topic || log.topic?.toLowerCase().includes(filters.topic.toLowerCase())) &&
-        (!filters.source || log.source?.toLowerCase().includes(filters.source.toLowerCase())) &&
-        (!filters.achievements || log.achievements?.toLowerCase().includes(filters.achievements.toLowerCase())) &&
-        (!filters.date || log.date?.includes(filters.date))
+        (!columnFilters.subject || log.subject?.toLowerCase().includes(columnFilters.subject.toLowerCase())) &&
+        (!columnFilters.topic || log.topic?.toLowerCase().includes(columnFilters.topic.toLowerCase())) &&
+        (!columnFilters.source || log.source?.toLowerCase().includes(columnFilters.source.toLowerCase())) &&
+        (!columnFilters.achievements || log.achievements?.toLowerCase().includes(columnFilters.achievements.toLowerCase())) &&
+        (!columnFilters.date || log.date?.includes(columnFilters.date))
       );
     });
 
@@ -95,7 +96,7 @@ const StudyLogTable = () => {
 
     setFilteredLogs(filtered);
     setCurrentPage(1); // Reset to first page when filters change
-  }, [studyLogs, filters, sortField, sortDirection]);
+  }, [studyLogs, columnFilters, sortField, sortDirection]);
 
   const handleDelete = async (id: number) => {
     if (!confirm('Are you sure you want to delete this study log?')) return;
@@ -148,16 +149,39 @@ const StudyLogTable = () => {
     }
   };
 
-  const handleFilterChange = (field: string, value: string) => {
-    setFilters(prev => ({
+  const handleColumnFilterChange = (field: string, value: string) => {
+    setColumnFilters(prev => ({
       ...prev,
       [field]: value
+    }));
+  };
+
+  const clearColumnFilter = (field: string) => {
+    setColumnFilters(prev => ({
+      ...prev,
+      [field]: ''
     }));
   };
 
   const getSortIcon = (field: string) => {
     if (sortField !== field) return <ArrowUpDown className="h-4 w-4" />;
     return sortDirection === 'asc' ? <ArrowUp className="h-4 w-4" /> : <ArrowDown className="h-4 w-4" />;
+  };
+
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    const day = date.getDate().toString().padStart(2, '0');
+    const month = date.toLocaleString('en-US', { month: 'short' });
+    const year = date.getFullYear();
+    return `${day}-${month}-${year}`;
+  };
+
+  const formatTime = (timeString: string) => {
+    const [hours, minutes] = timeString.split(':');
+    const hour24 = parseInt(hours);
+    const hour12 = hour24 === 0 ? 12 : hour24 > 12 ? hour24 - 12 : hour24;
+    const ampm = hour24 >= 12 ? 'PM' : 'AM';
+    return `${hour12}:${minutes} ${ampm}`;
   };
 
   const formatDuration = (minutes: number) => {
@@ -167,6 +191,45 @@ const StudyLogTable = () => {
       return `${hours}h ${mins}m`;
     }
     return `${mins}m`;
+  };
+
+  const FilterPopover = ({ field, placeholder }: { field: string, placeholder: string }) => {
+    const [isOpen, setIsOpen] = useState(false);
+    const hasFilter = columnFilters[field as keyof typeof columnFilters];
+
+    return (
+      <Popover open={isOpen} onOpenChange={setIsOpen}>
+        <PopoverTrigger asChild>
+          <Button
+            variant="ghost"
+            size="sm"
+            className={`h-6 w-6 p-0 ${hasFilter ? 'text-blue-600' : 'text-gray-400'}`}
+          >
+            <Filter className="h-3 w-3" />
+          </Button>
+        </PopoverTrigger>
+        <PopoverContent className="w-64 p-2">
+          <div className="flex items-center gap-2">
+            <Input
+              placeholder={placeholder}
+              value={columnFilters[field as keyof typeof columnFilters]}
+              onChange={(e) => handleColumnFilterChange(field, e.target.value)}
+              className="text-sm"
+            />
+            {hasFilter && (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => clearColumnFilter(field)}
+                className="h-8 w-8 p-0"
+              >
+                <X className="h-3 w-3" />
+              </Button>
+            )}
+          </div>
+        </PopoverContent>
+      </Popover>
+    );
   };
 
   // Pagination calculations
@@ -209,40 +272,6 @@ const StudyLogTable = () => {
           <div className="text-center py-4">Loading study logs...</div>
         ) : (
           <>
-            {/* Filters */}
-            <div className="mb-4 grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-2">
-              <Input
-                placeholder="Filter by subject..."
-                value={filters.subject}
-                onChange={(e) => handleFilterChange('subject', e.target.value)}
-                className="text-sm"
-              />
-              <Input
-                placeholder="Filter by topic..."
-                value={filters.topic}
-                onChange={(e) => handleFilterChange('topic', e.target.value)}
-                className="text-sm"
-              />
-              <Input
-                placeholder="Filter by source..."
-                value={filters.source}
-                onChange={(e) => handleFilterChange('source', e.target.value)}
-                className="text-sm"
-              />
-              <Input
-                placeholder="Filter by achievements..."
-                value={filters.achievements}
-                onChange={(e) => handleFilterChange('achievements', e.target.value)}
-                className="text-sm"
-              />
-              <Input
-                placeholder="Filter by date..."
-                value={filters.date}
-                onChange={(e) => handleFilterChange('date', e.target.value)}
-                className="text-sm"
-              />
-            </div>
-
             {filteredLogs.length === 0 ? (
               <div className="text-center py-8 text-gray-500">
                 <p>No study logs found.</p>
@@ -261,60 +290,54 @@ const StudyLogTable = () => {
                   <Table>
                     <TableHeader>
                       <TableRow>
-                        <TableHead 
-                          className="w-24 cursor-pointer hover:bg-gray-50"
-                          onClick={() => handleSort('date')}
-                        >
-                          <div className="flex items-center gap-1">
-                            Date {getSortIcon('date')}
+                        <TableHead className="w-32">
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-1 cursor-pointer" onClick={() => handleSort('date')}>
+                              Date {getSortIcon('date')}
+                            </div>
+                            <FilterPopover field="date" placeholder="Filter date..." />
                           </div>
                         </TableHead>
-                        <TableHead 
-                          className="w-20 cursor-pointer hover:bg-gray-50"
-                          onClick={() => handleSort('time')}
-                        >
-                          <div className="flex items-center gap-1">
+                        <TableHead className="w-24">
+                          <div className="flex items-center gap-1 cursor-pointer" onClick={() => handleSort('time')}>
                             Time {getSortIcon('time')}
                           </div>
                         </TableHead>
-                        <TableHead 
-                          className="w-20 cursor-pointer hover:bg-gray-50"
-                          onClick={() => handleSort('duration')}
-                        >
-                          <div className="flex items-center gap-1">
+                        <TableHead className="w-20">
+                          <div className="flex items-center gap-1 cursor-pointer" onClick={() => handleSort('duration')}>
                             Duration {getSortIcon('duration')}
                           </div>
                         </TableHead>
-                        <TableHead 
-                          className="w-32 cursor-pointer hover:bg-gray-50"
-                          onClick={() => handleSort('subject')}
-                        >
-                          <div className="flex items-center gap-1">
-                            Subject {getSortIcon('subject')}
+                        <TableHead className="w-32">
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-1 cursor-pointer" onClick={() => handleSort('subject')}>
+                              Subject {getSortIcon('subject')}
+                            </div>
+                            <FilterPopover field="subject" placeholder="Filter subject..." />
                           </div>
                         </TableHead>
-                        <TableHead 
-                          className="w-32 cursor-pointer hover:bg-gray-50"
-                          onClick={() => handleSort('topic')}
-                        >
-                          <div className="flex items-center gap-1">
-                            Topic {getSortIcon('topic')}
+                        <TableHead className="w-32">
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-1 cursor-pointer" onClick={() => handleSort('topic')}>
+                              Topic {getSortIcon('topic')}
+                            </div>
+                            <FilterPopover field="topic" placeholder="Filter topic..." />
                           </div>
                         </TableHead>
-                        <TableHead 
-                          className="w-32 cursor-pointer hover:bg-gray-50"
-                          onClick={() => handleSort('source')}
-                        >
-                          <div className="flex items-center gap-1">
-                            Source {getSortIcon('source')}
+                        <TableHead className="w-32">
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-1 cursor-pointer" onClick={() => handleSort('source')}>
+                              Source {getSortIcon('source')}
+                            </div>
+                            <FilterPopover field="source" placeholder="Filter source..." />
                           </div>
                         </TableHead>
-                        <TableHead 
-                          className="cursor-pointer hover:bg-gray-50"
-                          onClick={() => handleSort('achievements')}
-                        >
-                          <div className="flex items-center gap-1">
-                            Achievements {getSortIcon('achievements')}
+                        <TableHead>
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-1 cursor-pointer" onClick={() => handleSort('achievements')}>
+                              Achievements {getSortIcon('achievements')}
+                            </div>
+                            <FilterPopover field="achievements" placeholder="Filter achievements..." />
                           </div>
                         </TableHead>
                         <TableHead className="w-20">Actions</TableHead>
@@ -323,8 +346,8 @@ const StudyLogTable = () => {
                     <TableBody>
                       {currentItems.map((log) => (
                         <TableRow key={log.id}>
-                          <TableCell className="w-24">{log.date}</TableCell>
-                          <TableCell className="w-20">{log.time}</TableCell>
+                          <TableCell className="w-32">{formatDate(log.date)}</TableCell>
+                          <TableCell className="w-24">{formatTime(log.time)}</TableCell>
                           <TableCell className="w-20">{formatDuration(log.duration)}</TableCell>
                           <TableCell className="w-32">{log.subject}</TableCell>
                           <TableCell className="w-32">{log.topic || '-'}</TableCell>
@@ -344,7 +367,7 @@ const StudyLogTable = () => {
                                 variant="outline"
                                 size="sm"
                                 onClick={() => handleDelete(log.id)}
-                                className="h-7 w-7 p-0"
+                                className="h-7 w-7 p-0 border-red-200 text-red-600 hover:bg-red-50 hover:text-red-700 hover:border-red-300"
                               >
                                 <Trash2 className="h-3 w-3" />
                               </Button>
