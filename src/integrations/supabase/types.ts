@@ -51,13 +51,6 @@ export type Database = {
             foreignKeyName: "courses_subject_id_fkey"
             columns: ["subject_id"]
             isOneToOne: false
-            referencedRelation: "subject_stats"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "courses_subject_id_fkey"
-            columns: ["subject_id"]
-            isOneToOne: false
             referencedRelation: "subjects"
             referencedColumns: ["id"]
           },
@@ -227,19 +220,22 @@ export type Database = {
           planned_hours: number | null
           subject_name: string | null
         }
-        Relationships: [
-          {
-            foreignKeyName: "subjects_goal_id_fkey"
-            columns: ["goal_id"]
-            isOneToOne: false
-            referencedRelation: "study_goals"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
       }
     }
     Functions: {
-      [_ in never]: never
+      get_user_subject_stats: {
+        Args: { requesting_user_id?: string }
+        Returns: {
+          id: string
+          subject_name: string
+          goal_id: string
+          created_at: string
+          planned_hours: number
+          actual_hours: number
+          expertise_level: string
+        }[]
+      }
     }
     Enums: {
       [_ in never]: never
