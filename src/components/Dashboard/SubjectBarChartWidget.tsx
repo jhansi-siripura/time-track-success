@@ -108,7 +108,7 @@ const SubjectBarChartWidget = ({ data }: SubjectBarChartWidgetProps) => {
                   style={{ backgroundColor: item.color }}
                 />
                 <span className="text-gray-700">
-                  • {item.topic}: {item.hours.toFixed(1)} hrs
+                  {item.topic}: {item.hours.toFixed(1)} hrs
                 </span>
               </div>
             ))}
