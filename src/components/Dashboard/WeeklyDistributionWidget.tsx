@@ -47,7 +47,7 @@ const WeeklyDistributionWidget = ({ data, subjects, getSubjectColor }: WeeklyDis
                   style={{ backgroundColor: item.color }}
                 />
                 <span className="text-gray-700">
-                  • {item.subject}: {item.hours.toFixed(1)} hrs
+                  {item.subject}: {item.hours.toFixed(1)} hrs
                 </span>
               </div>
             ))}
