@@ -37,7 +37,7 @@ const TwelveMonthTrendWidget = ({ data, getSubjectColor }: TwelveMonthTrendWidge
         return (
           <div className="bg-white p-3 border border-gray-200 rounded-lg shadow-lg">
             <p className="font-semibold text-gray-900">
-              {label} — Total: {totalHours.toFixed(1)} hrs
+              {label} : {totalHours.toFixed(1)} hrs
             </p>
           </div>
         );
