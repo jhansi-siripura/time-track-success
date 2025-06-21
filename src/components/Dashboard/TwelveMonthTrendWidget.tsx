@@ -56,7 +56,7 @@ const TwelveMonthTrendWidget = ({ data, getSubjectColor }: TwelveMonthTrendWidge
                   style={{ backgroundColor: item.color }}
                 />
                 <span className="text-gray-700">
-                  • {item.subject}: {item.hours.toFixed(1)} hrs
+                  {item.subject}: {item.hours.toFixed(1)} hrs
                 </span>
               </div>
             ))}
@@ -86,7 +86,7 @@ const TwelveMonthTrendWidget = ({ data, getSubjectColor }: TwelveMonthTrendWidge
                   dataKey="month"
                   angle={-45}
                   textAnchor="end"
-                  height={35}
+                  height={30}
                   fontSize={10}
                 />
                 <YAxis fontSize={12} />
