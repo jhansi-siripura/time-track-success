@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -24,6 +23,13 @@ const StudyLogTable = () => {
   const [sortField, setSortField] = useState<string>('date');
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('desc');
   const [columnFilters, setColumnFilters] = useState({
+    subject: '',
+    topic: '',
+    source: '',
+    achievements: '',
+    date: ''
+  });
+  const [tempFilters, setTempFilters] = useState({
     subject: '',
     topic: '',
     source: '',
@@ -149,15 +155,36 @@ const StudyLogTable = () => {
     }
   };
 
-  const handleColumnFilterChange = (field: string, value: string) => {
-    setColumnFilters(prev => ({
+  const handleFilterChange = (field: string, value: string) => {
+    setTempFilters(prev => ({
       ...prev,
       [field]: value
     }));
   };
 
+  const applyFilter = (field: string) => {
+    setColumnFilters(prev => ({
+      ...prev,
+      [field]: tempFilters[field as keyof typeof tempFilters]
+    }));
+  };
+
+  const handleFilterKeyPress = (e: React.KeyboardEvent, field: string) => {
+    if (e.key === 'Enter') {
+      applyFilter(field);
+    }
+  };
+
+  const handleFilterBlur = (field: string) => {
+    applyFilter(field);
+  };
+
   const clearColumnFilter = (field: string) => {
     setColumnFilters(prev => ({
+      ...prev,
+      [field]: ''
+    }));
+    setTempFilters(prev => ({
       ...prev,
       [field]: ''
     }));
@@ -212,8 +239,10 @@ const StudyLogTable = () => {
           <div className="flex items-center gap-2">
             <Input
               placeholder={placeholder}
-              value={columnFilters[field as keyof typeof columnFilters]}
-              onChange={(e) => handleColumnFilterChange(field, e.target.value)}
+              value={tempFilters[field as keyof typeof tempFilters]}
+              onChange={(e) => handleFilterChange(field, e.target.value)}
+              onKeyPress={(e) => handleFilterKeyPress(e, field)}
+              onBlur={() => handleFilterBlur(field)}
               className="text-sm"
             />
             {hasFilter && (
@@ -290,7 +319,7 @@ const StudyLogTable = () => {
                   <Table>
                     <TableHeader>
                       <TableRow>
-                        <TableHead className="w-32">
+                        <TableHead className="w-36">
                           <div className="flex items-center justify-between">
                             <div className="flex items-center gap-1 cursor-pointer" onClick={() => handleSort('date')}>
                               Date {getSortIcon('date')}
@@ -298,7 +327,7 @@ const StudyLogTable = () => {
                             <FilterPopover field="date" placeholder="Filter date..." />
                           </div>
                         </TableHead>
-                        <TableHead className="w-28">
+                        <TableHead className="w-32">
                           <div className="flex items-center gap-1 cursor-pointer" onClick={() => handleSort('time')}>
                             Time {getSortIcon('time')}
                           </div>
@@ -346,9 +375,9 @@ const StudyLogTable = () => {
                     <TableBody>
                       {currentItems.map((log) => (
                         <TableRow key={log.id}>
-                          <TableCell className="w-32">{formatDate(log.date)}</TableCell>
-                          <TableCell className="w-24">{formatTime(log.time)}</TableCell>
-                          <TableCell className="w-20">{formatDuration(log.duration)}</TableCell>
+                          <TableCell className="w-36 whitespace-nowrap">{formatDate(log.date)}</TableCell>
+                          <TableCell className="w-32 whitespace-nowrap">{formatTime(log.time)}</TableCell>
+                          <TableCell className="w-24">{formatDuration(log.duration)}</TableCell>
                           <TableCell className="w-32">{log.subject}</TableCell>
                           <TableCell className="w-32">{log.topic || '-'}</TableCell>
                           <TableCell className="w-32">{log.source || '-'}</TableCell>
@@ -367,7 +396,7 @@ const StudyLogTable = () => {
                                 variant="outline"
                                 size="sm"
                                 onClick={() => handleDelete(log.id)}
-                                className="h-7 w-7 p-0 border-red-200 text-red-600 hover:bg-red-50 hover:text-red-700 hover:border-red-300"
+                                className="h-7 w-7 p-0 text-red-600 hover:bg-red-50 hover:text-red-700 hover:border-red-300"
                               >
                                 <Trash2 className="h-3 w-3" />
                               </Button>
