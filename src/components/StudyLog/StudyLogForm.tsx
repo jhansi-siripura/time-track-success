@@ -60,14 +60,14 @@ const StudyLogForm: React.FC<StudyLogFormProps> = ({ editingLog, onSuccess, onCa
         fetchTopicsForSubject(editingLog.subject);
       }
     }
-  }, [editingLog, fetchTopicsForSubject]);
+  }, [editingLog]);
 
-  // Fetch topics when subject changes
+  // Fetch topics when subject changes - but only when not editing initially
   useEffect(() => {
-    if (formData.subject) {
+    if (formData.subject && !editingLog) {
       fetchTopicsForSubject(formData.subject);
     }
-  }, [formData.subject, fetchTopicsForSubject]);
+  }, [formData.subject, fetchTopicsForSubject, editingLog]);
 
   const handleInputChange = (field: string, value: string | number) => {
     if (field === 'duration') {
@@ -91,6 +91,11 @@ const StudyLogForm: React.FC<StudyLogFormProps> = ({ editingLog, onSuccess, onCa
       subject: value,
       topic: '' // Reset topic when subject changes
     }));
+    
+    // Fetch topics for the new subject
+    if (value) {
+      fetchTopicsForSubject(value);
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {

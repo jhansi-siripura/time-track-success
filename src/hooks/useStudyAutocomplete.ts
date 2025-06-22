@@ -1,5 +1,5 @@
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 
@@ -75,7 +75,7 @@ export function useStudyAutocomplete(): UseStudyAutocompleteReturn {
     }
   };
 
-  const fetchTopicsForSubject = async (subject: string) => {
+  const fetchTopicsForSubject = useCallback(async (subject: string) => {
     if (!user || !subject) {
       setTopics([]);
       return;
@@ -105,7 +105,7 @@ export function useStudyAutocomplete(): UseStudyAutocompleteReturn {
     } finally {
       setLoadingTopics(false);
     }
-  };
+  }, [user]);
 
   const fetchSources = async () => {
     if (!user) return;
