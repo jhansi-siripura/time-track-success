@@ -85,6 +85,7 @@ export function RichTextEditor({
   return (
     <div className={cn("", className)}>
       <ReactQuill
+        className="custom-quill"  // ✅ ADDED THIS LINE
         ref={quillRef}
         value={editorValue}
         onChange={handleChange}
