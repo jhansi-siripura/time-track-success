@@ -13,7 +13,7 @@ interface UseStudyAutocompleteReturn {
   fetchTopicsForSubject: (subject: string) => void;
 }
 
-const DEFAULT_SOURCES = [,
+const DEFAULT_SOURCES = [
   'Textbook',
 ];
 
