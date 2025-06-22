@@ -225,14 +225,11 @@ const StudyLogForm: React.FC<StudyLogFormProps> = ({ editingLog, onSuccess, onCa
                 value={formData.topic}
                 onValueChange={(value) => handleInputChange('topic', value)}
                 options={topics}
-                placeholder="Select or type a topic..."
+                placeholder={formData.subject ? "Select or type a topic (defaults to 'General')..." : "Select a subject first"}
                 emptyMessage={formData.subject ? "No topics found for this subject." : "Select a subject first."}
                 loading={loadingTopics}
                 disabled={!formData.subject}
               />
-              <p className="text-xs text-muted-foreground">
-                Leave empty to default to "General"
-              </p>
             </div>
           </div>
 
@@ -278,7 +275,7 @@ const StudyLogForm: React.FC<StudyLogFormProps> = ({ editingLog, onSuccess, onCa
                 type="text"
                 value={formData.duration}
                 onChange={(e) => handleInputChange('duration', e.target.value)}
-                placeholder="e.g., 25 minutes"
+                placeholder="e.g., 25"
                 required
               />
             </div>

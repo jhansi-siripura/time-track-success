@@ -53,6 +53,7 @@ export function useStudyAutocomplete(): UseStudyAutocompleteReturn {
     
     setLoadingSubjects(true);
     try {
+      console.log('Fetching subjects for user:', user.id);
       const { data, error } = await supabase
         .from('study_logs')
         .select('subject')
@@ -65,6 +66,7 @@ export function useStudyAutocomplete(): UseStudyAutocompleteReturn {
       const uniqueSubjects = Array.from(
         new Set(data?.map(item => item.subject).filter(Boolean) || [])
       );
+      console.log('Fetched subjects:', uniqueSubjects);
       setSubjects(uniqueSubjects);
     } catch (error) {
       console.error('Error fetching subjects:', error);
@@ -79,6 +81,7 @@ export function useStudyAutocomplete(): UseStudyAutocompleteReturn {
       return;
     }
 
+    console.log('Fetching topics for subject:', subject);
     setLoadingTopics(true);
     try {
       const { data, error } = await supabase
@@ -94,6 +97,7 @@ export function useStudyAutocomplete(): UseStudyAutocompleteReturn {
       const uniqueTopics = Array.from(
         new Set(data?.map(item => item.topic).filter(Boolean) || [])
       );
+      console.log('Fetched topics for', subject, ':', uniqueTopics);
       setTopics(uniqueTopics);
     } catch (error) {
       console.error('Error fetching topics:', error);
