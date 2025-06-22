@@ -1,4 +1,3 @@
-
 import React, { useEffect, useRef, useState } from 'react';
 import { cn } from '@/lib/utils';
 
@@ -13,7 +12,7 @@ interface RichTextEditorProps {
 export function RichTextEditor({
   value,
   onChange,
-  placeholder = "Write your notes here...",
+  placeholder = 'Write your notes here...',
   className,
   maxLength = 1000,
 }: RichTextEditorProps) {
@@ -42,31 +41,30 @@ export function RichTextEditor({
 
   const modules = {
     toolbar: [
-      [{ 'header': [1, 2, 3, false] }],
+      [{ header: [1, 2, 3, false] }],
       ['bold', 'italic', 'underline'],
-      [{ 'color': [] }, { 'background': [] }],
-      [{ 'list': 'ordered'}, { 'list': 'bullet' }],
-      ['clean']
+      [{ color: [] }, { background: [] }],
+      [{ list: 'ordered' }, { list: 'bullet' }],
+      ['clean'],
     ],
   };
 
   const formats = [
-    'header', 'bold', 'italic', 'underline',
-    'color', 'background', 'list', 'bullet'
+    'header',
+    'bold',
+    'italic',
+    'underline',
+    'color',
+    'background',
+    'list',
+    'bullet',
   ];
 
   const handleChange = (content: string) => {
-    // Simple, direct handling without complex logic
-    if (content === '<p><br></p>') {
-      // ReactQuill's default empty state - convert to empty string
-      onChange('');
-    } else {
-      // For character counting, strip HTML tags
-      const textContent = content.replace(/<[^>]*>/g, '');
-      
-      if (textContent.length <= maxLength) {
-        onChange(content);
-      }
+    // strip tags only for the live character count
+    const plain = content.replace(/<[^>]*>/g, '');
+    if (plain.length <= maxLength) {
+      onChange(content === '<p><br></p>' ? '' : content);
     }
   };
 
@@ -92,16 +90,38 @@ export function RichTextEditor({
         formats={formats}
         placeholder={placeholder}
         theme="snow"
+        className="custom-quill"
         style={{
           backgroundColor: 'white',
           border: '1px solid hsl(var(--border))',
           borderRadius: '6px',
-          
+          minHeight: '240px', // Increased overall height
         }}
       />
       <div className="text-xs text-muted-foreground mt-1">
         {editorValue.replace(/<[^>]*>/g, '').length} / {maxLength} characters
       </div>
+      
+      <style jsx global>{`
+        .custom-quill .ql-editor {
+          min-height: 200px !important;
+          padding: 12px 15px !important;
+          font-size: 14px;
+          line-height: 1.5;
+        }
+        .custom-quill .ql-toolbar {
+          border-bottom: 1px solid hsl(var(--border)) !important;
+          border-top: none !important;
+          border-left: none !important;
+          border-right: none !important;
+          background: white;
+          padding: 8px 12px !important;
+        }
+        .custom-quill .ql-container {
+          border: none !important;
+          font-family: inherit;
+        }
+      `}</style>
     </div>
   );
 }
