@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -14,8 +13,9 @@ interface StudyLog {
   subject: string;
   topic?: string;
   source?: string;
-  comments: string;
+  notes: string;
   achievements: string;
+  images?: string[];
 }
 
 interface RecapCardProps {
@@ -144,14 +144,14 @@ const RecapCard: React.FC<RecapCardProps> = ({ log, onUpdate, onDelete }) => {
 
         {isExpanded && (
           <div className="space-y-3">
-            {log.comments && (
+            {log.notes && (
               <div>
                 <div className="prose prose-sm max-w-none">
                   <div 
                     className="text-gray-700 leading-relaxed whitespace-pre-wrap"
                     style={{ lineHeight: '1.6' }}
                   >
-                    {log.comments}
+                    {log.notes}
                   </div>
                 </div>
               </div>

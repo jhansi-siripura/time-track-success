@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -16,8 +15,9 @@ interface StudyLog {
   subject: string;
   topic?: string;
   source?: string;
-  comments: string;
+  notes: string;
   achievements: string;
+  images?: string[];
 }
 
 interface RecapCardEditorProps {
@@ -34,7 +34,7 @@ const RecapCardEditor: React.FC<RecapCardEditorProps> = ({ log, onSave, onCancel
     subject: log.subject,
     topic: log.topic || '',
     source: log.source || 'none',
-    comments: log.comments,
+    notes: log.notes,
     achievements: log.achievements,
   });
 
@@ -68,7 +68,7 @@ const RecapCardEditor: React.FC<RecapCardEditorProps> = ({ log, onSave, onCancel
       subject: formData.subject,
       topic: formData.topic || null,
       source: formData.source === 'none' ? null : formData.source,
-      comments: formData.comments,
+      notes: formData.notes,
       achievements: formData.achievements,
     };
 
@@ -162,11 +162,11 @@ const RecapCardEditor: React.FC<RecapCardEditorProps> = ({ log, onSave, onCancel
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="edit-comments">Comments</Label>
+          <Label htmlFor="edit-notes">Notes</Label>
           <Textarea
-            id="edit-comments"
-            value={formData.comments}
-            onChange={(e) => handleInputChange('comments', e.target.value)}
+            id="edit-notes"
+            value={formData.notes}
+            onChange={(e) => handleInputChange('notes', e.target.value)}
             placeholder="Study notes and comments..."
             rows={4}
             className="resize-none"
