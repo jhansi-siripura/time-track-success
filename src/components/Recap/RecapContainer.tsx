@@ -140,6 +140,7 @@ const RecapContainer = () => {
         description: "Study log updated successfully!",
       });
 
+      fetchStudyLogs();
       // Redirect to dashboard after successful update
       /*setTimeout(() => {
         navigate('/dashboard');
