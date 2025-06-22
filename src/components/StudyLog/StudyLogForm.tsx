@@ -10,6 +10,8 @@ import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { ArrowLeft } from 'lucide-react';
 import { validateAuthState, validateStudyLogData, sanitizeInput, rateLimiter } from '@/lib/security';
+import { CreatableCombobox } from '@/components/ui/creatable-combobox';
+import { useStudyAutocomplete } from '@/hooks/useStudyAutocomplete';
 
 interface StudyLogFormProps {
   editingLog?: any;
@@ -24,13 +26,21 @@ const StudyLogForm: React.FC<StudyLogFormProps> = ({ editingLog, onSuccess, onCa
     source: '',
     date: new Date().toISOString().split('T')[0],
     time: new Date().toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' }),
-    duration: 0,
+    duration: '',
     comments: '',
     achievements: '',
-    
   });
   const [loading, setLoading] = useState(false);
   const { user } = useAuth();
+  const {
+    subjects,
+    topics,
+    sources,
+    loadingSubjects,
+    loadingTopics,
+    loadingSources,
+    fetchTopicsForSubject,
+  } = useStudyAutocomplete();
 
   useEffect(() => {
     if (editingLog) {
@@ -40,17 +50,46 @@ const StudyLogForm: React.FC<StudyLogFormProps> = ({ editingLog, onSuccess, onCa
         source: editingLog.source || '',
         date: editingLog.date || '',
         time: editingLog.time || '',
-        duration: editingLog.duration || 0,
+        duration: editingLog.duration?.toString() || '',
         achievements: editingLog.achievements || '',
         comments: editingLog.comments || '',
       });
+      
+      // Fetch topics for the subject if editing
+      if (editingLog.subject) {
+        fetchTopicsForSubject(editingLog.subject);
+      }
     }
-  }, [editingLog]);
+  }, [editingLog, fetchTopicsForSubject]);
+
+  // Fetch topics when subject changes
+  useEffect(() => {
+    if (formData.subject) {
+      fetchTopicsForSubject(formData.subject);
+    }
+  }, [formData.subject, fetchTopicsForSubject]);
 
   const handleInputChange = (field: string, value: string | number) => {
+    if (field === 'duration') {
+      // Only allow positive integers for duration
+      const numValue = value.toString().replace(/[^0-9]/g, '');
+      setFormData(prev => ({
+        ...prev,
+        [field]: numValue
+      }));
+    } else {
+      setFormData(prev => ({
+        ...prev,
+        [field]: typeof value === 'string' ? sanitizeInput(value) : value
+      }));
+    }
+  };
+
+  const handleSubjectChange = (value: string) => {
     setFormData(prev => ({
       ...prev,
-      [field]: typeof value === 'string' ? sanitizeInput(value) : value
+      subject: value,
+      topic: '' // Reset topic when subject changes
     }));
   };
 
@@ -87,8 +126,16 @@ const StudyLogForm: React.FC<StudyLogFormProps> = ({ editingLog, onSuccess, onCa
       return;
     }
 
+    // Prepare data for submission
+    const dataToSubmit = {
+      ...formData,
+      topic: formData.topic.trim() || 'General', // Default to "General" if empty
+      duration: parseInt(formData.duration) || 0,
+      user_id: user.id,
+    };
+
     // Validate form data
-    const validation = validateStudyLogData(formData);
+    const validation = validateStudyLogData(dataToSubmit);
     if (!validation.isValid) {
       toast({
         title: "Validation Error",
@@ -101,11 +148,6 @@ const StudyLogForm: React.FC<StudyLogFormProps> = ({ editingLog, onSuccess, onCa
     setLoading(true);
 
     try {
-      const dataToSubmit = {
-        ...formData,
-        user_id: user.id, // Ensure user_id is always set
-      };
-
       if (editingLog) {
         const { error } = await supabase
           .from('study_logs')
@@ -167,39 +209,42 @@ const StudyLogForm: React.FC<StudyLogFormProps> = ({ editingLog, onSuccess, onCa
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label htmlFor="subject">Subject *</Label>
-              <Input
-                id="subject"
-                type="text"
+              <CreatableCombobox
                 value={formData.subject}
-                onChange={(e) => handleInputChange('subject', e.target.value)}
-                placeholder="e.g., Mathematics, Physics"
-                required
-                maxLength={100}
+                onValueChange={handleSubjectChange}
+                options={subjects}
+                placeholder="Select or type a subject..."
+                emptyMessage="No subjects found."
+                loading={loadingSubjects}
               />
             </div>
             
             <div className="space-y-2">
               <Label htmlFor="topic">Topic</Label>
-              <Input
-                id="topic"
-                type="text"
+              <CreatableCombobox
                 value={formData.topic}
-                onChange={(e) => handleInputChange('topic', e.target.value)}
-                placeholder="e.g., Calculus, Thermodynamics"
-                maxLength={100}
+                onValueChange={(value) => handleInputChange('topic', value)}
+                options={topics}
+                placeholder="Select or type a topic..."
+                emptyMessage={formData.subject ? "No topics found for this subject." : "Select a subject first."}
+                loading={loadingTopics}
+                disabled={!formData.subject}
               />
+              <p className="text-xs text-muted-foreground">
+                Leave empty to default to "General"
+              </p>
             </div>
           </div>
 
           <div className="space-y-2">
             <Label htmlFor="source">Source</Label>
-            <Input
-              id="source"
-              type="text"
+            <CreatableCombobox
               value={formData.source}
-              onChange={(e) => handleInputChange('source', e.target.value)}
-              placeholder="e.g., Textbook, Online Course, Video"
-              maxLength={200}
+              onValueChange={(value) => handleInputChange('source', value)}
+              options={sources}
+              placeholder="Select or type a source..."
+              emptyMessage="No sources found."
+              loading={loadingSources}
             />
           </div>
 
@@ -230,18 +275,14 @@ const StudyLogForm: React.FC<StudyLogFormProps> = ({ editingLog, onSuccess, onCa
               <Label htmlFor="duration">Duration (minutes) *</Label>
               <Input
                 id="duration"
-                type="number"
-                min="1"
-                max="1440"
+                type="text"
                 value={formData.duration}
-                onChange={(e) => handleInputChange('duration', parseInt(e.target.value) || 0)}
-                placeholder="e.g., 60"
+                onChange={(e) => handleInputChange('duration', e.target.value)}
+                placeholder="e.g., 25 minutes"
                 required
               />
             </div>
           </div>
-
-         
 
           <div className="space-y-2">
             <Label htmlFor="comments">Comments</Label>
