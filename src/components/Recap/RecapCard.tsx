@@ -1,9 +1,9 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Pencil, Trash2, ChevronDown, ChevronUp } from 'lucide-react';
+import { ImageLightbox } from '@/components/ui/image-lightbox';
 import RecapCardEditor from './RecapCardEditor';
 
 interface StudyLog {
@@ -28,6 +28,8 @@ interface RecapCardProps {
 const RecapCard: React.FC<RecapCardProps> = ({ log, onUpdate, onDelete }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [isExpanded, setIsExpanded] = useState(true);
+  const [lightboxOpen, setLightboxOpen] = useState(false);
+  const [lightboxIndex, setLightboxIndex] = useState(0);
 
   // Helper to format date and time as: 8-Jun-2025 10 AM
   const formatDateTime = (dateStr: string, timeStr: string) => {
@@ -88,6 +90,11 @@ const RecapCard: React.FC<RecapCardProps> = ({ log, onUpdate, onDelete }) => {
     }
   };
 
+  const handleImageClick = (index: number) => {
+    setLightboxIndex(index);
+    setLightboxOpen(true);
+  };
+
   const handleSave = (updatedData: Partial<StudyLog>) => {
     onUpdate(log.id, updatedData);
     setIsEditing(false);
@@ -123,92 +130,105 @@ const RecapCard: React.FC<RecapCardProps> = ({ log, onUpdate, onDelete }) => {
   }
 
   return (
-    <Card className="hover:shadow-md transition-shadow duration-200">
-      <CardContent className="p-6">
-        <div className="flex justify-between items-start mb-4">
-          {/* DATE/TIME on the top-left */}
-          <div className="flex flex-col">
-            <div className="text-sm text-gray-600 font-medium tracking-tight">
-              {formatDateTime(log.date, log.time)}
+    <>
+      <Card className="hover:shadow-md transition-shadow duration-200">
+        <CardContent className="p-6">
+          <div className="flex justify-between items-start mb-4">
+            {/* DATE/TIME on the top-left */}
+            <div className="flex flex-col">
+              <div className="text-sm text-gray-600 font-medium tracking-tight">
+                {formatDateTime(log.date, log.time)}
+              </div>
+            </div>
+            {/* Subject and Topic on the top-right */}
+            <div className="flex items-center gap-2">
+              <div className="flex flex-wrap gap-2">
+                <Badge className={getSubjectColor(log.subject)}>
+                  {log.subject}
+                </Badge>
+                {log.topic && (
+                  <Badge variant="outline" className="bg-gray-50">
+                    {log.topic}
+                  </Badge>
+                )}
+              </div>
+              <div className="flex gap-2 ml-4">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setIsEditing(true)}
+                  className="h-8 w-8 p-0"
+                  aria-label="Edit"
+                >
+                  <Pencil className="h-4 w-4" />
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setIsExpanded(!isExpanded)}
+                  className="h-8 w-8 p-0"
+                  aria-label={isExpanded ? 'Collapse' : 'Expand'}
+                >
+                  {isExpanded ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+                </Button>
+              </div>
             </div>
           </div>
-          {/* Subject and Topic on the top-right */}
-          <div className="flex items-center gap-2">
-            <div className="flex flex-wrap gap-2">
-              <Badge className={getSubjectColor(log.subject)}>
-                {log.subject}
-              </Badge>
-              {log.topic && (
-                <Badge variant="outline" className="bg-gray-50">
-                  {log.topic}
-                </Badge>
+
+          {isExpanded && (
+            <div className="space-y-4">
+              {/* Rich Text Notes Section */}
+              {log.notes && (
+                <div>
+                  <div 
+                    className="prose prose-sm max-w-none text-gray-700"
+                    dangerouslySetInnerHTML={{ __html: log.notes }}
+                    style={{
+                      lineHeight: '1.6'
+                    }}
+                  />
+                </div>
+              )}
+
+              {/* Images Section */}
+              {log.images && log.images.length > 0 && (
+                <div className="mt-4">
+                  <div className={`grid ${getImageGridLayout(log.images.length)} max-w-full`}>
+                    {log.images.map((imageUrl, index) => (
+                      <div 
+                        key={index} 
+                        className={`${getImageAspectRatio(log.images.length)} rounded-lg overflow-hidden border border-gray-200 shadow-sm cursor-pointer`}
+                        onClick={() => handleImageClick(index)}
+                      >
+                        <img
+                          src={imageUrl}
+                          alt={`Study session image ${index + 1}`}
+                          className="w-full h-full object-cover hover:scale-105 transition-transform duration-200"
+                          onError={(e) => {
+                            const target = e.target as HTMLImageElement;
+                            target.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTIxIDEyVjE5QTIgMiAwIDAgMSAxOSAyMUg1QTIgMiAwIDAgMSAzIDE5VjVBMiAyIDAgMCAxIDUgM0gxMiIgc3Ryb2tlPSJjdXJyZW50Q29sb3IiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+CjxjaXJjbGUgY3g9IjkiIGN5PSI5IiByPSIyIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4KPHN2Zz4K';
+                          }}
+                        />
+                      </div>
+                    ))}
+                  </div>
+                </div>
               )}
             </div>
-            <div className="flex gap-2 ml-4">
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => setIsEditing(true)}
-                className="h-8 w-8 p-0"
-                aria-label="Edit"
-              >
-                <Pencil className="h-4 w-4" />
-              </Button>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => setIsExpanded(!isExpanded)}
-                className="h-8 w-8 p-0"
-                aria-label={isExpanded ? 'Collapse' : 'Expand'}
-              >
-                {isExpanded ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
-              </Button>
-            </div>
-          </div>
-        </div>
+          )}
+        </CardContent>
+      </Card>
 
-        {isExpanded && (
-          <div className="space-y-4">
-            {/* Rich Text Notes Section */}
-            {log.notes && (
-              <div>
-                <div 
-                  className="prose prose-sm max-w-none text-gray-700"
-                  dangerouslySetInnerHTML={{ __html: log.notes }}
-                  style={{
-                    lineHeight: '1.6'
-                  }}
-                />
-              </div>
-            )}
-
-            {/* Images Section */}
-            {log.images && log.images.length > 0 && (
-              <div className="mt-4">
-                <div className={`grid ${getImageGridLayout(log.images.length)} max-w-full`}>
-                  {log.images.map((imageUrl, index) => (
-                    <div 
-                      key={index} 
-                      className={`${getImageAspectRatio(log.images.length)} rounded-lg overflow-hidden border border-gray-200 shadow-sm`}
-                    >
-                      <img
-                        src={imageUrl}
-                        alt={`Study session image ${index + 1}`}
-                        className="w-full h-full object-cover hover:scale-105 transition-transform duration-200 cursor-pointer"
-                        onError={(e) => {
-                          const target = e.target as HTMLImageElement;
-                          target.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTIxIDEyVjE5QTIgMiAwIDAgMSAxOSAyMUg1QTIgMiAwIDAgMSAzIDE5VjVBMiAyIDAgMCAxIDUgM0gxMiIgc3Ryb2tlPSJjdXJyZW50Q29sb3IiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+CjxjaXJjbGUgY3g9IjkiIGN5PSI5IiByPSIyIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4KPHN2Zz4K';
-                        }}
-                      />
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-          </div>
-        )}
-      </CardContent>
-    </Card>
+      {/* Image Lightbox */}
+      {log.images && log.images.length > 0 && (
+        <ImageLightbox
+          images={log.images}
+          initialIndex={lightboxIndex}
+          isOpen={lightboxOpen}
+          onClose={() => setLightboxOpen(false)}
+        />
+      )}
+    </>
   );
 };
 
