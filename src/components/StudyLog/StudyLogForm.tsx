@@ -12,6 +12,8 @@ import { ArrowLeft } from 'lucide-react';
 import { validateAuthState, validateStudyLogData, sanitizeInput, rateLimiter } from '@/lib/security';
 import { CreatableCombobox } from '@/components/ui/creatable-combobox';
 import { useStudyAutocomplete } from '@/hooks/useStudyAutocomplete';
+import { RichTextEditor } from '@/components/ui/rich-text-editor';
+import { ImageUpload } from '@/components/ui/image-upload';
 
 interface StudyLogFormProps {
   editingLog?: any;
@@ -27,8 +29,9 @@ const StudyLogForm: React.FC<StudyLogFormProps> = ({ editingLog, onSuccess, onCa
     date: new Date().toISOString().split('T')[0],
     time: new Date().toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' }),
     duration: '',
-    comments: '',
+    notes: '',
     achievements: '',
+    images: [] as string[],
   });
   const [loading, setLoading] = useState(false);
   const { user } = useAuth();
@@ -52,7 +55,8 @@ const StudyLogForm: React.FC<StudyLogFormProps> = ({ editingLog, onSuccess, onCa
         time: editingLog.time || '',
         duration: editingLog.duration?.toString() || '',
         achievements: editingLog.achievements || '',
-        comments: editingLog.comments || '',
+        notes: editingLog.notes || '',
+        images: editingLog.images || [],
       });
       
       // Fetch topics for the subject if editing
@@ -69,13 +73,18 @@ const StudyLogForm: React.FC<StudyLogFormProps> = ({ editingLog, onSuccess, onCa
     }
   }, [formData.subject, fetchTopicsForSubject, editingLog]);
 
-  const handleInputChange = (field: string, value: string | number) => {
+  const handleInputChange = (field: string, value: string | number | string[]) => {
     if (field === 'duration') {
       // Only allow positive integers for duration
       const numValue = value.toString().replace(/[^0-9]/g, '');
       setFormData(prev => ({
         ...prev,
         [field]: numValue
+      }));
+    } else if (field === 'images') {
+      setFormData(prev => ({
+        ...prev,
+        [field]: value as string[]
       }));
     } else {
       setFormData(prev => ({
@@ -210,7 +219,7 @@ const StudyLogForm: React.FC<StudyLogFormProps> = ({ editingLog, onSuccess, onCa
         </div>
       </CardHeader>
       <CardContent>
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label htmlFor="subject">Subject *</Label>
@@ -287,18 +296,16 @@ const StudyLogForm: React.FC<StudyLogFormProps> = ({ editingLog, onSuccess, onCa
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="comments">Comments</Label>
-            <Textarea
-              id="comments"
-              value={formData.comments}
-              onChange={(e) => handleInputChange('comments', e.target.value)}
-              placeholder="Any additional notes or observations"
-              rows={3}
-              maxLength={500}
+            <Label htmlFor="notes">Notes</Label>
+            <RichTextEditor
+              value={formData.notes}
+              onChange={(value) => handleInputChange('notes', value)}
+              placeholder="Add your study notes, observations, or reflections..."
+              maxLength={1000}
             />
           </div>
           
-           <div className="space-y-2">
+          <div className="space-y-2">
             <Label htmlFor="achievements">Achievements</Label>
             <Textarea
               id="achievements"
@@ -307,6 +314,15 @@ const StudyLogForm: React.FC<StudyLogFormProps> = ({ editingLog, onSuccess, onCa
               placeholder="What did you accomplish in this session?"
               rows={3}
               maxLength={500}
+            />
+          </div>
+
+          <div className="space-y-2">
+            <Label>Images</Label>
+            <ImageUpload
+              images={formData.images}
+              onImagesChange={(images) => handleInputChange('images', images)}
+              maxImages={3}
             />
           </div>
 

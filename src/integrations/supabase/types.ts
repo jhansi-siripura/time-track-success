@@ -80,11 +80,12 @@ export type Database = {
       study_logs: {
         Row: {
           achievements: string | null
-          comments: string | null
           created_at: string | null
           date: string | null
           duration: number | null
           id: number
+          images: string[] | null
+          notes: string | null
           source: string | null
           subject: string | null
           time: string | null
@@ -93,11 +94,12 @@ export type Database = {
         }
         Insert: {
           achievements?: string | null
-          comments?: string | null
           created_at?: string | null
           date?: string | null
           duration?: number | null
           id?: number
+          images?: string[] | null
+          notes?: string | null
           source?: string | null
           subject?: string | null
           time?: string | null
@@ -106,11 +108,12 @@ export type Database = {
         }
         Update: {
           achievements?: string | null
-          comments?: string | null
           created_at?: string | null
           date?: string | null
           duration?: number | null
           id?: number
+          images?: string[] | null
+          notes?: string | null
           source?: string | null
           subject?: string | null
           time?: string | null
