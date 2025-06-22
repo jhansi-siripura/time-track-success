@@ -17,18 +17,8 @@ const DEFAULT_SOURCES = [
   'YouTube',
   'Udemy',
   'Coursera',
-  'edX',
   'Pluralsight',
   'Textbook',
-  'Documentation',
-  'Tutorial',
-  'Blog Post',
-  'Online Course',
-  'Video',
-  'Book',
-  'Podcast',
-  'Workshop',
-  'Bootcamp'
 ];
 
 export function useStudyAutocomplete(): UseStudyAutocompleteReturn {
