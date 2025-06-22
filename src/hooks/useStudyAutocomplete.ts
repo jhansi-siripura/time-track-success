@@ -13,11 +13,7 @@ interface UseStudyAutocompleteReturn {
   fetchTopicsForSubject: (subject: string) => void;
 }
 
-const DEFAULT_SOURCES = [
-  'YouTube',
-  'Udemy',
-  'Coursera',
-  'Pluralsight',
+const DEFAULT_SOURCES = [,
   'Textbook',
 ];
 
