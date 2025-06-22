@@ -73,7 +73,7 @@ const StudyLogForm: React.FC<StudyLogFormProps> = ({ editingLog, onSuccess, onCa
     }
   }, [formData.subject, fetchTopicsForSubject, editingLog]);
 
-  const handleInputChange = (field: string, value: string | number | string[]) => {
+  const handleInputChangeold = (field: string, value: string | number | string[]) => {
     if (field === 'duration') {
       // Only allow positive integers for duration
       const numValue = value.toString().replace(/[^0-9]/g, '');
@@ -93,6 +93,46 @@ const StudyLogForm: React.FC<StudyLogFormProps> = ({ editingLog, onSuccess, onCa
       }));
     }
   };
+
+  // ──────────────────────────────────────────────────────────────
+// REPLACE your existing handleInputChange with this version
+// ──────────────────────────────────────────────────────────────
+const handleInputChange = (
+  field: string,
+  value: string | number | string[]
+) => {
+  if (field === 'duration') {
+    // Only allow positive integers for duration
+    const numValue = value.toString().replace(/[^0-9]/g, '');
+    setFormData(prev => ({
+      ...prev,
+      [field]: numValue,
+    }));
+  } else if (field === 'images') {
+    setFormData(prev => ({
+      ...prev,
+      [field]: value as string[],
+    }));
+  } else if (field === 'notes') {
+    /**
+     * 👉  IMPORTANT
+     *  - Do NOT sanitise the rich-text HTML here.
+     *  - ReactQuill needs the raw HTML string to avoid double-encoding.
+     *  - We'll sanitise (e.g. with DOMPurify) only when **displaying** notes.
+     */
+    setFormData(prev => ({
+      ...prev,
+      notes: value as string,
+    }));
+  } else {
+    // For plain-text fields keep using sanitizeInput to guard against XSS
+    setFormData(prev => ({
+      ...prev,
+      [field]: typeof value === 'string' ? sanitizeInput(value) : value,
+    }));
+  }
+};
+
 
   const handleSubjectChange = (value: string) => {
     setFormData(prev => ({
