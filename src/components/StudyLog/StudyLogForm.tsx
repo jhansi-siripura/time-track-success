@@ -277,35 +277,27 @@ const StudyLogForm: React.FC<StudyLogFormProps> = ({ editingLog, onSuccess, onCa
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="subject">Subject *</Label>
-                <CreatableCombobox
-                  value={formData.subject}
-                  onValueChange={handleSubjectChange}
-                  options={subjects}
-                  placeholder="Select or type a subject..."
-                  emptyMessage="No subjects found."
-                  loading={loadingSubjects}
-                />
-              </div>
+            {/* Subject, Topic, Source Row */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <CreatableCombobox
+                value={formData.subject}
+                onValueChange={handleSubjectChange}
+                options={subjects}
+                placeholder="Select or type a subject... *"
+                emptyMessage="No subjects found."
+                loading={loadingSubjects}
+              />
               
-              <div className="space-y-2">
-                <Label htmlFor="topic">Topic</Label>
-                <CreatableCombobox
-                  value={formData.topic}
-                  onValueChange={(value) => handleInputChange('topic', value)}
-                  options={topics}
-                  placeholder={formData.subject ? "Select or type a topic (defaults to 'General')..." : "Select a subject first"}
-                  emptyMessage={formData.subject ? "No topics found for this subject." : "Select a subject first."}
-                  loading={loadingTopics}
-                  disabled={!formData.subject}
-                />
-              </div>
-            </div>
+              <CreatableCombobox
+                value={formData.topic}
+                onValueChange={(value) => handleInputChange('topic', value)}
+                options={topics}
+                placeholder={formData.subject ? "Select or type a topic..." : "Select a subject first"}
+                emptyMessage={formData.subject ? "No topics found for this subject." : "Select a subject first."}
+                loading={loadingTopics}
+                disabled={!formData.subject}
+              />
 
-            <div className="space-y-2">
-              <Label htmlFor="source">Source</Label>
               <CreatableCombobox
                 value={formData.source}
                 onValueChange={(value) => handleInputChange('source', value)}
@@ -316,40 +308,29 @@ const StudyLogForm: React.FC<StudyLogFormProps> = ({ editingLog, onSuccess, onCa
               />
             </div>
 
+            {/* Date, Time, Duration Row */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="date">Date *</Label>
-                <Input
-                  id="date"
-                  type="date"
-                  value={formData.date}
-                  onChange={(e) => handleInputChange('date', e.target.value)}
-                  required
-                />
-              </div>
+              <Input
+                type="date"
+                value={formData.date}
+                onChange={(e) => handleInputChange('date', e.target.value)}
+                required
+              />
               
-              <div className="space-y-2">
-                <Label htmlFor="time">Time *</Label>
-                <Input
-                  id="time"
-                  type="time"
-                  value={formData.time}
-                  onChange={(e) => handleInputChange('time', e.target.value)}
-                  required
-                />
-              </div>
+              <Input
+                type="time"
+                value={formData.time}
+                onChange={(e) => handleInputChange('time', e.target.value)}
+                required
+              />
               
-              <div className="space-y-2">
-                <Label htmlFor="duration">Duration (minutes) *</Label>
-                <Input
-                  id="duration"
-                  type="text"
-                  value={formData.duration}
-                  onChange={(e) => handleInputChange('duration', e.target.value)}
-                  placeholder="e.g., 25"
-                  required
-                />
-              </div>
+              <Input
+                type="text"
+                value={formData.duration}
+                onChange={(e) => handleInputChange('duration', e.target.value)}
+                placeholder="Duration (minutes) *"
+                required
+              />
             </div>
 
             <div className="space-y-2">

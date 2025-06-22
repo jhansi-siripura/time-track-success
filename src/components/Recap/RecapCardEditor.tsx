@@ -113,70 +113,54 @@ const RecapCardEditor: React.FC<RecapCardEditorProps> = ({ log, onSave, onCancel
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-6">
-          {/* Date, Time, Duration Row */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="edit-date">Date</Label>
-              <Input
-                id="edit-date"
-                type="date"
-                value={formData.date}
-                onChange={(e) => handleInputChange('date', e.target.value)}
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="edit-time">Time</Label>
-              <Input
-                id="edit-time"
-                type="time"
-                value={formData.time}
-                onChange={(e) => handleInputChange('time', e.target.value)}
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="edit-duration">Duration (minutes)</Label>
-              <Input
-                id="edit-duration"
-                type="number"
-                min="1"
-                value={formData.duration}
-                onChange={(e) => handleInputChange('duration', e.target.value)}
-              />
-            </div>
-          </div>
-
           {/* Subject, Topic, Source Row */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="edit-subject">Subject</Label>
-              <CreatableCombobox
-                value={formData.subject}
-                onValueChange={(value) => handleInputChange('subject', value)}
-                options={subjects}
-                placeholder="Select or create subject..."
-                className="w-full"
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="edit-topic">Topic</Label>
-              <CreatableCombobox
-                value={formData.topic}
-                onValueChange={(value) => handleInputChange('topic', value)}
-                options={topics}
-                placeholder="Select or create topic..."
-                className="w-full"
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="edit-source">Source</Label>
-              <CreatableCombobox
-                value={formData.source}
-                onValueChange={(value) => handleInputChange('source', value)}
-                options={sources}
-                placeholder="Select or create source..."
-                className="w-full"
-              />
-            </div>
+            <CreatableCombobox
+              value={formData.subject}
+              onValueChange={(value) => handleInputChange('subject', value)}
+              options={subjects}
+              placeholder="Select or type a subject..."
+              className="w-full"
+            />
+            
+            <CreatableCombobox
+              value={formData.topic}
+              onValueChange={(value) => handleInputChange('topic', value)}
+              options={topics}
+              placeholder="Select or type a topic..."
+              className="w-full"
+            />
+            
+            <CreatableCombobox
+              value={formData.source}
+              onValueChange={(value) => handleInputChange('source', value)}
+              options={sources}
+              placeholder="Select or type a source..."
+              className="w-full"
+            />
+          </div>
+
+          {/* Date, Time, Duration Row */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <Input
+              type="date"
+              value={formData.date}
+              onChange={(e) => handleInputChange('date', e.target.value)}
+            />
+            
+            <Input
+              type="time"
+              value={formData.time}
+              onChange={(e) => handleInputChange('time', e.target.value)}
+            />
+            
+            <Input
+              type="number"
+              min="1"
+              value={formData.duration}
+              onChange={(e) => handleInputChange('duration', e.target.value)}
+              placeholder="Duration (minutes)"
+            />
           </div>
 
           {/* Rich Text Notes */}
