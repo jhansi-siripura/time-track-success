@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -61,6 +62,30 @@ const RecapCard: React.FC<RecapCardProps> = ({ log, onUpdate, onDelete }) => {
     ];
     const hash = subject.split('').reduce((a, b) => a + b.charCodeAt(0), 0);
     return colors[hash % colors.length];
+  };
+
+  const getImageGridLayout = (imageCount: number) => {
+    switch (imageCount) {
+      case 1:
+        return 'grid-cols-1 max-w-sm mx-auto';
+      case 2:
+        return 'grid-cols-2 gap-3';
+      case 3:
+        return 'grid-cols-3 gap-2';
+      default:
+        return 'grid-cols-2 gap-2 sm:grid-cols-3';
+    }
+  };
+
+  const getImageAspectRatio = (imageCount: number) => {
+    switch (imageCount) {
+      case 1:
+        return 'aspect-video'; // 16:9 for single image
+      case 2:
+        return 'aspect-square'; // Square for side by side
+      default:
+        return 'aspect-square'; // Square for multiple images
+    }
   };
 
   const handleSave = (updatedData: Partial<StudyLog>) => {
@@ -143,16 +168,40 @@ const RecapCard: React.FC<RecapCardProps> = ({ log, onUpdate, onDelete }) => {
         </div>
 
         {isExpanded && (
-          <div className="space-y-3">
+          <div className="space-y-4">
+            {/* Rich Text Notes Section */}
             {log.notes && (
               <div>
-                <div className="prose prose-sm max-w-none">
-                  <div 
-                    className="text-gray-700 leading-relaxed whitespace-pre-wrap"
-                    style={{ lineHeight: '1.6' }}
-                  >
-                    {log.notes}
-                  </div>
+                <div 
+                  className="prose prose-sm max-w-none text-gray-700"
+                  dangerouslySetInnerHTML={{ __html: log.notes }}
+                  style={{
+                    lineHeight: '1.6'
+                  }}
+                />
+              </div>
+            )}
+
+            {/* Images Section */}
+            {log.images && log.images.length > 0 && (
+              <div className="mt-4">
+                <div className={`grid ${getImageGridLayout(log.images.length)} max-w-full`}>
+                  {log.images.map((imageUrl, index) => (
+                    <div 
+                      key={index} 
+                      className={`${getImageAspectRatio(log.images.length)} rounded-lg overflow-hidden border border-gray-200 shadow-sm`}
+                    >
+                      <img
+                        src={imageUrl}
+                        alt={`Study session image ${index + 1}`}
+                        className="w-full h-full object-cover hover:scale-105 transition-transform duration-200 cursor-pointer"
+                        onError={(e) => {
+                          const target = e.target as HTMLImageElement;
+                          target.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTIxIDEyVjE5QTIgMiAwIDAgMSAxOSAyMUg1QTIgMiAwIDAgMSAzIDE5VjVBMiAyIDAgMCAxIDUgM0gxMiIgc3Ryb2tlPSJjdXJyZW50Q29sb3IiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+CjxjaXJjbGUgY3g9IjkiIGN5PSI5IiByPSIyIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4KPHN2Zz4K';
+                        }}
+                      />
+                    </div>
+                  ))}
                 </div>
               </div>
             )}
