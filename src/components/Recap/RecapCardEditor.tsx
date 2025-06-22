@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
 import { RichTextEditor } from '@/components/ui/rich-text-editor';
 import { ImageUpload } from '@/components/ui/image-upload';
 import { CreatableCombobox } from '@/components/ui/creatable-combobox';
@@ -202,12 +203,17 @@ const RecapCardEditor: React.FC<RecapCardEditorProps> = ({ log, onSave, onCancel
           {/* Achievements */}
           <div className="space-y-2">
             <Label htmlFor="edit-achievements">Achievements</Label>
-            <RichTextEditor
+            <Textarea
+              id="edit-achievements"
               value={formData.achievements}
-              onChange={(value) => handleInputChange('achievements', value)}
+              onChange={(e) => handleInputChange('achievements', e.target.value)}
               placeholder="What did you accomplish?"
+              rows={4}
               maxLength={1000}
             />
+            <div className="text-xs text-muted-foreground">
+              {formData.achievements.length} / 1000 characters
+            </div>
           </div>
         </CardContent>
       </Card>
