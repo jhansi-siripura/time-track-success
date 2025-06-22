@@ -1,5 +1,5 @@
 
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState, useCallback } from 'react';
 import { cn } from '@/lib/utils';
 
 interface RichTextEditorProps {
@@ -20,6 +20,7 @@ export function RichTextEditor({
   const quillRef = useRef<any>(null);
   const [ReactQuill, setReactQuill] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const lastValueRef = useRef<string>('');
 
   useEffect(() => {
     // Dynamically import ReactQuill only on client side
@@ -55,19 +56,33 @@ export function RichTextEditor({
     'color', 'background', 'list', 'bullet'
   ];
 
-  const handleChange = (content: string) => {
-    // Ensure we get the raw HTML content from ReactQuill
-    // ReactQuill returns HTML content, not encoded entities
-    const rawContent = content || '';
+  const handleChange = useCallback((content: string) => {
+    // Prevent infinite loops by checking if content actually changed
+    if (content === lastValueRef.current) {
+      return;
+    }
+    
+    lastValueRef.current = content;
+    
+    // Clean the content - remove empty paragraphs and normalize
+    let cleanContent = content || '';
+    
+    // Remove consecutive empty paragraphs
+    cleanContent = cleanContent.replace(/<p><br><\/p>/g, '');
+    cleanContent = cleanContent.replace(/<p>\s*<\/p>/g, '');
+    
+    // If content is just empty paragraph tags, set to empty string
+    if (cleanContent === '<p><br></p>' || cleanContent === '<p></p>') {
+      cleanContent = '';
+    }
     
     // For character counting, strip HTML tags
-    const textContent = rawContent.replace(/<[^>]*>/g, '');
+    const textContent = cleanContent.replace(/<[^>]*>/g, '');
     
     if (textContent.length <= maxLength) {
-      // Pass the raw HTML content to the parent
-      onChange(rawContent);
+      onChange(cleanContent);
     }
-  };
+  }, [onChange, maxLength]);
 
   // Show loading state while Quill is loading
   if (isLoading || !ReactQuill) {
@@ -78,23 +93,19 @@ export function RichTextEditor({
     );
   }
 
-  // Ensure we pass clean HTML value to ReactQuill
-  // If value contains encoded entities, decode them
-  const cleanValue = value || '';
+  // Clean and prepare the value for ReactQuill
+  let displayValue = value || '';
   
-  // Decode HTML entities if they exist (this handles cases where encoded content was saved)
-  const decodedValue = cleanValue
-    .replace(/&lt;/g, '<')
-    .replace(/&gt;/g, '>')
-    .replace(/&amp;/g, '&')
-    .replace(/&quot;/g, '"')
-    .replace(/&#x27;/g, "'");
+  // Update the ref when value changes externally
+  if (displayValue !== lastValueRef.current) {
+    lastValueRef.current = displayValue;
+  }
 
   return (
     <div className={cn("", className)}>
       <ReactQuill
         ref={quillRef}
-        value={decodedValue}
+        value={displayValue}
         onChange={handleChange}
         modules={modules}
         formats={formats}
@@ -107,7 +118,7 @@ export function RichTextEditor({
         }}
       />
       <div className="text-xs text-muted-foreground mt-1">
-        {decodedValue.replace(/<[^>]*>/g, '').length} / {maxLength} characters
+        {displayValue.replace(/<[^>]*>/g, '').length} / {maxLength} characters
       </div>
     </div>
   );
