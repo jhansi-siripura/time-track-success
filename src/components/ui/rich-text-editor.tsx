@@ -1,3 +1,4 @@
+
 import React, { useEffect, useRef, useState } from 'react';
 import { cn } from '@/lib/utils';
 
@@ -37,6 +38,50 @@ export function RichTextEditor({
     };
 
     loadQuill();
+  }, []);
+
+  // Inject custom styles for the editor
+  useEffect(() => {
+    const styleId = 'rich-text-editor-styles';
+    
+    // Remove existing styles if any
+    const existingStyle = document.getElementById(styleId);
+    if (existingStyle) {
+      existingStyle.remove();
+    }
+
+    // Create and inject new styles
+    const style = document.createElement('style');
+    style.id = styleId;
+    style.textContent = `
+      .custom-quill .ql-editor {
+        min-height: 200px !important;
+        padding: 12px 15px !important;
+        font-size: 14px;
+        line-height: 1.5;
+      }
+      .custom-quill .ql-toolbar {
+        border-bottom: 1px solid hsl(var(--border)) !important;
+        border-top: none !important;
+        border-left: none !important;
+        border-right: none !important;
+        background: white;
+        padding: 8px 12px !important;
+      }
+      .custom-quill .ql-container {
+        border: none !important;
+        font-family: inherit;
+      }
+    `;
+    document.head.appendChild(style);
+
+    // Cleanup function to remove styles when component unmounts
+    return () => {
+      const styleElement = document.getElementById(styleId);
+      if (styleElement) {
+        styleElement.remove();
+      }
+    };
   }, []);
 
   const modules = {
@@ -101,27 +146,6 @@ export function RichTextEditor({
       <div className="text-xs text-muted-foreground mt-1">
         {editorValue.replace(/<[^>]*>/g, '').length} / {maxLength} characters
       </div>
-      
-      <style jsx global>{`
-        .custom-quill .ql-editor {
-          min-height: 200px !important;
-          padding: 12px 15px !important;
-          font-size: 14px;
-          line-height: 1.5;
-        }
-        .custom-quill .ql-toolbar {
-          border-bottom: 1px solid hsl(var(--border)) !important;
-          border-top: none !important;
-          border-left: none !important;
-          border-right: none !important;
-          background: white;
-          padding: 8px 12px !important;
-        }
-        .custom-quill .ql-container {
-          border: none !important;
-          font-family: inherit;
-        }
-      `}</style>
     </div>
   );
 }
