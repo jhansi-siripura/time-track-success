@@ -1,13 +1,6 @@
 
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { cn } from '@/lib/utils';
-
-// Import Quill dynamically to avoid SSR issues
-let ReactQuill: any = null;
-if (typeof window !== 'undefined') {
-  ReactQuill = require('react-quill');
-  require('react-quill/dist/quill.snow.css');
-}
 
 interface RichTextEditorProps {
   value: string;
@@ -25,6 +18,25 @@ export function RichTextEditor({
   maxLength = 1000,
 }: RichTextEditorProps) {
   const quillRef = useRef<any>(null);
+  const [ReactQuill, setReactQuill] = useState<any>(null);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    // Dynamically import ReactQuill only on client side
+    const loadQuill = async () => {
+      try {
+        const { default: ReactQuillComponent } = await import('react-quill');
+        await import('react-quill/dist/quill.snow.css');
+        setReactQuill(() => ReactQuillComponent);
+        setIsLoading(false);
+      } catch (error) {
+        console.error('Failed to load ReactQuill:', error);
+        setIsLoading(false);
+      }
+    };
+
+    loadQuill();
+  }, []);
 
   const modules = {
     toolbar: [
@@ -49,8 +61,8 @@ export function RichTextEditor({
     }
   };
 
-  // Don't render on server side
-  if (!ReactQuill) {
+  // Show loading state while Quill is loading
+  if (isLoading || !ReactQuill) {
     return (
       <div className={cn("min-h-[120px] w-full rounded-md border border-input bg-background px-3 py-2", className)}>
         <p className="text-muted-foreground">Loading editor...</p>
