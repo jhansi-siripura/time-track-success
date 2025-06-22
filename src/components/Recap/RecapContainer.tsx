@@ -135,7 +135,7 @@ const RecapContainer = () => {
 
       toast({
         title: "Success",
-        description: "Study log updated successfully! Redirecting to dashboard...",
+        description: "Study log updated successfully!",
       });
 
       // Redirect to dashboard after successful update
