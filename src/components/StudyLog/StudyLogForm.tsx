@@ -240,17 +240,7 @@ const StudyLogForm: React.FC<StudyLogFormProps> = ({ editingLog, onSuccess, onCa
             </div>
           </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="achievements">Achievements</Label>
-            <Textarea
-              id="achievements"
-              value={formData.achievements}
-              onChange={(e) => handleInputChange('achievements', e.target.value)}
-              placeholder="What did you accomplish in this session?"
-              rows={3}
-              maxLength={500}
-            />
-          </div>
+         
 
           <div className="space-y-2">
             <Label htmlFor="comments">Comments</Label>
@@ -259,6 +249,18 @@ const StudyLogForm: React.FC<StudyLogFormProps> = ({ editingLog, onSuccess, onCa
               value={formData.comments}
               onChange={(e) => handleInputChange('comments', e.target.value)}
               placeholder="Any additional notes or observations"
+              rows={3}
+              maxLength={500}
+            />
+          </div>
+          
+           <div className="space-y-2">
+            <Label htmlFor="achievements">Achievements</Label>
+            <Textarea
+              id="achievements"
+              value={formData.achievements}
+              onChange={(e) => handleInputChange('achievements', e.target.value)}
+              placeholder="What did you accomplish in this session?"
               rows={3}
               maxLength={500}
             />
