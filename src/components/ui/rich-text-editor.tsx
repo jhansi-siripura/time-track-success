@@ -1,5 +1,5 @@
 
-import React, { useEffect, useRef, useState, useCallback } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { cn } from '@/lib/utils';
 
 interface RichTextEditorProps {
@@ -20,7 +20,6 @@ export function RichTextEditor({
   const quillRef = useRef<any>(null);
   const [ReactQuill, setReactQuill] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const isUpdatingRef = useRef(false);
 
   useEffect(() => {
     // Dynamically import ReactQuill only on client side
@@ -56,34 +55,20 @@ export function RichTextEditor({
     'color', 'background', 'list', 'bullet'
   ];
 
-  const handleChange = useCallback((content: string) => {
-    // Prevent infinite loops
-    if (isUpdatingRef.current) {
-      return;
+  const handleChange = (content: string) => {
+    // Simple, direct handling without complex logic
+    if (content === '<p><br></p>') {
+      // ReactQuill's default empty state - convert to empty string
+      onChange('');
+    } else {
+      // For character counting, strip HTML tags
+      const textContent = content.replace(/<[^>]*>/g, '');
+      
+      if (textContent.length <= maxLength) {
+        onChange(content);
+      }
     }
-    
-    isUpdatingRef.current = true;
-    
-    // Use setTimeout to prevent blocking and allow proper state updates
-    setTimeout(() => {
-      isUpdatingRef.current = false;
-    }, 0);
-    
-    // Clean the content
-    let cleanContent = content || '';
-    
-    // If content is just empty paragraph tags, set to empty string
-    if (cleanContent === '<p><br></p>' || cleanContent === '<p></p>' || cleanContent.trim() === '') {
-      cleanContent = '';
-    }
-    
-    // For character counting, strip HTML tags
-    const textContent = cleanContent.replace(/<[^>]*>/g, '');
-    
-    if (textContent.length <= maxLength) {
-      onChange(cleanContent);
-    }
-  }, [onChange, maxLength]);
+  };
 
   // Show loading state while Quill is loading
   if (isLoading || !ReactQuill) {
@@ -94,14 +79,14 @@ export function RichTextEditor({
     );
   }
 
-  // Use the value directly - no encoding/decoding
-  const displayValue = value || '';
+  // Use value directly, let ReactQuill handle it properly
+  const editorValue = value || '';
 
   return (
     <div className={cn("", className)}>
       <ReactQuill
         ref={quillRef}
-        value={displayValue}
+        value={editorValue}
         onChange={handleChange}
         modules={modules}
         formats={formats}
@@ -114,7 +99,7 @@ export function RichTextEditor({
         }}
       />
       <div className="text-xs text-muted-foreground mt-1">
-        {displayValue.replace(/<[^>]*>/g, '').length} / {maxLength} characters
+        {editorValue.replace(/<[^>]*>/g, '').length} / {maxLength} characters
       </div>
     </div>
   );
