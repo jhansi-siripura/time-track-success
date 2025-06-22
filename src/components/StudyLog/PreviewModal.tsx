@@ -43,6 +43,32 @@ export const PreviewModal: React.FC<PreviewModalProps> = ({
     return `${displayHour}:${minutes} ${ampm}`;
   };
 
+  const getImageGridLayout = (imageCount: number) => {
+    switch (imageCount) {
+      case 1:
+        return 'grid-cols-1 max-w-md mx-auto';
+      case 2:
+        return 'grid-cols-2 gap-4';
+      case 3:
+        return 'grid-cols-3 gap-2';
+      default:
+        return '';
+    }
+  };
+
+  const getImageAspectRatio = (imageCount: number) => {
+    switch (imageCount) {
+      case 1:
+        return 'aspect-video'; // 16:9 for single image
+      case 2:
+        return 'aspect-square'; // Square for side by side
+      case 3:
+        return 'aspect-square'; // Square for 3-column grid
+      default:
+        return 'aspect-square';
+    }
+  };
+
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
@@ -75,16 +101,19 @@ export const PreviewModal: React.FC<PreviewModalProps> = ({
               </div>
             )}
 
-            {/* Images */}
+            {/* Images with Dynamic Layout */}
             {formData.images && formData.images.length > 0 && (
               <div className="mt-4">
-                <div className="grid grid-cols-3 gap-2">
+                <div className={`grid ${getImageGridLayout(formData.images.length)}`}>
                   {formData.images.map((imageUrl, index) => (
-                    <div key={index} className="aspect-square rounded-lg overflow-hidden border border-border">
+                    <div 
+                      key={index} 
+                      className={`${getImageAspectRatio(formData.images.length)} rounded-lg overflow-hidden border border-border`}
+                    >
                       <img
                         src={imageUrl}
                         alt={`Study session image ${index + 1}`}
-                        className="w-full h-full object-cover"
+                        className="w-full h-full object-cover hover:scale-105 transition-transform duration-200"
                         onError={(e) => {
                           const target = e.target as HTMLImageElement;
                           target.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTIxIDEyVjE5QTIgMiAwIDAgMSAxOSAyMUg1QTIgMiAwIDAgMSAzIDE5VjVBMiAyIDAgMCAxIDUgM0gxMiIgc3Ryb2tlPSJjdXJyZW50Q29sb3IiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+CjxjaXJjbGUgY3g9IjkiIGN5PSI5IiByPSIyIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4KPHN2Zz4K';
