@@ -190,29 +190,30 @@ const RecapCardEditor: React.FC<RecapCardEditorProps> = ({ log, onSave, onCancel
             />
           </div>
 
-          {/* Image Upload */}
-          <div className="space-y-2">
-            <Label>Images</Label>
-            <ImageUpload
-              images={formData.images}
-              onImagesChange={(images) => handleInputChange('images', images)}
-              maxImages={3}
-            />
-          </div>
+          {/* Achievements and Images side by side */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div className="space-y-2">
+              <Label htmlFor="edit-achievements">Achievements</Label>
+              <Textarea
+                id="edit-achievements"
+                value={formData.achievements}
+                onChange={(e) => handleInputChange('achievements', e.target.value)}
+                placeholder="What did you accomplish?"
+                rows={6}
+                maxLength={1000}
+              />
+              <div className="text-xs text-muted-foreground">
+                {formData.achievements.length} / 1000 characters
+              </div>
+            </div>
 
-          {/* Achievements */}
-          <div className="space-y-2">
-            <Label htmlFor="edit-achievements">Achievements</Label>
-            <Textarea
-              id="edit-achievements"
-              value={formData.achievements}
-              onChange={(e) => handleInputChange('achievements', e.target.value)}
-              placeholder="What did you accomplish?"
-              rows={4}
-              maxLength={1000}
-            />
-            <div className="text-xs text-muted-foreground">
-              {formData.achievements.length} / 1000 characters
+            <div className="space-y-2">
+              <Label>Images</Label>
+              <ImageUpload
+                images={formData.images}
+                onImagesChange={(images) => handleInputChange('images', images)}
+                maxImages={3}
+              />
             </div>
           </div>
         </CardContent>

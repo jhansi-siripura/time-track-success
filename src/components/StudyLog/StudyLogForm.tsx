@@ -361,28 +361,29 @@ const StudyLogForm: React.FC<StudyLogFormProps> = ({ editingLog, onSuccess, onCa
                 maxLength={1000}
               />
             </div>
-            
-          
 
-            <div className="space-y-2">
-              <Label>Images</Label>
-              <ImageUpload
-                images={formData.images}
-                onImagesChange={(images) => handleInputChange('images', images)}
-                maxImages={3}
-              />
-            </div>
+            {/* Achievements and Images side by side */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <div className="space-y-2">
+                <Label htmlFor="achievements">Achievements</Label>
+                <Textarea
+                  id="achievements"
+                  value={formData.achievements}
+                  onChange={(e) => handleInputChange('achievements', e.target.value)}
+                  placeholder="What did you accomplish in this session?"
+                  rows={6}
+                  maxLength={500}
+                />
+              </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="achievements">Achievements</Label>
-              <Textarea
-                id="achievements"
-                value={formData.achievements}
-                onChange={(e) => handleInputChange('achievements', e.target.value)}
-                placeholder="What did you accomplish in this session?"
-                rows={3}
-                maxLength={500}
-              />
+              <div className="space-y-2">
+                <Label>Images</Label>
+                <ImageUpload
+                  images={formData.images}
+                  onImagesChange={(images) => handleInputChange('images', images)}
+                  maxImages={3}
+                />
+              </div>
             </div>
 
             <div className="flex gap-2 pt-4">
