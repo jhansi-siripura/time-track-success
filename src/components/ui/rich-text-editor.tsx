@@ -13,14 +13,14 @@ interface RichTextEditorProps {
 export function RichTextEditor({
   value,
   onChange,
-  placeholder = "Enter your notes...",
+  placeholder = "Write your notes here...",
   className,
   maxLength = 1000,
 }: RichTextEditorProps) {
   const quillRef = useRef<any>(null);
   const [ReactQuill, setReactQuill] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const lastValueRef = useRef<string>('');
+  const isUpdatingRef = useRef(false);
 
   useEffect(() => {
     // Dynamically import ReactQuill only on client side
@@ -57,22 +57,23 @@ export function RichTextEditor({
   ];
 
   const handleChange = useCallback((content: string) => {
-    // Prevent infinite loops by checking if content actually changed
-    if (content === lastValueRef.current) {
+    // Prevent infinite loops
+    if (isUpdatingRef.current) {
       return;
     }
     
-    lastValueRef.current = content;
+    isUpdatingRef.current = true;
     
-    // Clean the content - remove empty paragraphs and normalize
+    // Use setTimeout to prevent blocking and allow proper state updates
+    setTimeout(() => {
+      isUpdatingRef.current = false;
+    }, 0);
+    
+    // Clean the content
     let cleanContent = content || '';
     
-    // Remove consecutive empty paragraphs
-    cleanContent = cleanContent.replace(/<p><br><\/p>/g, '');
-    cleanContent = cleanContent.replace(/<p>\s*<\/p>/g, '');
-    
     // If content is just empty paragraph tags, set to empty string
-    if (cleanContent === '<p><br></p>' || cleanContent === '<p></p>') {
+    if (cleanContent === '<p><br></p>' || cleanContent === '<p></p>' || cleanContent.trim() === '') {
       cleanContent = '';
     }
     
@@ -93,13 +94,8 @@ export function RichTextEditor({
     );
   }
 
-  // Clean and prepare the value for ReactQuill
-  let displayValue = value || '';
-  
-  // Update the ref when value changes externally
-  if (displayValue !== lastValueRef.current) {
-    lastValueRef.current = displayValue;
-  }
+  // Use the value directly - no encoding/decoding
+  const displayValue = value || '';
 
   return (
     <div className={cn("", className)}>
