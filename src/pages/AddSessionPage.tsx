@@ -9,7 +9,7 @@ const AddSessionPage = () => {
   const navigate = useNavigate();
 
   const handleSuccess = () => {
-    navigate('/study-logs');
+    navigate('/dashboard');
   };
 
   const handleCancel = () => {

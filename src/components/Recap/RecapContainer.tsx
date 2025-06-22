@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useMemo } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
@@ -7,6 +6,7 @@ import { getTodayDate } from '@/lib/dateUtils';
 import RecapFilters from './RecapFilters';
 import RecapCard from './RecapCard';
 import { validateAuthState, rateLimiter } from '@/lib/security';
+import { useNavigate } from 'react-router-dom';
 
 interface StudyLog {
   id: number;
@@ -27,6 +27,7 @@ const RecapContainer = () => {
   const [subjectFilter, setSubjectFilter] = useState('all');
   const [topicFilter, setTopicFilter] = useState('all');
   const { user } = useAuth();
+  const navigate = useNavigate();
 
   const fetchStudyLogs = async () => {
     if (!user) return;
@@ -134,10 +135,13 @@ const RecapContainer = () => {
 
       toast({
         title: "Success",
-        description: "Study log updated successfully!",
+        description: "Study log updated successfully! Redirecting to dashboard...",
       });
 
-      fetchStudyLogs();
+      // Redirect to dashboard after successful update
+      setTimeout(() => {
+        navigate('/dashboard');
+      }, 1000);
     } catch (error: any) {
       console.error('Update study log error:', error);
       toast({
