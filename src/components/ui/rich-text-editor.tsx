@@ -25,8 +25,12 @@ export function RichTextEditor({
     // Dynamically import ReactQuill only on client side
     const loadQuill = async () => {
       try {
-        const { default: ReactQuillComponent } = await import('react-quill');
+        const ReactQuillModule = await import('react-quill');
+        const ReactQuillComponent = ReactQuillModule.default;
+        
+        // Import CSS
         await import('react-quill/dist/quill.snow.css');
+        
         setReactQuill(() => ReactQuillComponent);
         setIsLoading(false);
       } catch (error) {
