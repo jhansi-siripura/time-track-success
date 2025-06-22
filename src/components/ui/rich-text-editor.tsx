@@ -96,6 +96,7 @@ export function RichTextEditor({
           backgroundColor: 'white',
           border: '1px solid hsl(var(--border))',
           borderRadius: '6px',
+          minHeight: '200px', // ✅ Add this line
         }}
       />
       <div className="text-xs text-muted-foreground mt-1">
