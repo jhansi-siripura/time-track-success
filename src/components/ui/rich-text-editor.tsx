@@ -25,9 +25,7 @@ export function RichTextEditor({
     // Dynamically import ReactQuill only on client side
     const loadQuill = async () => {
       try {
-        const ReactQuillModule = await import('react-quill');
-        const ReactQuillComponent = ReactQuillModule.default;
-        
+        const { default: ReactQuillComponent } = await import('react-quill');
         // Import CSS
         await import('react-quill/dist/quill.snow.css');
         
@@ -58,13 +56,16 @@ export function RichTextEditor({
   ];
 
   const handleChange = (content: string) => {
-    // Clean the content and ensure it's properly formatted
-    const cleanContent = content || '';
+    // Ensure we get the raw HTML content from ReactQuill
+    // ReactQuill returns HTML content, not encoded entities
+    const rawContent = content || '';
     
-    // Remove HTML tags for length calculation
-    const textContent = cleanContent.replace(/<[^>]*>/g, '');
+    // For character counting, strip HTML tags
+    const textContent = rawContent.replace(/<[^>]*>/g, '');
+    
     if (textContent.length <= maxLength) {
-      onChange(cleanContent);
+      // Pass the raw HTML content to the parent
+      onChange(rawContent);
     }
   };
 
@@ -77,14 +78,23 @@ export function RichTextEditor({
     );
   }
 
-  // Ensure value is always a string and properly formatted
+  // Ensure we pass clean HTML value to ReactQuill
+  // If value contains encoded entities, decode them
   const cleanValue = value || '';
+  
+  // Decode HTML entities if they exist (this handles cases where encoded content was saved)
+  const decodedValue = cleanValue
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&amp;/g, '&')
+    .replace(/&quot;/g, '"')
+    .replace(/&#x27;/g, "'");
 
   return (
     <div className={cn("", className)}>
       <ReactQuill
         ref={quillRef}
-        value={cleanValue}
+        value={decodedValue}
         onChange={handleChange}
         modules={modules}
         formats={formats}
@@ -97,7 +107,7 @@ export function RichTextEditor({
         }}
       />
       <div className="text-xs text-muted-foreground mt-1">
-        {cleanValue.replace(/<[^>]*>/g, '').length} / {maxLength} characters
+        {decodedValue.replace(/<[^>]*>/g, '').length} / {maxLength} characters
       </div>
     </div>
   );
