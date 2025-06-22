@@ -40,3 +40,10 @@
 .read-the-docs {
   color: #888;
 }
+
+/* ✅ ADD THIS ANYWHERE IN YOUR GLOBAL STYLES */
+.custom-quill .ql-editor {
+  min-height: 180px;   /* You can tweak: 160px, 200px, etc. */
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+}
