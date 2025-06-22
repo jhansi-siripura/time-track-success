@@ -139,9 +139,9 @@ const RecapContainer = () => {
       });
 
       // Redirect to dashboard after successful update
-      setTimeout(() => {
+      /*setTimeout(() => {
         navigate('/dashboard');
-      }, 1000);
+      }, 1000);*/
     } catch (error: any) {
       console.error('Update study log error:', error);
       toast({
