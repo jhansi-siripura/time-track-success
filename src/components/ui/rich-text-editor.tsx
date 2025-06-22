@@ -58,10 +58,13 @@ export function RichTextEditor({
   ];
 
   const handleChange = (content: string) => {
+    // Clean the content and ensure it's properly formatted
+    const cleanContent = content || '';
+    
     // Remove HTML tags for length calculation
-    const textContent = content.replace(/<[^>]*>/g, '');
+    const textContent = cleanContent.replace(/<[^>]*>/g, '');
     if (textContent.length <= maxLength) {
-      onChange(content);
+      onChange(cleanContent);
     }
   };
 
@@ -74,15 +77,19 @@ export function RichTextEditor({
     );
   }
 
+  // Ensure value is always a string and properly formatted
+  const cleanValue = value || '';
+
   return (
     <div className={cn("", className)}>
       <ReactQuill
         ref={quillRef}
-        value={value}
+        value={cleanValue}
         onChange={handleChange}
         modules={modules}
         formats={formats}
         placeholder={placeholder}
+        theme="snow"
         style={{
           backgroundColor: 'white',
           border: '1px solid hsl(var(--border))',
@@ -90,7 +97,7 @@ export function RichTextEditor({
         }}
       />
       <div className="text-xs text-muted-foreground mt-1">
-        {value.replace(/<[^>]*>/g, '').length} / {maxLength} characters
+        {cleanValue.replace(/<[^>]*>/g, '').length} / {maxLength} characters
       </div>
     </div>
   );
