@@ -13,7 +13,7 @@ interface RichTextEditorProps {
 export function RichTextEditor({
   value,
   onChange,
-  placeholder = 'Write your notes here...',
+  placeholder = "Write your notes here...",
   className,
   maxLength = 1000,
 }: RichTextEditorProps) {
@@ -21,75 +21,69 @@ export function RichTextEditor({
   const [ReactQuill, setReactQuill] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  /* ─────────────────────────────────────────
-     Dynamically load ReactQuill on the client
-  ───────────────────────────────────────── */
   useEffect(() => {
-    (async () => {
+    // Dynamically import ReactQuill only on client side
+    const loadQuill = async () => {
       try {
         const { default: ReactQuillComponent } = await import('react-quill');
+        // Import CSS
         await import('react-quill/dist/quill.snow.css');
+        
         setReactQuill(() => ReactQuillComponent);
-      } catch (err) {
-        console.error('Failed to load ReactQuill:', err);
-      } finally {
+        setIsLoading(false);
+      } catch (error) {
+        console.error('Failed to load ReactQuill:', error);
         setIsLoading(false);
       }
-    })();
+    };
+
+    loadQuill();
   }, []);
 
   const modules = {
     toolbar: [
-      [{ header: [1, 2, 3, false] }],
+      [{ 'header': [1, 2, 3, false] }],
       ['bold', 'italic', 'underline'],
-      [{ color: [] }, { background: [] }],
-      [{ list: 'ordered' }, { list: 'bullet' }],
-      ['clean'],
+      [{ 'color': [] }, { 'background': [] }],
+      [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+      ['clean']
     ],
   };
 
   const formats = [
-    'header',
-    'bold',
-    'italic',
-    'underline',
-    'color',
-    'background',
-    'list',
-    'bullet',
+    'header', 'bold', 'italic', 'underline',
+    'color', 'background', 'list', 'bullet'
   ];
 
   const handleChange = (content: string) => {
-    // strip tags only for the live character count
-    const plain = content.replace(/<[^>]*>/g, '');
-    if (plain.length <= maxLength) {
-      onChange(content === '<p><br></p>' ? '' : content);
+    // Simple, direct handling without complex logic
+    if (content === '<p><br></p>') {
+      // ReactQuill's default empty state - convert to empty string
+      onChange('');
+    } else {
+      // For character counting, strip HTML tags
+      const textContent = content.replace(/<[^>]*>/g, '');
+      
+      if (textContent.length <= maxLength) {
+        onChange(content);
+      }
     }
   };
 
-  /* ─────────────────────────────────────────
-     Loading skeleton
-  ───────────────────────────────────────── */
+  // Show loading state while Quill is loading
   if (isLoading || !ReactQuill) {
     return (
-      <div
-        className={cn(
-          'min-h-[120px] w-full rounded-md border border-input bg-background px-3 py-2',
-          className
-        )}
-      >
-        <p className="text-muted-foreground">Loading editor…</p>
+      <div className={cn("min-h-[120px] w-full rounded-md border border-input bg-background px-3 py-2", className)}>
+        <p className="text-muted-foreground">Loading editor...</p>
       </div>
     );
   }
 
-  /* ─────────────────────────────────────────
-     Editor
-  ───────────────────────────────────────── */
+  // Use value directly, let ReactQuill handle it properly
   const editorValue = value || '';
 
   return (
-    <div className={cn('', className)}>
+    <div className={cn("", className)}>
       <ReactQuill
         ref={quillRef}
         value={editorValue}
@@ -98,11 +92,11 @@ export function RichTextEditor({
         formats={formats}
         placeholder={placeholder}
         theme="snow"
-        className="custom-quill"
         style={{
           backgroundColor: 'white',
           border: '1px solid hsl(var(--border))',
           borderRadius: '6px',
+          
         }}
       />
       <div className="text-xs text-muted-foreground mt-1">
