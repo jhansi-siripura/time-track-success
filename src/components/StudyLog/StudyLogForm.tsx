@@ -25,8 +25,9 @@ const StudyLogForm: React.FC<StudyLogFormProps> = ({ editingLog, onSuccess, onCa
     date: new Date().toISOString().split('T')[0],
     time: new Date().toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' }),
     duration: 0,
-    achievements: '',
     comments: '',
+    achievements: '',
+    
   });
   const [loading, setLoading] = useState(false);
   const { user } = useAuth();
