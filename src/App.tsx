@@ -1,4 +1,5 @@
 
+import React from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -15,58 +16,67 @@ import StudyPlanPage from "@/pages/StudyPlanPage";
 import TodosPage from "@/pages/TodosPage";
 import RecapPage from "@/pages/RecapPage";
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: 1,
+      refetchOnWindowFocus: false,
+    },
+  },
+});
 
-const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <AuthProvider>
-      <Toaster />
-      <Sonner />
-      <BrowserRouter>
-        <Routes>
-          <Route path="/landing" element={<LandingPage />} />
-          <Route path="/auth" element={<AuthPage />} />
-          <Route path="/home" element={
-            <ProtectedRoute>
-              <HomePage />
-            </ProtectedRoute>
-          } />
-          <Route path="/dashboard" element={
-            <ProtectedRoute>
-              <DashboardPage />
-            </ProtectedRoute>
-          } />
-          <Route path="/study-plan" element={
-            <ProtectedRoute>
-              <StudyPlanPage />
-            </ProtectedRoute>
-          } />
-          <Route path="/todos" element={
-            <ProtectedRoute>
-              <TodosPage />
-            </ProtectedRoute>
-          } />
-          <Route path="/study-logs" element={
-            <ProtectedRoute>
-              <StudyLogsPage />
-            </ProtectedRoute>
-          } />
-          <Route path="/add-session" element={
-            <ProtectedRoute>
-              <AddSessionPage />
-            </ProtectedRoute>
-          } />
-          <Route path="/recap" element={
-            <ProtectedRoute>
-              <RecapPage />
-            </ProtectedRoute>
-          } />
-          <Route path="/" element={<Navigate to="/landing" replace />} />
-          <Route path="*" element={<Navigate to="/landing" replace />} />
-        </Routes>
-      </BrowserRouter>
-    </AuthProvider>
-  </QueryClientProvider>
-);
+const App: React.FC = () => {
+  return (
+    <QueryClientProvider client={queryClient}>
+      <AuthProvider>
+        <Toaster />
+        <Sonner />
+        <BrowserRouter>
+          <Routes>
+            <Route path="/landing" element={<LandingPage />} />
+            <Route path="/auth" element={<AuthPage />} />
+            <Route path="/home" element={
+              <ProtectedRoute>
+                <HomePage />
+              </ProtectedRoute>
+            } />
+            <Route path="/dashboard" element={
+              <ProtectedRoute>
+                <DashboardPage />
+              </ProtectedRoute>
+            } />
+            <Route path="/study-plan" element={
+              <ProtectedRoute>
+                <StudyPlanPage />
+              </ProtectedRoute>
+            } />
+            <Route path="/todos" element={
+              <ProtectedRoute>
+                <TodosPage />
+              </ProtectedRoute>
+            } />
+            <Route path="/study-logs" element={
+              <ProtectedRoute>
+                <StudyLogsPage />
+              </ProtectedRoute>
+            } />
+            <Route path="/add-session" element={
+              <ProtectedRoute>
+                <AddSessionPage />
+              </ProtectedRoute>
+            } />
+            <Route path="/recap" element={
+              <ProtectedRoute>
+                <RecapPage />
+              </ProtectedRoute>
+            } />
+            <Route path="/" element={<Navigate to="/landing" replace />} />
+            <Route path="*" element={<Navigate to="/landing" replace />} />
+          </Routes>
+        </BrowserRouter>
+      </AuthProvider>
+    </QueryClientProvider>
+  );
+};
 
 export default App;
