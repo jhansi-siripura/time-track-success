@@ -22,14 +22,21 @@ interface StudyLog {
   images?: string[];
 }
 
-const RecapContainer = () => {
+interface RecapContainerProps {
+  dateFilter: string;
+  onDateFilterChange: (date: string) => void;
+}
+
+const RecapContainer = ({ dateFilter, onDateFilterChange }: RecapContainerProps) => {
   const [studyLogs, setStudyLogs] = useState<StudyLog[]>([]);
   const [loading, setLoading] = useState(true);
-  const [dateFilter, setDateFilter] = useState(getTodayDate());
   const [subjectFilter, setSubjectFilter] = useState('all');
   const [topicFilter, setTopicFilter] = useState('all');
   const { user } = useAuth();
   const navigate = useNavigate();
+
+  // Use provided dateFilter or default to today
+  const currentDateFilter = dateFilter || getTodayDate();
 
   const fetchStudyLogs = async () => {
     if (!user) return;
@@ -77,7 +84,7 @@ const RecapContainer = () => {
 
     // Filter logs based on selected filters
     let filtered = studyLogs.filter(log => {
-      const isDateMatch = dateFilter === '' || log.date === dateFilter;
+      const isDateMatch = currentDateFilter === '' || log.date === currentDateFilter;
       const isSubjectMatch = subjectFilter === 'all' || log.subject === subjectFilter;
       const isTopicMatch = topicFilter === 'all' || log.topic === topicFilter;
       
@@ -93,7 +100,7 @@ const RecapContainer = () => {
       subjects: uniqueSubjects,
       topics: uniqueTopics
     };
-  }, [studyLogs, dateFilter, subjectFilter, topicFilter]);
+  }, [studyLogs, currentDateFilter, subjectFilter, topicFilter]);
 
   const handleLogUpdate = async (logId: number, updatedData: Partial<StudyLog>) => {
     if (!user) {
@@ -141,10 +148,6 @@ const RecapContainer = () => {
       });
 
       fetchStudyLogs();
-      // Redirect to dashboard after successful update
-      /*setTimeout(() => {
-        navigate('/dashboard');
-      }, 1000);*/
     } catch (error: any) {
       console.error('Update study log error:', error);
       toast({
@@ -225,12 +228,12 @@ const RecapContainer = () => {
   return (
     <div className="space-y-6">
       <RecapFilters
-        dateFilter={dateFilter}
+        dateFilter={currentDateFilter}
         subjectFilter={subjectFilter}
         topicFilter={topicFilter}
         subjects={subjects}
         topics={topics}
-        onDateFilterChange={setDateFilter}
+        onDateFilterChange={onDateFilterChange}
         onSubjectFilterChange={setSubjectFilter}
         onTopicFilterChange={setTopicFilter}
       />
