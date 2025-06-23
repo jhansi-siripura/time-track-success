@@ -74,46 +74,44 @@ const RevisionWidget = ({ dateFilter, onDateFilterChange, onRevisionStatusChange
     }
   };
 
-  const handleTodayRevisionToggle = async () => {
+  const handleTodayRevisionToggle = async (checked: boolean) => {
     if (!user) return;
 
     setLoading(true);
     try {
-      const newCompleted = !todayCompleted;
+      console.log('Updating revision status to:', checked);
       
-      if (newCompleted) {
-        await supabase
-          .from('revision_streaks')
-          .upsert({
-            user_id: user.id,
-            date: getTodayDate(),
-            completed: true
-          });
+      const { error } = await supabase
+        .from('revision_streaks')
+        .upsert({
+          user_id: user.id,
+          date: getTodayDate(),
+          completed: checked
+        }, {
+          onConflict: 'user_id,date'
+        });
 
+      if (error) {
+        console.error('Database error:', error);
+        throw error;
+      }
+
+      console.log('Successfully updated revision status to:', checked);
+      
+      setTodayCompleted(checked);
+      
+      if (checked) {
         toast({
           title: "Great job!",
           description: "Today's revisions marked as complete! 🎉",
         });
+        setSelectedRevision('');
+        onDateFilterChange(getTodayDate());
       } else {
-        await supabase
-          .from('revision_streaks')
-          .upsert({
-            user_id: user.id,
-            date: getTodayDate(),
-            completed: false
-          });
-
         toast({
           title: "Revisions reset",
           description: "Today's revisions marked as incomplete.",
         });
-      }
-
-      setTodayCompleted(newCompleted);
-      
-      if (newCompleted) {
-        setSelectedRevision('');
-        onDateFilterChange(getTodayDate());
       }
 
       // Notify parent component about revision status change
@@ -148,7 +146,7 @@ const RevisionWidget = ({ dateFilter, onDateFilterChange, onRevisionStatusChange
             disabled={loading}
             className="h-4 w-4"
           />
-          <span className="text-lg font-semibold text-gray-900">
+          <span className="text-base font-semibold text-gray-900">
             Today's Revisions
           </span>
         </div>
