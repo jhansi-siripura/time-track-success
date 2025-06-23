@@ -188,7 +188,7 @@ const RecapCard: React.FC<RecapCardProps> = ({ log, onUpdate, onDelete }) => {
                       Attachments ({log.images.length})
                     </span>
                   </div>
-                  <div className={`grid ${getImageGridLayout(log.images.length)} gap-3 max-w-md`}>
+                  <div className={`grid ${getImageGridLayout(log.images.length)} gap-2 w-fit`}>
                     {log.images.map((imageUrl, index) => (
                       <div 
                         key={index} 
