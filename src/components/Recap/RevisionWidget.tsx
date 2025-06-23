@@ -22,12 +22,21 @@ const RevisionWidget = ({ dateFilter, onDateFilterChange, onRevisionStatusChange
   const { toast } = useToast();
 
   const revisionOptions = [
-    { value: '1', label: '1 day ago', days: 1 },
-    { value: '3', label: '3 days ago', days: 3 },
-    { value: '7', label: '7 days ago', days: 7 },
-    { value: '15', label: '15 days ago', days: 15 },
-    { value: '30', label: '30 days ago', days: 30 }
+    { value: '1', label: '1 Day ago', days: 1 },
+    { value: '3', label: '3 Days ago', days: 3 },
+    { value: '7', label: '7 Days ago', days: 7 },
+    { value: '15', label: '15 Days ago', days: 15 },
+    { value: '30', label: '30 Days ago', days: 30 }
   ];
+
+  // Helper function to format date as (DD-MMM-YYYY)
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    const day = date.getDate().toString().padStart(2, '0');
+    const month = date.toLocaleDateString('en-US', { month: 'short' });
+    const year = date.getFullYear();
+    return `(${day}-${month}-${year})`;
+  };
 
   useEffect(() => {
     fetchTodayRevisionStatus();
@@ -129,61 +138,63 @@ const RevisionWidget = ({ dateFilter, onDateFilterChange, onRevisionStatusChange
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-sm border p-4 space-y-4">
-      <h3 className="text-lg font-semibold text-gray-900">Today's Revisions</h3>
-      
-      <div className="space-y-4">
+    <div className="bg-white rounded-lg shadow-sm border p-6 space-y-6">
+      <div className="space-y-5">
+        {/* Today's Revisions Checkbox */}
         <div className="flex items-center space-x-3">
           <Checkbox
             checked={todayCompleted}
             onCheckedChange={handleTodayRevisionToggle}
             disabled={loading}
-            className="h-4 w-4"
+            className="h-5 w-5"
           />
-          <span className={`text-sm font-medium ${todayCompleted ? 'text-green-600' : 'text-gray-700'}`}>
-            {todayCompleted ? 'Today\'s Revisions Completed ✓' : 'Mark today\'s revisions as complete'}
+          <span className="text-lg font-medium text-gray-900">
+            Today's Revisions
           </span>
         </div>
 
-        <div className="space-y-3">
-          <p className="text-sm text-gray-600">Review materials from:</p>
-          <RadioGroup
-            value={selectedRevision}
-            onValueChange={handleRevisionSelect}
-            disabled={todayCompleted}
-            className="space-y-2"
-          >
-            {revisionOptions.map((option) => (
-              <div key={option.value} className="flex items-center space-x-2">
+        {/* Radio Group for revision options */}
+        <RadioGroup
+          value={selectedRevision}
+          onValueChange={handleRevisionSelect}
+          disabled={todayCompleted}
+          className="space-y-4"
+        >
+          {revisionOptions.map((option) => {
+            const targetDate = getDaysAgoDate(option.days);
+            const formattedDate = formatDate(targetDate);
+            
+            return (
+              <div key={option.value} className="flex items-center space-x-3">
                 <RadioGroupItem
                   value={option.value}
                   id={`revision-${option.value}`}
                   disabled={todayCompleted}
-                  className={todayCompleted ? 'opacity-50' : ''}
+                  className={`h-5 w-5 ${todayCompleted ? 'opacity-50' : ''}`}
                 />
                 <label
                   htmlFor={`revision-${option.value}`}
-                  className={`text-sm cursor-pointer ${
-                    todayCompleted ? 'text-gray-400' : 'text-gray-700'
+                  className={`text-lg cursor-pointer flex items-center space-x-2 ${
+                    todayCompleted ? 'text-gray-400 opacity-50' : 'text-gray-900'
                   }`}
                 >
-                  {option.label}
+                  <span>{option.label}</span>
+                  <span className="text-gray-600">{formattedDate}</span>
                 </label>
               </div>
-            ))}
-          </RadioGroup>
-        </div>
+            );
+          })}
+        </RadioGroup>
 
-        {!todayCompleted && (
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={handleClear}
-            className="w-full"
-          >
-            Clear Selection
-          </Button>
-        )}
+        {/* Clear Button */}
+        <Button
+          variant="outline"
+          onClick={handleClear}
+          className="w-full py-3 text-lg font-medium text-gray-600 border-2 rounded-lg hover:bg-gray-50"
+          disabled={todayCompleted}
+        >
+          Clear
+        </Button>
       </div>
     </div>
   );
