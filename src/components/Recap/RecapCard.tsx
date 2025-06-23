@@ -98,7 +98,7 @@ const RecapCard: React.FC<RecapCardProps> = ({ log, onUpdate, onDelete }) => {
     <>
       <Card className="hover:shadow-md transition-shadow duration-200">
         {/* ░░ HEADER  ░░ */}
-        <div className="bg-gray-200 px-4 py-2 flex justify-between items-start rounded-t-md border-b border-gray-200">
+        <div className="bg-gray-300 px-4 py-2 flex justify-between items-start rounded-t-md border-b border-gray-200">
           {/* date / time */}
           <div className="text-sm text-gray-600 font-medium tracking-tight">
             {formatDateTime(log.date, log.time)}
