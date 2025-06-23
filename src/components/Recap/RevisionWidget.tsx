@@ -146,9 +146,9 @@ const RevisionWidget = ({ dateFilter, onDateFilterChange, onRevisionStatusChange
             checked={todayCompleted}
             onCheckedChange={handleTodayRevisionToggle}
             disabled={loading}
-            className="h-5 w-5"
+            className="h-4 w-4"
           />
-          <span className="text-lg font-medium text-gray-900">
+          <span className="text-sm font-medium text-gray-900">
             Today's Revisions
           </span>
         </div>
@@ -158,28 +158,28 @@ const RevisionWidget = ({ dateFilter, onDateFilterChange, onRevisionStatusChange
           value={selectedRevision}
           onValueChange={handleRevisionSelect}
           disabled={todayCompleted}
-          className="space-y-4"
+          className="space-y-3"
         >
           {revisionOptions.map((option) => {
             const targetDate = getDaysAgoDate(option.days);
             const formattedDate = formatDate(targetDate);
             
             return (
-              <div key={option.value} className="flex items-center space-x-3">
+              <div key={option.value} className="flex items-center space-x-2">
                 <RadioGroupItem
                   value={option.value}
                   id={`revision-${option.value}`}
                   disabled={todayCompleted}
-                  className={`h-5 w-5 ${todayCompleted ? 'opacity-50' : ''}`}
+                  className={`h-4 w-4 ${todayCompleted ? 'opacity-50' : ''}`}
                 />
                 <label
                   htmlFor={`revision-${option.value}`}
-                  className={`text-lg cursor-pointer flex items-center space-x-2 ${
+                  className={`text-sm cursor-pointer flex items-center space-x-1 ${
                     todayCompleted ? 'text-gray-400 opacity-50' : 'text-gray-900'
                   }`}
                 >
                   <span>{option.label}</span>
-                  <span className="text-gray-600">{formattedDate}</span>
+                  <span className="text-xs text-gray-600">{formattedDate}</span>
                 </label>
               </div>
             );
@@ -190,7 +190,7 @@ const RevisionWidget = ({ dateFilter, onDateFilterChange, onRevisionStatusChange
         <Button
           variant="outline"
           onClick={handleClear}
-          className="w-full py-3 text-lg font-medium text-gray-600 border-2 rounded-lg hover:bg-gray-50"
+          className="w-full py-2 text-sm font-medium text-gray-600 border rounded-lg hover:bg-gray-50"
           disabled={todayCompleted}
         >
           Clear
