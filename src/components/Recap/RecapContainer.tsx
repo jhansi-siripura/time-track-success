@@ -36,7 +36,7 @@ const RecapContainer = ({ dateFilter, onDateFilterChange }: RecapContainerProps)
   const navigate = useNavigate();
   const { toast } = useToast();
 
-  // Use provided dateFilter or default to today
+  // Use provided dateFilter or default to today using local timezone
   const currentDateFilter = dateFilter || getTodayDate();
 
   const fetchStudyLogs = async () => {

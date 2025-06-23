@@ -4,6 +4,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Card, CardContent } from '@/components/ui/card';
+import { getTodayDate } from '@/lib/dateUtils';
 
 interface RecapFiltersProps {
   dateFilter: string;
@@ -30,6 +31,9 @@ const RecapFilters: React.FC<RecapFiltersProps> = ({
   const validSubjects = subjects.filter(subject => subject && subject.trim() !== '');
   const validTopics = topics.filter(topic => topic && topic.trim() !== '');
 
+  // Use local timezone for default date if no date filter is set
+  const displayDate = dateFilter || getTodayDate();
+
   return (
     <Card>
       <CardContent className="pt-6">
@@ -39,7 +43,7 @@ const RecapFilters: React.FC<RecapFiltersProps> = ({
             <Input
               id="date-filter"
               type="date"
-              value={dateFilter}
+              value={displayDate}
               onChange={(e) => onDateFilterChange(e.target.value)}
             />
           </div>

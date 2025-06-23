@@ -14,6 +14,7 @@ import { useStudyAutocomplete } from '@/hooks/useStudyAutocomplete';
 import { RichTextEditor } from '@/components/ui/rich-text-editor';
 import { ImageUpload } from '@/components/ui/image-upload';
 import { PreviewModal } from './PreviewModal';
+import { getTodayDate } from '@/lib/dateUtils';
 
 interface StudyLogFormProps {
   editingLog?: any;
@@ -26,7 +27,7 @@ const StudyLogForm: React.FC<StudyLogFormProps> = ({ editingLog, onSuccess, onCa
     subject: '',
     topic: '',
     source: '',
-    date: new Date().toISOString().split('T')[0],
+    date: getTodayDate(), // Use local timezone date utility
     time: new Date().toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' }),
     duration: '',
     notes: '',

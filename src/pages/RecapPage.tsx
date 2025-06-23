@@ -4,9 +4,10 @@ import Navbar from '@/components/Navigation/Navbar';
 import BottomNav from '@/components/Navigation/BottomNav';
 import RecapContainer from '@/components/Recap/RecapContainer';
 import RecapSidebar from '@/components/Recap/RecapSidebar';
+import { getTodayDate } from '@/lib/dateUtils';
 
 const RecapPage = () => {
-  const [dateFilter, setDateFilter] = React.useState('');
+  const [dateFilter, setDateFilter] = React.useState(getTodayDate()); // Initialize with local timezone date
 
   return (
     <div className="min-h-screen bg-gray-50">
