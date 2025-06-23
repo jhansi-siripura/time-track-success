@@ -100,7 +100,7 @@ const RecapCard: React.FC<RecapCardProps> = ({ log, onUpdate, onDelete }) => {
         {/* ░░ HEADER  ░░ */}
         <div className="bg-gray-600 px-4 py-2 flex justify-between items-start rounded-t-md border-b border-gray-200">
           {/* date / time */}
-          <div className="text-xs text-gray-100 font-medium tracking-tight">
+          <div className="text-xs text-gray-300 font-medium tracking-tight">
             {formatDateTime(log.date, log.time)}
           </div>
 
