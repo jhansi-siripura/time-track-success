@@ -2,7 +2,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
-import { toast } from '@/hooks/use-toast';
+import { useToast } from '@/hooks/use-toast';
 import { getTodayDate } from '@/lib/dateUtils';
 import RecapFilters from './RecapFilters';
 import RecapCard from './RecapCard';
@@ -34,6 +34,7 @@ const RecapContainer = ({ dateFilter, onDateFilterChange }: RecapContainerProps)
   const [topicFilter, setTopicFilter] = useState('all');
   const { user } = useAuth();
   const navigate = useNavigate();
+  const { toast } = useToast();
 
   // Use provided dateFilter or default to today
   const currentDateFilter = dateFilter || getTodayDate();

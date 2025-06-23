@@ -5,7 +5,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Button } from '@/components/ui/button';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
-import { toast } from '@/hooks/use-toast';
+import { useToast } from '@/hooks/use-toast';
 import { getTodayDate, getDaysAgoDate } from '@/lib/dateUtils';
 
 interface RevisionWidgetProps {
@@ -18,6 +18,7 @@ const RevisionWidget = ({ dateFilter, onDateFilterChange }: RevisionWidgetProps)
   const [todayCompleted, setTodayCompleted] = useState(false);
   const [loading, setLoading] = useState(false);
   const { user } = useAuth();
+  const { toast } = useToast();
 
   const revisionOptions = [
     { value: '1', label: '1 day ago', days: 1 },
