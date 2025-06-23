@@ -11,9 +11,10 @@ import { getTodayDate, getDaysAgoDate } from '@/lib/dateUtils';
 interface RevisionWidgetProps {
   dateFilter: string;
   onDateFilterChange: (date: string) => void;
+  onRevisionStatusChange?: () => void;
 }
 
-const RevisionWidget = ({ dateFilter, onDateFilterChange }: RevisionWidgetProps) => {
+const RevisionWidget = ({ dateFilter, onDateFilterChange, onRevisionStatusChange }: RevisionWidgetProps) => {
   const [selectedRevision, setSelectedRevision] = useState('');
   const [todayCompleted, setTodayCompleted] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -72,7 +73,6 @@ const RevisionWidget = ({ dateFilter, onDateFilterChange }: RevisionWidgetProps)
       const newCompleted = !todayCompleted;
       
       if (newCompleted) {
-        // Mark as completed
         await supabase
           .from('revision_streaks')
           .upsert({
@@ -86,7 +86,6 @@ const RevisionWidget = ({ dateFilter, onDateFilterChange }: RevisionWidgetProps)
           description: "Today's revisions marked as complete! 🎉",
         });
       } else {
-        // Mark as incomplete
         await supabase
           .from('revision_streaks')
           .upsert({
@@ -107,6 +106,11 @@ const RevisionWidget = ({ dateFilter, onDateFilterChange }: RevisionWidgetProps)
         setSelectedRevision('');
         onDateFilterChange(getTodayDate());
       }
+
+      // Notify parent component about revision status change
+      if (onRevisionStatusChange) {
+        onRevisionStatusChange();
+      }
     } catch (error) {
       console.error('Error updating revision status:', error);
       toast({
@@ -125,7 +129,7 @@ const RevisionWidget = ({ dateFilter, onDateFilterChange }: RevisionWidgetProps)
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-sm border p-6 space-y-4">
+    <div className="bg-white rounded-lg shadow-sm border p-4 space-y-4">
       <h3 className="text-lg font-semibold text-gray-900">Today's Revisions</h3>
       
       <div className="space-y-4">
@@ -134,7 +138,7 @@ const RevisionWidget = ({ dateFilter, onDateFilterChange }: RevisionWidgetProps)
             checked={todayCompleted}
             onCheckedChange={handleTodayRevisionToggle}
             disabled={loading}
-            className="h-5 w-5"
+            className="h-4 w-4"
           />
           <span className={`text-sm font-medium ${todayCompleted ? 'text-green-600' : 'text-gray-700'}`}>
             {todayCompleted ? 'Today\'s Revisions Completed ✓' : 'Mark today\'s revisions as complete'}
