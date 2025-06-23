@@ -148,7 +148,8 @@ const RevisionWidget = ({ dateFilter, onDateFilterChange, onRevisionStatusChange
             disabled={loading}
             className="h-4 w-4"
           />
-          <span className="text-sm font-medium text-gray-900">
+          <span className="text-sm font-semibold text-gray-900">
+          <h3 className="text-lg font-semibold text-gray-900">Revision Streak</h3>
             Today's Revisions
           </span>
         </div>
