@@ -5,6 +5,7 @@ import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
+import { dateToLocalDateString } from '@/lib/dateUtils';
 
 interface CalendarWidgetProps {
   onRevisionStatusChange?: number; // Trigger prop to force reload
@@ -32,12 +33,13 @@ const CalendarWidget = ({ onRevisionStatusChange }: CalendarWidgetProps) => {
         .select('date')
         .eq('user_id', user.id)
         .eq('completed', true)
-        .gte('date', startOfMonth.toISOString().split('T')[0])
-        .lte('date', endOfMonth.toISOString().split('T')[0]);
+        .gte('date', dateToLocalDateString(startOfMonth))
+        .lte('date', dateToLocalDateString(endOfMonth));
 
       if (error) throw error;
 
       const dates = new Set(data.map(item => item.date));
+      console.log('Completed dates from DB:', Array.from(dates));
       setCompletedDates(dates);
     } catch (error) {
       console.error('Error fetching completed dates:', error);
@@ -64,7 +66,6 @@ const CalendarWidget = ({ onRevisionStatusChange }: CalendarWidgetProps) => {
             <h3 className="text-lg font-semibold text-gray-900">Revision Streak</h3>
         </div>
 
-
       <div className="w-full overflow-hidden">
         <Calendar
           mode="single"
@@ -74,7 +75,8 @@ const CalendarWidget = ({ onRevisionStatusChange }: CalendarWidgetProps) => {
           onMonthChange={setSelectedDate}
           modifiers={{
             completed: (date) => {
-              const dateString = date.toISOString().split('T')[0];
+              const dateString = dateToLocalDateString(date);
+              console.log('Checking date:', dateString, 'Is completed:', completedDates.has(dateString));
               return completedDates.has(dateString);
             }
           }}
