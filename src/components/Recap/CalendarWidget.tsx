@@ -130,17 +130,6 @@ const CalendarWidget = ({ onRevisionStatusChange }: CalendarWidgetProps) => {
           }}
         />
       </div>
-
-      <div className="mt-4 flex items-center justify-between text-xs text-gray-600">
-        <div className="flex items-center space-x-1">
-          <div className="w-3 h-3 bg-green-500 rounded"></div>
-          <span>Completed</span>
-        </div>
-        <div className="flex items-center space-x-1">
-          <div className="w-3 h-3 border border-gray-300 rounded"></div>
-          <span>Pending</span>
-        </div>
-      </div>
     </div>
   );
 };
