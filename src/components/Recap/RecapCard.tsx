@@ -1,4 +1,4 @@
-
+// RecapCard.tsx
 import React, { useState } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -32,28 +32,22 @@ const RecapCard: React.FC<RecapCardProps> = ({ log, onUpdate, onDelete }) => {
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [lightboxIndex, setLightboxIndex] = useState(0);
 
-  // Helper to format date and time as: 8-Jun-2025 10 AM
+  /** Format "YYYY-MM-DD" + "HH:mm" → "8-Jun-2025 10 AM" */
   const formatDateTime = (dateStr: string, timeStr: string) => {
     try {
-      // dateStr is "YYYY-MM-DD", timeStr is "HH:mm", combine into JS Date
-      const [year, month, day] = dateStr.split('-').map(Number);
-      const [hour, minute] = timeStr.split(':').map(Number);
-      const dateObj = new Date(year, month - 1, day, hour, minute);
-
-      // Get day, abbreviated month, year, 12h hour and AM/PM
-      const dayNum = dateObj.getDate();
-      const monthShort = dateObj.toLocaleString('en-US', { month: 'short' });
-      const yearNum = dateObj.getFullYear();
-      let hourNum = dateObj.getHours();
-      const ampm = hourNum >= 12 ? 'PM' : 'AM';
-      const hour12 = hourNum % 12 === 0 ? 12 : hourNum % 12;
-
-      return `${dayNum}-${monthShort}-${yearNum} ${hour12} ${ampm}`;
+      const [y, m, d] = dateStr.split('-').map(Number);
+      const [h, mm] = timeStr.split(':').map(Number);
+      const dt = new Date(y, m - 1, d, h, mm);
+      const ampm = dt.getHours() >= 12 ? 'PM' : 'AM';
+      const h12 = dt.getHours() % 12 === 0 ? 12 : dt.getHours() % 12;
+      const month = dt.toLocaleString('en-US', { month: 'short' });
+      return `${dt.getDate()}-${month}-${dt.getFullYear()} ${h12} ${ampm}`;
     } catch (e) {
-      return dateStr + ' ' + timeStr;
+      return `${dateStr} ${timeStr}`;
     }
   };
 
+  /** Stable colour per subject */
   const getSubjectColor = (subject: string) => {
     const colors = [
       'bg-blue-100 text-blue-800',
@@ -67,50 +61,30 @@ const RecapCard: React.FC<RecapCardProps> = ({ log, onUpdate, onDelete }) => {
     return colors[hash % colors.length];
   };
 
-  const getImageGridLayout = (imageCount: number) => {
-    switch (imageCount) {
-      case 1:
-        return 'grid-cols-1';
-      case 2:
-        return 'grid-cols-2';
-      case 3:
-        return 'grid-cols-3';
-      default:
-        return 'grid-cols-3';
-    }
-  };
+  /** 1 → 1col, 2 → 2col, ≥3 → 3col */
+  const getImageGridLayout = (count: number) =>
+    count === 1 ? 'grid-cols-1' : count === 2 ? 'grid-cols-2' : 'grid-cols-3';
 
-  const handleImageClick = (index: number) => {
-    setLightboxIndex(index);
+  /* ---------- handlers ---------- */
+  const handleImageClick = (i: number) => {
+    setLightboxIndex(i);
     setLightboxOpen(true);
   };
-
-  const handleSave = (updatedData: Partial<StudyLog>) => {
-    onUpdate(log.id, updatedData);
+  const handleSave = (data: Partial<StudyLog>) => {
+    onUpdate(log.id, data);
     setIsEditing(false);
   };
-
   const handleDelete = () => {
-    if (confirm('Are you sure you want to delete this study log?')) {
-      onDelete(log.id);
-    }
+    if (confirm('Are you sure you want to delete this study log?')) onDelete(log.id);
   };
 
+  /* ---------- edit mode ---------- */
   if (isEditing) {
     return (
       <div className="space-y-4">
-        <RecapCardEditor
-          log={log}
-          onSave={handleSave}
-          onCancel={() => setIsEditing(false)}
-        />
+        <RecapCardEditor log={log} onSave={handleSave} onCancel={() => setIsEditing(false)} />
         <div className="flex justify-end">
-          <Button
-            variant="destructive"
-            size="sm"
-            onClick={handleDelete}
-            className="h-8"
-          >
+          <Button variant="destructive" size="sm" onClick={handleDelete} className="h-8">
             <Trash2 className="h-4 w-4 mr-1" />
             Delete
           </Button>
@@ -119,104 +93,87 @@ const RecapCard: React.FC<RecapCardProps> = ({ log, onUpdate, onDelete }) => {
     );
   }
 
+  /* ---------- display mode ---------- */
   return (
     <>
       <Card className="hover:shadow-md transition-shadow duration-200">
-        <CardContent className="p-6">
-          <div className="flex justify-between items-start mb-4">
-            {/* DATE/TIME on the top-left */}
-            <div className="flex flex-col">
-              <div className="text-sm text-gray-600 font-medium tracking-tight">
-                {formatDateTime(log.date, log.time)}
-              </div>
-            </div>
-            {/* Subject and Topic on the top-right */}
-            <div className="flex items-center gap-2">
-              <div className="flex flex-wrap gap-2">
-                <Badge className={getSubjectColor(log.subject)}>
-                  {log.subject}
-                </Badge>
-                {log.topic && (
-                  <Badge variant="outline" className="bg-gray-50">
-                    {log.topic}
-                  </Badge>
-                )}
-              </div>
-              <div className="flex gap-2 ml-4">
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => setIsEditing(true)}
-                  className="h-8 w-8 p-0"
-                  aria-label="Edit"
-                >
-                  <Pencil className="h-4 w-4" />
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => setIsExpanded(!isExpanded)}
-                  className="h-8 w-8 p-0"
-                  aria-label={isExpanded ? 'Collapse' : 'Expand'}
-                >
-                  {isExpanded ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
-                </Button>
-              </div>
-            </div>
+        {/* ░░ HEADER  ░░ */}
+        <div className="bg-gray-100 px-4 py-2 flex justify-between items-start rounded-t-md border-b border-gray-200">
+          {/* date / time */}
+          <div className="text-sm text-gray-600 font-medium tracking-tight">
+            {formatDateTime(log.date, log.time)}
           </div>
 
-          {isExpanded && (
-            <div className="space-y-5">
-              {/* Rich Text Notes Section */}
-              {log.notes && (
-                <div>
-                  <div 
-                    className="prose prose-sm max-w-none text-gray-700"
-                    dangerouslySetInnerHTML={{ __html: log.notes }}
-                    style={{
-                      lineHeight: '1.6'
-                    }}
-                  />
-                </div>
-              )}
-
-              {/* Images Section with improved spacing and smaller thumbnails */}
-              {log.images && log.images.length > 0 && (
-                <div className="mt-6 pt-4 border-t border-gray-100">
-                  <div className="mb-3">
-                    <span className="text-sm font-medium text-gray-600">
-                      Attachments ({log.images.length})
-                    </span>
-                  </div>
-                  <div className={`grid ${getImageGridLayout(log.images.length)} gap-2 w-fit`}>
-                    {log.images.map((imageUrl, index) => (
-                      <div 
-                        key={index} 
-                        className="group relative w-20 h-20 rounded-lg overflow-hidden border border-gray-200 shadow-sm cursor-pointer hover:shadow-md transition-all duration-200"
-                        onClick={() => handleImageClick(index)}
-                      >
-                        <img
-                          src={imageUrl}
-                          alt={`Study session image ${index + 1}`}
-                          className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-200"
-                          onError={(e) => {
-                            const target = e.target as HTMLImageElement;
-                            target.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTIxIDEyVjE5QTIgMiAwIDAgMSAxOSAyMUg1QTIgMiAwIDAgMSAzIDE5VjVBMiAyIDAgMCAxIDUgM0gxMiIgc3Ryb2tlPSJjdXJyZW50Q29sb3IiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+CjxjaXJjbGUgY3g9IjkiIGN5PSI5IiByPSIyIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4KPHN2Zz4K';
-                          }}
-                        />
-                        <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-10 transition-all duration-200 rounded-lg" />
-                      </div>
-                    ))}
-                  </div>
-                </div>
+          {/* badges + buttons */}
+          <div className="flex items-center gap-2">
+            <div className="flex flex-wrap gap-2">
+              <Badge className={getSubjectColor(log.subject)}>{log.subject}</Badge>
+              {log.topic && (
+                <Badge variant="outline" className="bg-white text-gray-800 border-gray-300">
+                  {log.topic}
+                </Badge>
               )}
             </div>
-          )}
-        </CardContent>
+            <div className="flex gap-2 ml-4">
+              <Button variant="ghost" size="sm" className="h-8 w-8 p-0" onClick={() => setIsEditing(true)}>
+                <Pencil className="h-4 w-4" />
+              </Button>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="h-8 w-8 p-0"
+                onClick={() => setIsExpanded(!isExpanded)}
+                aria-label={isExpanded ? 'Collapse' : 'Expand'}
+              >
+                {isExpanded ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+              </Button>
+            </div>
+          </div>
+        </div>
+
+        {/* ░░ BODY  ░░ */}
+        {isExpanded && (
+          <CardContent className="bg-white p-6 space-y-5">
+            {log.notes && (
+              <div
+                className="prose prose-sm max-w-none text-gray-700"
+                dangerouslySetInnerHTML={{ __html: log.notes }}
+                style={{ lineHeight: '1.6' }}
+              />
+            )}
+
+            {log.images?.length ? (
+              <div className="pt-4 border-t border-gray-100">
+                <div className="mb-3 text-sm font-medium text-gray-600">
+                  Attachments ({log.images.length})
+                </div>
+                <div className={`grid ${getImageGridLayout(log.images.length)} gap-2 w-fit`}>
+                  {log.images.map((src, i) => (
+                    <div
+                      key={i}
+                      className="group relative w-20 h-20 rounded-lg overflow-hidden border border-gray-200 shadow-sm cursor-pointer hover:shadow-md transition-all duration-200"
+                      onClick={() => handleImageClick(i)}
+                    >
+                      <img
+                        src={src}
+                        alt={`log-img-${i}`}
+                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-200"
+                        onError={(e) => {
+                          (e.target as HTMLImageElement).src = 'fallback.png';
+                        }}
+                      />
+                      <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-10 transition-all duration-200 rounded-lg" />
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ) : null}
+          </CardContent>
+        )}
       </Card>
 
-      {/* Image Lightbox */}
-      {log.images && log.images.length > 0 && (
+      {/* lightbox */}
+      {log.images?.length && (
         <ImageLightbox
           images={log.images}
           initialIndex={lightboxIndex}
