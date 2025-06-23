@@ -62,27 +62,6 @@ const CalendarWidget = ({ onRevisionStatusChange }: CalendarWidgetProps) => {
     <div className="bg-white rounded-lg shadow-sm border p-4">
       <div className="flex items-center justify-between mb-4">
         <h3 className="text-lg font-semibold text-gray-900">Revision Streak</h3>
-        <div className="flex items-center space-x-1">
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => navigateMonth('prev')}
-            className="h-7 w-7 p-0"
-          >
-            <ChevronLeft className="h-4 w-4" />
-          </Button>
-          <span className="text-sm font-medium min-w-[120px] text-center text-xs">
-            {formatMonth(selectedDate)}
-          </span>
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => navigateMonth('next')}
-            className="h-7 w-7 p-0"
-          >
-            <ChevronRight className="h-4 w-4" />
-          </Button>
-        </div>
       </div>
 
       <div className="w-full overflow-hidden">
