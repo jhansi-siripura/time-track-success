@@ -16,9 +16,10 @@ const Navbar = () => {
     { path: '/add-session', label: 'Add Study Log', icon: Plus },
     { path: '/study-logs', label: 'View Logs', icon: FileText },
     { path: '/recap', label: 'Recap', icon: BookOpen },
-    { path: '/study-plan', label: 'Study Plan', icon: Target },
-    { path: '/todos', label: 'To-Do', icon: CheckSquare },
+    
   ];
+  /*{ path: '/study-plan', label: 'Study Plan', icon: Target },
+    { path: '/todos', label: 'To-Do', icon: CheckSquare },*/
 
   return (
     <nav className="bg-white border-b border-gray-200 px-4 py-3 sticky top-0 z-40">
