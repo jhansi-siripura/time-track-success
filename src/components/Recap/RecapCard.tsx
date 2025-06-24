@@ -142,7 +142,7 @@ const RecapCard: React.FC<RecapCardProps> = ({ log, onUpdate, onDelete }) => {
               />
             )}
 
-            {log.images?.length ? (
+            {log.images && log.images.length > 0 && (
               <div className="pt-4 border-t border-gray-100">
                 <div className="mb-3 text-sm font-medium text-gray-600">
                   Attachments ({log.images.length})
@@ -167,13 +167,13 @@ const RecapCard: React.FC<RecapCardProps> = ({ log, onUpdate, onDelete }) => {
                   ))}
                 </div>
               </div>
-            ) : null}
+            )}
           </CardContent>
         )}
       </Card>
 
       {/* lightbox */}
-      {log.images?.length && (
+      {log.images && log.images.length > 0 && (
         <ImageLightbox
           images={log.images}
           initialIndex={lightboxIndex}
