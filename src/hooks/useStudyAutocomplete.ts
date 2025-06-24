@@ -14,8 +14,7 @@ interface UseStudyAutocompleteReturn {
 }
 
 const DEFAULT_SOURCES = [
-  'Textbook',
-  'Textbook2',
+ 
 ];
 
 export function useStudyAutocomplete(): UseStudyAutocompleteReturn {
