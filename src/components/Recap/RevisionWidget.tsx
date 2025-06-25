@@ -21,12 +21,23 @@ const RevisionWidget = ({ dateFilter, onDateFilterChange, onRevisionStatusChange
   const { user } = useAuth();
   const { toast } = useToast();
 
-  const revisionOptions = [
+ /* const revisionOptions = [
     { value: '1', label: '1 Day ago', days: 1 },
     { value: '3', label: '3 Days ago', days: 3 },
     { value: '7', label: '7 Days ago', days: 7 },
     { value: '15', label: '15 Days ago', days: 15 },
     { value: '30', label: '30 Days ago', days: 30 }
+  ];*/
+
+  // 0, 1 , 3 , 7 , 15 , 31 , 63 
+
+  const revisionOptions = [
+    { value: '1', label: '1 Day ago', days: 1 },
+    { value: '3', label: '3 Days ago', days: 3 },
+    { value: '7', label: '7 Days ago', days: 7 },
+    { value: '15', label: '15 Days ago', days: 15 },
+    { value: '31', label: '31 Days ago', days: 31 },
+    { value: '63', label: '63 Days ago', days: 63 }
   ];
 
   // Helper function to format date as (DD-MMM-YYYY)
