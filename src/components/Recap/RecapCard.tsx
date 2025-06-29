@@ -146,7 +146,7 @@ const RecapCard: React.FC<RecapCardProps> = ({ log, onUpdate, onDelete }) => {
                   <Badge className="text-[10px] px-2 py-0.5 bg-gray-50 text-gray-500 border border-gray-100">{log.topic}</Badge>
                 )}
               </div>
-              <div className="text-[9px] text-gray-300">{formatDateTime(log.date, log.time)}</div>
+              <div className="text-[9px] text-gray-500">{formatDateTime(log.date, log.time)}</div>
             </div>
           </CardContent>
         )}
