@@ -1,76 +1,139 @@
-// Updated version of RecapCard.tsx focusing on minimal header and subtle metadata
+// Updated version of RecapCard.tsx focusing on clean layout, minimal top section, and subtle metadata
 
-<Card className="hover:shadow-md transition-shadow duration-200">
-  {/* ░░ HEADER  ░░ */}
-  <div className="px-4 pt-4 pb-2 flex justify-end">
-    <div className="flex gap-2">
-      <Button variant="ghost" size="sm" className="h-7 w-7 p-0" onClick={() => setIsEditing(true)}>
-        <Pencil className="h-4 w-4 text-gray-400" />
-      </Button>
-      <Button
-        variant="ghost"
-        size="sm"
-        className="h-7 w-7 p-0"
-        onClick={() => setIsExpanded(!isExpanded)}
-        aria-label={isExpanded ? 'Collapse' : 'Expand'}
-      >
-        {isExpanded ? <ChevronUp className="h-4 w-4 text-gray-400" /> : <ChevronDown className="h-4 w-4 text-gray-400" />}
-      </Button>
-    </div>
-  </div>
+import React, { useState } from 'react';
+import { Card, CardContent } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { Pencil, Trash2, ChevronDown, ChevronUp } from 'lucide-react';
+import { ImageLightbox } from '@/components/ui/image-lightbox';
+import RecapCardEditor from './RecapCardEditor';
 
-  {/* ░░ BODY ░░ */}
-  {isExpanded && (
-    <CardContent className="bg-white px-6 pb-4 pt-0 space-y-5">
-      {log.notes && (
-        <div
-          className="prose prose-sm max-w-none text-gray-800"
-          dangerouslySetInnerHTML={{ __html: log.notes }}
-          style={{ lineHeight: '1.7' }}
-        />
-      )}
+interface StudyLog {
+  id: number;
+  date: string;
+  time: string;
+  duration: number;
+  subject: string;
+  topic?: string;
+  source?: string;
+  notes: string;
+  achievements: string;
+  images?: string[];
+}
 
-      {log.images && log.images.length > 0 && (
-        <div className="pt-4 border-t border-gray-100">
-          <div className="mb-2 text-xs text-gray-500">Attachments ({log.images.length})</div>
-          <div className={`grid ${getImageGridLayout(log.images.length)} gap-2 w-fit`}>
-            {log.images.map((src, i) => (
-              <div
-                key={i}
-                className="group relative w-20 h-20 rounded-lg overflow-hidden border border-gray-200 shadow-sm cursor-pointer hover:shadow-md transition-all duration-200"
-                onClick={() => handleImageClick(i)}
-              >
-                <img
-                  src={src}
-                  alt={`log-img-${i}`}
-                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-200"
-                  onError={(e) => {
-                    (e.target as HTMLImageElement).src = 'fallback.png';
-                  }}
-                />
-                <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-10 transition-all duration-200 rounded-lg" />
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
+interface RecapCardProps {
+  log: StudyLog;
+  onUpdate: (logId: number, updatedData: Partial<StudyLog>) => void;
+  onDelete: (logId: number) => void;
+}
 
-      {/* ░░ FOOTER META ░░ */}
-      <div className="pt-3 border-t border-gray-100 text-[10px] text-gray-400 flex flex-wrap justify-between items-center">
-        <div className="flex gap-2">
-          <Badge className="text-xs px-2 py-0.5 bg-gray-100 text-gray-600 border border-gray-200">
-            {log.subject}
-          </Badge>
-          {log.topic && (
-            <Badge className="text-[10px] px-2 py-0.5 bg-gray-50 text-gray-500 border border-gray-100">
-              {log.topic}
-            </Badge>
-          )}
-        </div>
-        <div className="text-[9px] text-gray-300">
-          {formatDateTime(log.date, log.time)}
+const RecapCard: React.FC<RecapCardProps> = ({ log, onUpdate, onDelete }) => {
+  const [isEditing, setIsEditing] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(true);
+  const [lightboxOpen, setLightboxOpen] = useState(false);
+  const [lightboxIndex, setLightboxIndex] = useState(0);
+
+  const formatDateTime = (dateStr: string, timeStr: string) => {
+    try {
+      const [y, m, d] = dateStr.split('-').map(Number);
+      const [h, mm] = timeStr.split(':').map(Number);
+      const dt = new Date(y, m - 1, d, h, mm);
+      const ampm = dt.getHours() >= 12 ? 'PM' : 'AM';
+      const h12 = dt.getHours() % 12 === 0 ? 12 : dt.getHours() % 12;
+      const month = dt.toLocaleString('en-US', { month: 'short' });
+      return `${dt.getDate()}-${month}-${dt.getFullYear()} ${h12} ${ampm}`;
+    } catch (e) {
+      return `${dateStr} ${timeStr}`;
+    }
+  };
+
+  const getSubjectColor = (subject: string) => {
+    const colors = [
+      'bg-blue-100 text-blue-800',
+      'bg-green-100 text-green-800',
+      'bg-purple-100 text-purple-800',
+      'bg-orange-100 text-orange-800',
+      'bg-pink-100 text-pink-800',
+      'bg-indigo-100 text-indigo-800'
+    ];
+    const hash = subject.split('').reduce((a, b) => a + b.charCodeAt(0), 0);
+    return colors[hash % colors.length];
+  };
+
+  const getImageGridLayout = (count: number) =>
+    count === 1 ? 'grid-cols-1' : count === 2 ? 'grid-cols-2' : 'grid-cols-3';
+
+  const handleImageClick = (i: number) => {
+    setLightboxIndex(i);
+    setLightboxOpen(true);
+  };
+  const handleSave = (data: Partial<StudyLog>) => {
+    onUpdate(log.id, data);
+    setIsEditing(false);
+  };
+  const handleDelete = () => {
+    if (confirm('Are you sure you want to delete this study log?')) onDelete(log.id);
+  };
+
+  if (isEditing) {
+    return (
+      <div className="space-y-4">
+        <RecapCardEditor log={log} onSave={handleSave} onCancel={() => setIsEditing(false)} />
+        <div className="flex justify-end">
+          <Button variant="destructive" size="sm" onClick={handleDelete} className="h-8">
+            <Trash2 className="h-4 w-4 mr-1" /> Delete
+          </Button>
         </div>
       </div>
-    </CardContent>
-  )}
-</Card>
+    );
+  }
+
+  return (
+    <>
+      <Card className="hover:shadow-md transition-shadow duration-200">
+        {/* top right buttons */}
+        <div className="flex justify-end p-2">
+          <Button variant="ghost" size="sm" className="h-7 w-7 p-0" onClick={() => setIsEditing(true)}>
+            <Pencil className="h-4 w-4 text-gray-400" />
+          </Button>
+          <Button variant="ghost" size="sm" className="h-7 w-7 p-0" onClick={() => setIsExpanded(!isExpanded)}>
+            {isExpanded ? <ChevronUp className="h-4 w-4 text-gray-400" /> : <ChevronDown className="h-4 w-4 text-gray-400" />}
+          </Button>
+        </div>
+
+        {isExpanded && (
+          <CardContent className="bg-white px-6 pb-4 pt-0 space-y-5">
+            <div className="text-sm text-gray-700">Study notes go here</div>
+
+            <div className="grid grid-cols-3 gap-2">
+              <div className="bg-gray-100 h-20 rounded-md flex items-center justify-center text-gray-400">Image 1</div>
+              <div className="bg-gray-100 h-20 rounded-md flex items-center justify-center text-gray-400">Image 2</div>
+              <div className="bg-gray-100 h-20 rounded-md flex items-center justify-center text-gray-400">Image 3</div>
+            </div>
+
+            <div className="pt-3 border-t border-gray-100 text-[10px] text-gray-400 flex flex-wrap justify-between items-center">
+              <div className="flex gap-2">
+                <Badge className="text-xs px-2 py-0.5 bg-gray-100 text-gray-600 border border-gray-200">{log.subject}</Badge>
+                {log.topic && (
+                  <Badge className="text-[10px] px-2 py-0.5 bg-gray-50 text-gray-500 border border-gray-100">{log.topic}</Badge>
+                )}
+              </div>
+              <div className="text-[9px] text-gray-300">{formatDateTime(log.date, log.time)}</div>
+            </div>
+          </CardContent>
+        )}
+      </Card>
+
+      {log.images && log.images.length > 0 && (
+        <ImageLightbox
+          images={log.images}
+          initialIndex={lightboxIndex}
+          isOpen={lightboxOpen}
+          onClose={() => setLightboxOpen(false)}
+        />
+      )}
+    </>
+  );
+};
+
+export default RecapCard;
