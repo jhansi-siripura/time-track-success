@@ -1,4 +1,4 @@
-// Updated version of RecapCard.tsx focusing on clean layout, minimal top section, and subtle metadata
+// Final version of RecapCard.tsx with real-time data preserved and beautiful layout
 
 import React, { useState } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
@@ -67,10 +67,12 @@ const RecapCard: React.FC<RecapCardProps> = ({ log, onUpdate, onDelete }) => {
     setLightboxIndex(i);
     setLightboxOpen(true);
   };
+
   const handleSave = (data: Partial<StudyLog>) => {
     onUpdate(log.id, data);
     setIsEditing(false);
   };
+
   const handleDelete = () => {
     if (confirm('Are you sure you want to delete this study log?')) onDelete(log.id);
   };
@@ -91,7 +93,7 @@ const RecapCard: React.FC<RecapCardProps> = ({ log, onUpdate, onDelete }) => {
   return (
     <>
       <Card className="hover:shadow-md transition-shadow duration-200">
-        {/* top right buttons */}
+        {/* Top-right action buttons */}
         <div className="flex justify-end p-2">
           <Button variant="ghost" size="sm" className="h-7 w-7 p-0" onClick={() => setIsEditing(true)}>
             <Pencil className="h-4 w-4 text-gray-400" />
@@ -103,17 +105,43 @@ const RecapCard: React.FC<RecapCardProps> = ({ log, onUpdate, onDelete }) => {
 
         {isExpanded && (
           <CardContent className="bg-white px-6 pb-4 pt-0 space-y-5">
-            <div className="text-sm text-gray-700">Study notes go here</div>
+            {log.notes && (
+              <div
+                className="prose prose-sm max-w-none text-gray-800"
+                dangerouslySetInnerHTML={{ __html: log.notes }}
+                style={{ lineHeight: '1.6' }}
+              />
+            )}
 
-            <div className="grid grid-cols-3 gap-2">
-              <div className="bg-gray-100 h-20 rounded-md flex items-center justify-center text-gray-400">Image 1</div>
-              <div className="bg-gray-100 h-20 rounded-md flex items-center justify-center text-gray-400">Image 2</div>
-              <div className="bg-gray-100 h-20 rounded-md flex items-center justify-center text-gray-400">Image 3</div>
-            </div>
+            {log.images && log.images.length > 0 && (
+              <div className="pt-4 border-t border-gray-100">
+                <div className="mb-2 text-xs text-gray-500">Attachments ({log.images.length})</div>
+                <div className={`grid ${getImageGridLayout(log.images.length)} gap-2 w-fit`}>
+                  {log.images.map((src, i) => (
+                    <div
+                      key={i}
+                      className="group relative w-20 h-20 rounded-lg overflow-hidden border border-gray-200 shadow-sm cursor-pointer hover:shadow-md transition-all duration-200"
+                      onClick={() => handleImageClick(i)}
+                    >
+                      <img
+                        src={src}
+                        alt={`log-img-${i}`}
+                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-200"
+                        onError={(e) => {
+                          (e.target as HTMLImageElement).src = 'fallback.png';
+                        }}
+                      />
+                      <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-10 transition-all duration-200 rounded-lg" />
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
 
+            {/* Footer metadata */}
             <div className="pt-3 border-t border-gray-100 text-[10px] text-gray-400 flex flex-wrap justify-between items-center">
               <div className="flex gap-2">
-                <Badge className="text-xs px-2 py-0.5 bg-gray-100 text-gray-600 border border-gray-200">{log.subject}</Badge>
+                <Badge className={`text-xs px-2 py-0.5 border ${getSubjectColor(log.subject)}`}>{log.subject}</Badge>
                 {log.topic && (
                   <Badge className="text-[10px] px-2 py-0.5 bg-gray-50 text-gray-500 border border-gray-100">{log.topic}</Badge>
                 )}
