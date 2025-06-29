@@ -150,6 +150,17 @@ const RecapCard: React.FC<RecapCardProps> = ({ log, onUpdate, onDelete }) => {
             </div>
           </CardContent>
         )}
+              {!isExpanded && (
+          <div className="px-6 pb-3 text-[10px] text-gray-400 flex flex-wrap justify-between items-center">
+            <div className="flex gap-2">
+              <Badge className={`text-xs px-2 py-0.5 border ${getSubjectColor(log.subject)}`}>{log.subject}</Badge>
+              {log.topic && (
+                <Badge className="text-[10px] px-2 py-0.5 bg-gray-50 text-gray-500 border border-gray-100">{log.topic}</Badge>
+              )}
+            </div>
+            <div className="text-[9px] text-gray-500">{formatDateTime(log.date, log.time)}</div>
+          </div>
+        )}
       </Card>
 
       {log.images && log.images.length > 0 && (
