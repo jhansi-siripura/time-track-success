@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
@@ -21,6 +20,7 @@ import SettingsPage from "@/pages/SettingsPage";
 import PomodoroPage from "@/pages/PomodoroPage";
 import ChangelogPage from "@/pages/ChangelogPage";
 import NewFeatureToast from "@/components/Navigation/NewFeatureToast";
+import NewFeatureNotification from '@/components/Navigation/NewFeatureNotification';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -31,96 +31,148 @@ const queryClient = new QueryClient({
   },
 });
 
-const App: React.FC = () => {
+function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
         <PomodoroProvider>
-          <Toaster />
-          <Sonner />
-          <NewFeatureToast />
           <BrowserRouter>
-            <Routes>
-              <Route path="/landing" element={<LandingPage />} />
-              <Route path="/auth" element={<AuthPage />} />
-              <Route path="/home" element={
-                <ProtectedRoute>
-                  <MainLayout>
-                    <HomePage />
-                  </MainLayout>
-                </ProtectedRoute>
-              } />
-              <Route path="/dashboard" element={
-                <ProtectedRoute>
-                  <MainLayout>
-                    <DashboardPage />
-                  </MainLayout>
-                </ProtectedRoute>
-              } />
-              <Route path="/pomodoro" element={
-                <ProtectedRoute>
-                  <MainLayout>
-                    <PomodoroPage />
-                  </MainLayout>
-                </ProtectedRoute>
-              } />
-              <Route path="/study-plan" element={
-                <ProtectedRoute>
-                  <MainLayout>
-                    <StudyPlanPage />
-                  </MainLayout>
-                </ProtectedRoute>
-              } />
-              <Route path="/todos" element={
-                <ProtectedRoute>
-                  <MainLayout>
-                    <TodosPage />
-                  </MainLayout>
-                </ProtectedRoute>
-              } />
-              <Route path="/study-logs" element={
-                <ProtectedRoute>
-                  <MainLayout>
-                    <StudyLogsPage />
-                  </MainLayout>
-                </ProtectedRoute>
-              } />
-              <Route path="/add-session" element={
-                <ProtectedRoute>
-                  <MainLayout>
-                    <AddSessionPage />
-                  </MainLayout>
-                </ProtectedRoute>
-              } />
-              <Route path="/recap" element={
-                <ProtectedRoute>
-                  <MainLayout>
-                    <RecapPage />
-                  </MainLayout>
-                </ProtectedRoute>
-              } />
-              <Route path="/settings" element={
-                <ProtectedRoute>
-                  <MainLayout>
-                    <SettingsPage />
-                  </MainLayout>
-                </ProtectedRoute>
-              } />
-              <Route path="/changelog" element={
-                <ProtectedRoute>
-                  <MainLayout>
-                    <ChangelogPage />
-                  </MainLayout>
-                </ProtectedRoute>
-              } />
-              <Route path="/" element={<Navigate to="/landing" replace />} />
-              <Route path="*" element={<Navigate to="/landing" replace />} />
-            </Routes>
+            <div className="min-h-screen bg-gray-50">
+              <Routes>
+                <Route path="/" element={<Index />} />
+                <Route path="/landing" element={<LandingPage />} />
+                <Route 
+                  path="/dashboard" 
+                  element={
+                    <ProtectedRoute>
+                      <MainLayout>
+                        <DashboardPage />
+                      </MainLayout>
+                    </ProtectedRoute>
+                  } 
+                />
+                <Route 
+                  path="/study-logs" 
+                  element={
+                    <ProtectedRoute>
+                      <MainLayout>
+                        <StudyLogsPage />
+                      </MainLayout>
+                    </ProtectedRoute>
+                  } 
+                />
+                <Route 
+                  path="/add-session" 
+                  element={
+                    <ProtectedRoute>
+                      <MainLayout>
+                        <AddSessionPage />
+                      </MainLayout>
+                    </ProtectedRoute>
+                  } 
+                />
+                <Route 
+                  path="/study-goals" 
+                  element={
+                    <ProtectedRoute>
+                      <MainLayout>
+                        <StudyGoalsPage />
+                      </MainLayout>
+                    </ProtectedRoute>
+                  } 
+                />
+                <Route 
+                  path="/subjects" 
+                  element={
+                    <ProtectedRoute>
+                      <MainLayout>
+                        <SubjectsPage />
+                      </MainLayout>
+                    </ProtectedRoute>
+                  } 
+                />
+                <Route 
+                  path="/courses" 
+                  element={
+                    <ProtectedRoute>
+                      <MainLayout>
+                        <CoursesPage />
+                      </MainLayout>
+                    </ProtectedRoute>
+                  } 
+                />
+                <Route 
+                  path="/todos" 
+                  element={
+                    <ProtectedRoute>
+                      <MainLayout>
+                        <TodosPage />
+                      </MainLayout>
+                    </ProtectedRoute>
+                  } 
+                />
+                <Route 
+                  path="/study-plan" 
+                  element={
+                    <ProtectedRoute>
+                      <MainLayout>
+                        <StudyPlanPage />
+                      </MainLayout>
+                    </ProtectedRoute>
+                  } 
+                />
+                <Route 
+                  path="/recap" 
+                  element={
+                    <ProtectedRoute>
+                      <MainLayout>
+                        <RecapPage />
+                      </MainLayout>
+                    </ProtectedRoute>
+                  } 
+                />
+                <Route 
+                  path="/pomodoro" 
+                  element={
+                    <ProtectedRoute>
+                      <MainLayout>
+                        <PomodoroPage />
+                      </MainLayout>
+                    </ProtectedRoute>
+                  } 
+                />
+                <Route 
+                  path="/settings" 
+                  element={
+                    <ProtectedRoute>
+                      <MainLayout>
+                        <SettingsPage />
+                      </MainLayout>
+                    </ProtectedRoute>
+                  } 
+                />
+                <Route 
+                  path="/changelog" 
+                  element={
+                    <ProtectedRoute>
+                      <MainLayout>
+                        <ChangelogPage />
+                      </MainLayout>
+                    </ProtectedRoute>
+                  } 
+                />
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+              
+              {/* Global components */}
+              <Toaster />
+              <NewFeatureNotification />
+            </div>
           </BrowserRouter>
         </PomodoroProvider>
       </AuthProvider>
     </QueryClientProvider>
   );
-};
+}
 
 export default App;
