@@ -20,6 +20,7 @@ import RecapPage from "@/pages/RecapPage";
 import SettingsPage from "@/pages/SettingsPage";
 import PomodoroPage from "@/pages/PomodoroPage";
 import ChangelogPage from "@/pages/ChangelogPage";
+import NewFeatureToast from "@/components/Navigation/NewFeatureToast";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -37,6 +38,7 @@ const App: React.FC = () => {
         <PomodoroProvider>
           <Toaster />
           <Sonner />
+          <NewFeatureToast />
           <BrowserRouter>
             <Routes>
               <Route path="/landing" element={<LandingPage />} />

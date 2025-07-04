@@ -325,6 +325,35 @@ export type Database = {
           },
         ]
       }
+      user_changelog_views: {
+        Row: {
+          changelog_id: string
+          id: string
+          user_id: string
+          viewed_at: string
+        }
+        Insert: {
+          changelog_id: string
+          id?: string
+          user_id: string
+          viewed_at?: string
+        }
+        Update: {
+          changelog_id?: string
+          id?: string
+          user_id?: string
+          viewed_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_changelog_views_changelog_id_fkey"
+            columns: ["changelog_id"]
+            isOneToOne: false
+            referencedRelation: "app_changelog"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       subject_stats: {
@@ -352,6 +381,10 @@ export type Database = {
           actual_hours: number
           expertise_level: string
         }[]
+      }
+      mark_changelog_viewed: {
+        Args: { changelog_entry_id: string }
+        Returns: undefined
       }
     }
     Enums: {

@@ -1,12 +1,15 @@
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { CalendarDays, Zap, Bug, Wrench } from 'lucide-react';
+import { useChangelogNotifications } from '@/hooks/useChangelogNotifications';
 
 const ChangelogPage = () => {
+  const { markAsViewed } = useChangelogNotifications();
+  
   const { data: changelog, isLoading } = useQuery({
     queryKey: ['changelog'],
     queryFn: async () => {
@@ -21,6 +24,15 @@ const ChangelogPage = () => {
     },
   });
 
+  // Mark all changelog entries as viewed when user visits the page
+  useEffect(() => {
+    if (changelog && changelog.length > 0) {
+      changelog.forEach(entry => {
+        markAsViewed(entry.id);
+      });
+    }
+  }, [changelog, markAsViewed]);
+
   const getChangeTypeIcon = (type: string) => {
     switch (type) {
       case 'feature':
@@ -30,7 +42,7 @@ const ChangelogPage = () => {
       case 'improvement':
         return <Wrench className="w-4 h-4" />;
       default:
-        return <CalendarDays className="w-4 h-4" />;
+        return <CalendarDays className="w-4 w-4" />;
     }
   };
 

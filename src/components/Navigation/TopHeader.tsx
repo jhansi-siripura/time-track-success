@@ -6,6 +6,7 @@ import { Input } from '@/components/ui/input';
 import { useAuth } from '@/contexts/AuthContext';
 import { LogOut, Settings, Search, FileText } from 'lucide-react';
 import { SidebarTrigger } from '@/components/ui/sidebar';
+import ChangelogNotificationBadge from './ChangelogNotificationBadge';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -74,6 +75,7 @@ const TopHeader = () => {
                 <Link to="/changelog" className="flex items-center space-x-2 cursor-pointer">
                   <FileText className="h-4 w-4" />
                   <span>Changelog</span>
+                  <ChangelogNotificationBadge />
                 </Link>
               </DropdownMenuItem>
               <DropdownMenuSeparator />
