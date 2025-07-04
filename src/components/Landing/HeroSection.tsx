@@ -13,7 +13,7 @@ const HeroSection = () => {
           <div className="space-y-8 text-center lg:text-left">
             <div className="space-y-4">
               <h1 className="text-4xl md:text-6xl font-bold text-gray-900 leading-tight">
-                Master Your
+                Mastery Your
                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600">
                   {" "}Study Journey
                 </span>
