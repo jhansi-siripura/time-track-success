@@ -17,6 +17,8 @@ import StudyPlanPage from "@/pages/StudyPlanPage";
 import TodosPage from "@/pages/TodosPage";
 import RecapPage from "@/pages/RecapPage";
 import SettingsPage from "@/pages/SettingsPage";
+import PomodoroPage from "@/pages/PomodoroPage";
+import ChangelogPage from "@/pages/ChangelogPage";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -48,6 +50,13 @@ const App: React.FC = () => {
               <ProtectedRoute>
                 <MainLayout>
                   <DashboardPage />
+                </MainLayout>
+              </ProtectedRoute>
+            } />
+            <Route path="/pomodoro" element={
+              <ProtectedRoute>
+                <MainLayout>
+                  <PomodoroPage />
                 </MainLayout>
               </ProtectedRoute>
             } />
@@ -90,6 +99,13 @@ const App: React.FC = () => {
               <ProtectedRoute>
                 <MainLayout>
                   <SettingsPage />
+                </MainLayout>
+              </ProtectedRoute>
+            } />
+            <Route path="/changelog" element={
+              <ProtectedRoute>
+                <MainLayout>
+                  <ChangelogPage />
                 </MainLayout>
               </ProtectedRoute>
             } />

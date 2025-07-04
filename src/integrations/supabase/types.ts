@@ -9,6 +9,39 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      app_changelog: {
+        Row: {
+          change_type: string
+          created_at: string
+          description: string
+          id: string
+          is_published: boolean
+          title: string
+          updated_at: string
+          version: string
+        }
+        Insert: {
+          change_type?: string
+          created_at?: string
+          description: string
+          id?: string
+          is_published?: boolean
+          title: string
+          updated_at?: string
+          version: string
+        }
+        Update: {
+          change_type?: string
+          created_at?: string
+          description?: string
+          id?: string
+          is_published?: boolean
+          title?: string
+          updated_at?: string
+          version?: string
+        }
+        Relationships: []
+      }
       courses: {
         Row: {
           created_at: string
@@ -55,6 +88,54 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      pomodoro_settings: {
+        Row: {
+          auto_start_breaks: boolean
+          auto_start_pomodoros: boolean
+          created_at: string
+          cycles_until_long_break: number
+          focus_duration: number
+          id: string
+          long_break_duration: number
+          short_break_duration: number
+          sound_focus: string | null
+          sound_long_break: string | null
+          sound_short_break: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          auto_start_breaks?: boolean
+          auto_start_pomodoros?: boolean
+          created_at?: string
+          cycles_until_long_break?: number
+          focus_duration?: number
+          id?: string
+          long_break_duration?: number
+          short_break_duration?: number
+          sound_focus?: string | null
+          sound_long_break?: string | null
+          sound_short_break?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          auto_start_breaks?: boolean
+          auto_start_pomodoros?: boolean
+          created_at?: string
+          cycles_until_long_break?: number
+          focus_duration?: number
+          id?: string
+          long_break_duration?: number
+          short_break_duration?: number
+          sound_focus?: string | null
+          sound_long_break?: string | null
+          sound_short_break?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
       }
       revision_streaks: {
         Row: {
@@ -113,6 +194,8 @@ export type Database = {
           id: number
           images: string[] | null
           notes: string | null
+          pomodoro_cycle: number | null
+          session_type: string | null
           source: string | null
           subject: string | null
           time: string | null
@@ -127,6 +210,8 @@ export type Database = {
           id?: number
           images?: string[] | null
           notes?: string | null
+          pomodoro_cycle?: number | null
+          session_type?: string | null
           source?: string | null
           subject?: string | null
           time?: string | null
@@ -141,6 +226,8 @@ export type Database = {
           id?: number
           images?: string[] | null
           notes?: string | null
+          pomodoro_cycle?: number | null
+          session_type?: string | null
           source?: string | null
           subject?: string | null
           time?: string | null

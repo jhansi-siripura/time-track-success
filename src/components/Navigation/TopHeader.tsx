@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useAuth } from '@/contexts/AuthContext';
-import { LogOut, Settings, Search } from 'lucide-react';
+import { LogOut, Settings, Search, FileText } from 'lucide-react';
 import { SidebarTrigger } from '@/components/ui/sidebar';
 import {
   DropdownMenu,
@@ -68,6 +68,12 @@ const TopHeader = () => {
                 <Link to="/settings" className="flex items-center space-x-2 cursor-pointer">
                   <Settings className="h-4 w-4" />
                   <span>Settings</span>
+                </Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem asChild>
+                <Link to="/changelog" className="flex items-center space-x-2 cursor-pointer">
+                  <FileText className="h-4 w-4" />
+                  <span>Changelog</span>
                 </Link>
               </DropdownMenuItem>
               <DropdownMenuSeparator />
