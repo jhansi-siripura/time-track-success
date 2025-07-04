@@ -53,7 +53,7 @@ const FeaturesShowcase = () => {
       description: 'Monitor your improvement over time with trend analysis',
       color: 'from-yellow-500 to-pink-600',
       bgColor: 'bg-orange-50'
-    }
+    },
   ];
 
   return (
