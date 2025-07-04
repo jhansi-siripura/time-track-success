@@ -47,6 +47,7 @@ function App() {
               <Routes>
                 <Route path="/" element={<Index />} />
                 <Route path="/landing" element={<LandingPage />} />
+                <Route path="/auth" element={<AuthPage />} />
                 <Route 
                   path="/dashboard" 
                   element={
