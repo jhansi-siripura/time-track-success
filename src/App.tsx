@@ -1,3 +1,4 @@
+
 import React from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
@@ -9,6 +10,7 @@ import ProtectedRoute from "@/components/Layout/ProtectedRoute";
 import MainLayout from "@/components/Layout/MainLayout";
 import AuthPage from "@/components/Auth/AuthPage";
 import LandingPage from "@/pages/LandingPage";
+import Index from "@/pages/Index";
 import HomePage from "@/pages/HomePage";
 import DashboardPage from "@/pages/DashboardPage";
 import StudyLogsPage from "@/pages/StudyLogsPage";
@@ -19,6 +21,10 @@ import RecapPage from "@/pages/RecapPage";
 import SettingsPage from "@/pages/SettingsPage";
 import PomodoroPage from "@/pages/PomodoroPage";
 import ChangelogPage from "@/pages/ChangelogPage";
+import StudyGoalsPage from "@/pages/StudyGoalsPage";
+import SubjectsPage from "@/pages/SubjectsPage";
+import CoursesPage from "@/pages/CoursesPage";
+import NotFound from "@/pages/NotFound";
 import NewFeatureToast from "@/components/Navigation/NewFeatureToast";
 import NewFeatureNotification from '@/components/Navigation/NewFeatureNotification';
 
