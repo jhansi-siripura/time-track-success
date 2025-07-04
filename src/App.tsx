@@ -6,6 +6,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider } from "@/contexts/AuthContext";
 import ProtectedRoute from "@/components/Layout/ProtectedRoute";
+import MainLayout from "@/components/Layout/MainLayout";
 import AuthPage from "@/components/Auth/AuthPage";
 import LandingPage from "@/pages/LandingPage";
 import HomePage from "@/pages/HomePage";
@@ -15,6 +16,7 @@ import AddSessionPage from "@/pages/AddSessionPage";
 import StudyPlanPage from "@/pages/StudyPlanPage";
 import TodosPage from "@/pages/TodosPage";
 import RecapPage from "@/pages/RecapPage";
+import SettingsPage from "@/pages/SettingsPage";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -37,37 +39,58 @@ const App: React.FC = () => {
             <Route path="/auth" element={<AuthPage />} />
             <Route path="/home" element={
               <ProtectedRoute>
-                <HomePage />
+                <MainLayout>
+                  <HomePage />
+                </MainLayout>
               </ProtectedRoute>
             } />
             <Route path="/dashboard" element={
               <ProtectedRoute>
-                <DashboardPage />
+                <MainLayout>
+                  <DashboardPage />
+                </MainLayout>
               </ProtectedRoute>
             } />
             <Route path="/study-plan" element={
               <ProtectedRoute>
-                <StudyPlanPage />
+                <MainLayout>
+                  <StudyPlanPage />
+                </MainLayout>
               </ProtectedRoute>
             } />
             <Route path="/todos" element={
               <ProtectedRoute>
-                <TodosPage />
+                <MainLayout>
+                  <TodosPage />
+                </MainLayout>
               </ProtectedRoute>
             } />
             <Route path="/study-logs" element={
               <ProtectedRoute>
-                <StudyLogsPage />
+                <MainLayout>
+                  <StudyLogsPage />
+                </MainLayout>
               </ProtectedRoute>
             } />
             <Route path="/add-session" element={
               <ProtectedRoute>
-                <AddSessionPage />
+                <MainLayout>
+                  <AddSessionPage />
+                </MainLayout>
               </ProtectedRoute>
             } />
             <Route path="/recap" element={
               <ProtectedRoute>
-                <RecapPage />
+                <MainLayout>
+                  <RecapPage />
+                </MainLayout>
+              </ProtectedRoute>
+            } />
+            <Route path="/settings" element={
+              <ProtectedRoute>
+                <MainLayout>
+                  <SettingsPage />
+                </MainLayout>
               </ProtectedRoute>
             } />
             <Route path="/" element={<Navigate to="/landing" replace />} />
