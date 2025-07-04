@@ -5,6 +5,7 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider } from "@/contexts/AuthContext";
+import { PomodoroProvider } from "@/contexts/PomodoroContext";
 import ProtectedRoute from "@/components/Layout/ProtectedRoute";
 import MainLayout from "@/components/Layout/MainLayout";
 import AuthPage from "@/components/Auth/AuthPage";
@@ -33,86 +34,88 @@ const App: React.FC = () => {
   return (
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
-        <Toaster />
-        <Sonner />
-        <BrowserRouter>
-          <Routes>
-            <Route path="/landing" element={<LandingPage />} />
-            <Route path="/auth" element={<AuthPage />} />
-            <Route path="/home" element={
-              <ProtectedRoute>
-                <MainLayout>
-                  <HomePage />
-                </MainLayout>
-              </ProtectedRoute>
-            } />
-            <Route path="/dashboard" element={
-              <ProtectedRoute>
-                <MainLayout>
-                  <DashboardPage />
-                </MainLayout>
-              </ProtectedRoute>
-            } />
-            <Route path="/pomodoro" element={
-              <ProtectedRoute>
-                <MainLayout>
-                  <PomodoroPage />
-                </MainLayout>
-              </ProtectedRoute>
-            } />
-            <Route path="/study-plan" element={
-              <ProtectedRoute>
-                <MainLayout>
-                  <StudyPlanPage />
-                </MainLayout>
-              </ProtectedRoute>
-            } />
-            <Route path="/todos" element={
-              <ProtectedRoute>
-                <MainLayout>
-                  <TodosPage />
-                </MainLayout>
-              </ProtectedRoute>
-            } />
-            <Route path="/study-logs" element={
-              <ProtectedRoute>
-                <MainLayout>
-                  <StudyLogsPage />
-                </MainLayout>
-              </ProtectedRoute>
-            } />
-            <Route path="/add-session" element={
-              <ProtectedRoute>
-                <MainLayout>
-                  <AddSessionPage />
-                </MainLayout>
-              </ProtectedRoute>
-            } />
-            <Route path="/recap" element={
-              <ProtectedRoute>
-                <MainLayout>
-                  <RecapPage />
-                </MainLayout>
-              </ProtectedRoute>
-            } />
-            <Route path="/settings" element={
-              <ProtectedRoute>
-                <MainLayout>
-                  <SettingsPage />
-                </MainLayout>
-              </ProtectedRoute>
-            } />
-            <Route path="/changelog" element={
-              <ProtectedRoute>
-                <MainLayout>
-                  <ChangelogPage />
-                </MainLayout>
-              </ProtectedRoute>
-            } />
-            <Route path="/" element={<Navigate to="/landing" replace />} />
-            <Route path="*" element={<Navigate to="/landing" replace />} />
-          </Routes>
-        </BrowserRouter>
+        <PomodoroProvider>
+          <Toaster />
+          <Sonner />
+          <BrowserRouter>
+            <Routes>
+              <Route path="/landing" element={<LandingPage />} />
+              <Route path="/auth" element={<AuthPage />} />
+              <Route path="/home" element={
+                <ProtectedRoute>
+                  <MainLayout>
+                    <HomePage />
+                  </MainLayout>
+                </ProtectedRoute>
+              } />
+              <Route path="/dashboard" element={
+                <ProtectedRoute>
+                  <MainLayout>
+                    <DashboardPage />
+                  </MainLayout>
+                </ProtectedRoute>
+              } />
+              <Route path="/pomodoro" element={
+                <ProtectedRoute>
+                  <MainLayout>
+                    <PomodoroPage />
+                  </MainLayout>
+                </ProtectedRoute>
+              } />
+              <Route path="/study-plan" element={
+                <ProtectedRoute>
+                  <MainLayout>
+                    <StudyPlanPage />
+                  </MainLayout>
+                </ProtectedRoute>
+              } />
+              <Route path="/todos" element={
+                <ProtectedRoute>
+                  <MainLayout>
+                    <TodosPage />
+                  </MainLayout>
+                </ProtectedRoute>
+              } />
+              <Route path="/study-logs" element={
+                <ProtectedRoute>
+                  <MainLayout>
+                    <StudyLogsPage />
+                  </MainLayout>
+                </ProtectedRoute>
+              } />
+              <Route path="/add-session" element={
+                <ProtectedRoute>
+                  <MainLayout>
+                    <AddSessionPage />
+                  </MainLayout>
+                </ProtectedRoute>
+              } />
+              <Route path="/recap" element={
+                <ProtectedRoute>
+                  <MainLayout>
+                    <RecapPage />
+                  </MainLayout>
+                </ProtectedRoute>
+              } />
+              <Route path="/settings" element={
+                <ProtectedRoute>
+                  <MainLayout>
+                    <SettingsPage />
+                  </MainLayout>
+                </ProtectedRoute>
+              } />
+              <Route path="/changelog" element={
+                <ProtectedRoute>
+                  <MainLayout>
+                    <ChangelogPage />
+                  </MainLayout>
+                </ProtectedRoute>
+              } />
+              <Route path="/" element={<Navigate to="/landing" replace />} />
+              <Route path="*" element={<Navigate to="/landing" replace />} />
+            </Routes>
+          </BrowserRouter>
+        </PomodoroProvider>
       </AuthProvider>
     </QueryClientProvider>
   );

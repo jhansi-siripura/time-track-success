@@ -1,40 +1,28 @@
 
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useEffect, useCallback, useRef } from 'react';
 import { usePomodoroSettings } from './usePomodoroSettings';
+import { usePomodoro } from '@/contexts/PomodoroContext';
+import { useAudioNotifications } from './useAudioNotifications';
 
 export type SessionType = 'focus' | 'short_break' | 'long_break';
 
-export interface PomodoroState {
-  sessionType: SessionType;
-  timeLeft: number;
-  isActive: boolean;
-  currentCycle: number;
-  totalCycles: number;
-}
-
 export const usePomodoroTimer = () => {
   const { settings } = usePomodoroSettings();
-  const [state, setState] = useState<PomodoroState>({
-    sessionType: 'focus',
-    timeLeft: 25 * 60, // 25 minutes in seconds
-    isActive: false,
-    currentCycle: 1,
-    totalCycles: 4,
-  });
-
+  const { state, dispatch, formatTime } = usePomodoro();
+  const { playNotificationSound, requestNotificationPermission } = useAudioNotifications();
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
-  const audioRef = useRef<HTMLAudioElement | null>(null);
+  const completedSessionRef = useRef<{ type: SessionType; duration: number; cycle: number } | null>(null);
 
   // Initialize timer with settings
   useEffect(() => {
     if (settings) {
-      setState(prev => ({
-        ...prev,
-        timeLeft: settings.focus_duration * 60,
+      dispatch({
+        type: 'INITIALIZE_SETTINGS',
+        focusDuration: settings.focus_duration,
         totalCycles: settings.cycles_until_long_break,
-      }));
+      });
     }
-  }, [settings]);
+  }, [settings, dispatch]);
 
   const getSessionDuration = useCallback((type: SessionType): number => {
     if (!settings) return 25 * 60;
@@ -51,91 +39,53 @@ export const usePomodoroTimer = () => {
     }
   }, [settings]);
 
-  const playNotificationSound = useCallback((type: SessionType) => {
-    if (!settings) return;
-    
-    let soundFile = 'bell.mp3';
-    switch (type) {
-      case 'focus':
-        soundFile = `${settings.sound_focus}.mp3`;
-        break;
-      case 'short_break':
-        soundFile = `${settings.sound_short_break}.mp3`;
-        break;
-      case 'long_break':
-        soundFile = `${settings.sound_long_break}.mp3`;
-        break;
-    }
-
-    try {
-      if (audioRef.current) {
-        audioRef.current.src = `/sounds/${soundFile}`;
-        audioRef.current.play();
-      }
-    } catch (error) {
-      console.log('Could not play notification sound:', error);
-    }
-
-    // Browser notification
-    if ('Notification' in window && Notification.permission === 'granted') {
-      const title = type === 'focus' ? 'Focus Session Complete!' : 'Break Time Over!';
-      const body = type === 'focus' ? 'Time for a break!' : 'Ready to focus again?';
-      new Notification(title, { body, icon: '/favicon.ico' });
-    }
-  }, [settings]);
-
   const startTimer = useCallback(() => {
-    setState(prev => ({ ...prev, isActive: true }));
-  }, []);
+    dispatch({ type: 'START_TIMER' });
+    requestNotificationPermission();
+  }, [dispatch, requestNotificationPermission]);
 
   const pauseTimer = useCallback(() => {
-    setState(prev => ({ ...prev, isActive: false }));
-  }, []);
+    dispatch({ type: 'PAUSE_TIMER' });
+  }, [dispatch]);
 
   const resetTimer = useCallback(() => {
-    setState(prev => ({
-      ...prev,
-      isActive: false,
-      timeLeft: getSessionDuration(prev.sessionType),
-    }));
-  }, [getSessionDuration]);
+    dispatch({
+      type: 'RESET_TIMER',
+      sessionType: state.sessionType,
+      duration: getSessionDuration(state.sessionType),
+    });
+  }, [dispatch, state.sessionType, getSessionDuration]);
 
   const skipSession = useCallback(() => {
-    setState(prev => {
-      const isLastCycle = prev.currentCycle >= prev.totalCycles;
-      let nextSessionType: SessionType;
-      let nextCycle = prev.currentCycle;
+    const isLastCycle = state.currentCycle >= state.totalCycles;
+    let nextSessionType: SessionType;
+    let nextCycle = state.currentCycle;
 
-      if (prev.sessionType === 'focus') {
-        nextSessionType = isLastCycle ? 'long_break' : 'short_break';
-        if (isLastCycle) {
-          nextCycle = 1;
-        }
-      } else {
-        nextSessionType = 'focus';
-        if (prev.sessionType === 'short_break') {
-          nextCycle = prev.currentCycle + 1;
-        }
+    if (state.sessionType === 'focus') {
+      nextSessionType = isLastCycle ? 'long_break' : 'short_break';
+      if (isLastCycle) {
+        nextCycle = 1;
       }
+    } else {
+      nextSessionType = 'focus';
+      if (state.sessionType === 'short_break') {
+        nextCycle = state.currentCycle + 1;
+      }
+    }
 
-      return {
-        ...prev,
-        sessionType: nextSessionType,
-        timeLeft: getSessionDuration(nextSessionType),
-        currentCycle: nextCycle,
-        isActive: false,
-      };
+    dispatch({
+      type: 'SKIP_SESSION',
+      nextSessionType,
+      nextDuration: getSessionDuration(nextSessionType),
+      nextCycle,
     });
-  }, [getSessionDuration]);
+  }, [dispatch, state.sessionType, state.currentCycle, state.totalCycles, getSessionDuration]);
 
   // Timer countdown effect
   useEffect(() => {
     if (state.isActive && state.timeLeft > 0) {
       intervalRef.current = setInterval(() => {
-        setState(prev => ({
-          ...prev,
-          timeLeft: prev.timeLeft - 1,
-        }));
+        dispatch({ type: 'TICK' });
       }, 1000);
     } else {
       if (intervalRef.current) {
@@ -149,11 +99,28 @@ export const usePomodoroTimer = () => {
         clearInterval(intervalRef.current);
       }
     };
-  }, [state.isActive, state.timeLeft]);
+  }, [state.isActive, state.timeLeft, dispatch]);
 
   // Handle session completion
   useEffect(() => {
     if (state.timeLeft === 0 && state.isActive) {
+      // Complete the session
+      const sessionDuration = getSessionDuration(state.sessionType);
+      dispatch({
+        type: 'COMPLETE_SESSION',
+        sessionType: state.sessionType,
+        cycle: state.currentCycle,
+        duration: sessionDuration / 60, // Convert to minutes
+      });
+
+      // Store completed session for dialog
+      completedSessionRef.current = {
+        type: state.sessionType,
+        duration: sessionDuration / 60,
+        cycle: state.currentCycle,
+      };
+
+      // Play notification sound
       playNotificationSound(state.sessionType);
       
       // Auto-advance to next session if enabled
@@ -163,25 +130,23 @@ export const usePomodoroTimer = () => {
       ) {
         setTimeout(() => {
           skipSession();
-          startTimer();
+          setTimeout(() => {
+            startTimer();
+          }, 1000);
         }, 2000);
       } else {
-        setState(prev => ({ ...prev, isActive: false }));
+        // Just pause the timer
+        dispatch({ type: 'PAUSE_TIMER' });
       }
     }
-  }, [state.timeLeft, state.isActive, state.sessionType, settings, playNotificationSound, skipSession, startTimer]);
+  }, [state.timeLeft, state.isActive, state.sessionType, state.currentCycle, settings, dispatch, getSessionDuration, playNotificationSound, skipSession, startTimer]);
 
-  // Request notification permission
-  useEffect(() => {
-    if ('Notification' in window && Notification.permission === 'default') {
-      Notification.requestPermission();
-    }
+  const getLastCompletedSession = useCallback(() => {
+    return completedSessionRef.current;
   }, []);
 
-  const formatTime = useCallback((seconds: number): string => {
-    const mins = Math.floor(seconds / 60);
-    const secs = seconds % 60;
-    return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+  const clearLastCompletedSession = useCallback(() => {
+    completedSessionRef.current = null;
   }, []);
 
   return {
@@ -192,5 +157,7 @@ export const usePomodoroTimer = () => {
     skipSession,
     formatTime,
     getSessionDuration,
+    getLastCompletedSession,
+    clearLastCompletedSession,
   };
 };

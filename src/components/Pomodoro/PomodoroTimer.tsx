@@ -1,10 +1,11 @@
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Play, Pause, RotateCcw, SkipForward } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { usePomodoroTimer } from '@/hooks/usePomodoroTimer';
+import StudyLogDialog from './StudyLogDialog';
 
 const PomodoroTimer = () => {
   const {
@@ -19,7 +20,38 @@ const PomodoroTimer = () => {
     skipSession,
     formatTime,
     getSessionDuration,
+    getLastCompletedSession,
+    clearLastCompletedSession,
   } = usePomodoroTimer();
+
+  const [showLogDialog, setShowLogDialog] = useState(false);
+  const [lastCompletedSession, setLastCompletedSession] = useState<{
+    type: any;
+    duration: number;
+    cycle: number;
+  } | null>(null);
+
+  // Check for completed sessions
+  useEffect(() => {
+    const checkForCompletedSession = () => {
+      const completed = getLastCompletedSession();
+      if (completed && completed.type === 'focus' && !lastCompletedSession) {
+        setLastCompletedSession(completed);
+        setShowLogDialog(true);
+      }
+    };
+
+    const interval = setInterval(checkForCompletedSession, 1000);
+    return () => clearInterval(interval);
+  }, [getLastCompletedSession, lastCompletedSession]);
+
+  const handleLogDialogClose = (open: boolean) => {
+    if (!open) {
+      clearLastCompletedSession();
+      setLastCompletedSession(null);
+    }
+    setShowLogDialog(open);
+  };
 
   const totalTime = getSessionDuration(sessionType);
   const progress = ((totalTime - timeLeft) / totalTime) * 100;
@@ -139,8 +171,16 @@ const PomodoroTimer = () => {
         </Card>
       </div>
 
-      {/* Hidden Audio Element */}
-      <audio ref={(el) => { if (el) (window as any).pomodoroAudio = el; }} preload="auto" />
+      {/* Study Log Dialog */}
+      {lastCompletedSession && (
+        <StudyLogDialog
+          open={showLogDialog}
+          onOpenChange={handleLogDialogClose}
+          sessionType={lastCompletedSession.type}
+          duration={lastCompletedSession.duration}
+          cycle={lastCompletedSession.cycle}
+        />
+      )}
     </div>
   );
 };
