@@ -31,6 +31,74 @@ export const useAudioNotifications = () => {
     }
   }, []);
 
+  const createBeepTone = useCallback(async (frequency: number = 800, duration: number = 0.3): Promise<AudioBuffer> => {
+    if (!audioContextRef.current) {
+      throw new Error('Audio context not initialized');
+    }
+
+    const sampleRate = audioContextRef.current.sampleRate;
+    const numSamples = sampleRate * duration;
+    const audioBuffer = audioContextRef.current.createBuffer(1, numSamples, sampleRate);
+    const channelData = audioBuffer.getChannelData(0);
+
+    for (let i = 0; i < numSamples; i++) {
+      const t = i / sampleRate;
+      // Create a simple sine wave with fade in/out to avoid clicks
+      const envelope = Math.sin(Math.PI * t / duration);
+      channelData[i] = Math.sin(2 * Math.PI * frequency * t) * envelope * 0.3;
+    }
+
+    return audioBuffer;
+  }, []);
+
+  const playToneFromBuffer = useCallback(async (audioBuffer: AudioBuffer) => {
+    if (!audioContextRef.current) {
+      throw new Error('Audio context not initialized');
+    }
+
+    const source = audioContextRef.current.createBufferSource();
+    source.buffer = audioBuffer;
+    source.connect(audioContextRef.current.destination);
+    source.start();
+    
+    return new Promise<void>((resolve) => {
+      source.onended = () => resolve();
+    });
+  }, []);
+
+  const playBuiltInTone = useCallback(async (sessionType: SessionType) => {
+    try {
+      await initializeAudioContext();
+      
+      let frequency = 800;
+      let duration = 0.3;
+      
+      switch (sessionType) {
+        case 'focus':
+          frequency = 800; // Bell-like tone
+          duration = 0.5;
+          break;
+        case 'short_break':
+          frequency = 1000; // Higher chime
+          duration = 0.3;
+          break;
+        case 'long_break':
+          frequency = 600; // Lower gong-like
+          duration = 0.7;
+          break;
+      }
+
+      console.log(`Playing built-in tone: ${frequency}Hz for ${duration}s`);
+      const audioBuffer = await createBeepTone(frequency, duration);
+      await playToneFromBuffer(audioBuffer);
+      console.log('Built-in tone played successfully');
+      return true;
+    } catch (error) {
+      console.error('Built-in tone failed:', error);
+      return false;
+    }
+  }, [initializeAudioContext, createBeepTone, playToneFromBuffer]);
+
   const testAudioFile = useCallback(async (soundFile: string): Promise<boolean> => {
     return new Promise((resolve) => {
       const audio = new Audio(`/sounds/${soundFile}.mp3`);
@@ -58,6 +126,7 @@ export const useAudioNotifications = () => {
       // Timeout after 3 seconds
       setTimeout(() => {
         cleanup();
+        console.log(`Audio file ${soundFile}.mp3 test timed out`);
         resolve(false);
       }, 3000);
     });
@@ -89,8 +158,11 @@ export const useAudioNotifications = () => {
     // Test if audio file exists first
     const audioFileExists = await testAudioFile(soundFile);
     if (!audioFileExists) {
-      console.warn(`Audio file ${soundFile}.mp3 not found, falling back to bell.mp3`);
-      soundFile = 'bell';
+      console.warn(`Audio file ${soundFile}.mp3 not available, using built-in tone`);
+      const toneSuccess = await playBuiltInTone(sessionType);
+      if (toneSuccess) {
+        return; // Successfully played built-in tone
+      }
     }
 
     try {
@@ -119,18 +191,11 @@ export const useAudioNotifications = () => {
       console.error('Audio playback failed:', error);
       setLastError(error.message || 'Audio playback failed');
       
-      // Try fallback with bell sound if not already using it
-      if (soundFile !== 'bell') {
-        try {
-          console.log('Attempting fallback to bell.mp3');
-          const fallbackAudio = new Audio('/sounds/bell.mp3');
-          fallbackAudio.volume = 0.5;
-          await fallbackAudio.play();
-          console.log('Fallback audio played successfully');
-        } catch (fallbackError) {
-          console.error('Fallback audio also failed:', fallbackError);
-          setLastError('All audio playback attempts failed');
-        }
+      // Fallback to built-in tone
+      console.log('Falling back to built-in tone');
+      const toneSuccess = await playBuiltInTone(sessionType);
+      if (!toneSuccess) {
+        setLastError('Both audio file and built-in tone failed');
       }
     }
 
@@ -151,7 +216,7 @@ export const useAudioNotifications = () => {
         console.error('Browser notification failed:', notificationError);
       }
     }
-  }, [settings, initializeAudioContext, testAudioFile]);
+  }, [settings, initializeAudioContext, testAudioFile, playBuiltInTone]);
 
   const testSound = useCallback(async (soundName: string) => {
     console.log(`Testing sound: ${soundName}`);
@@ -160,6 +225,7 @@ export const useAudioNotifications = () => {
     try {
       await initializeAudioContext();
       
+      // First try to play the file
       const audio = new Audio(`/sounds/${soundName}.mp3`);
       audio.volume = 0.7;
       
@@ -172,10 +238,25 @@ export const useAudioNotifications = () => {
       return true;
     } catch (error: any) {
       console.error(`Test sound ${soundName} failed:`, error);
+      
+      // Fallback to built-in tone
+      console.log(`Falling back to built-in tone for ${soundName}`);
+      try {
+        const sessionType: SessionType = soundName === 'bell' ? 'focus' : 
+                                       soundName === 'chime' ? 'short_break' : 'long_break';
+        const toneSuccess = await playBuiltInTone(sessionType);
+        if (toneSuccess) {
+          console.log(`Built-in tone played successfully for ${soundName}`);
+          return true;
+        }
+      } catch (toneError) {
+        console.error(`Built-in tone also failed for ${soundName}:`, toneError);
+      }
+      
       setLastError(`Test failed: ${error.message}`);
       return false;
     }
-  }, [initializeAudioContext]);
+  }, [initializeAudioContext, playBuiltInTone]);
 
   const requestNotificationPermission = useCallback(async () => {
     if ('Notification' in window && Notification.permission === 'default') {
@@ -194,6 +275,7 @@ export const useAudioNotifications = () => {
       audioSupported,
       lastError,
       userAgent: navigator.userAgent,
+      builtInToneAvailable: true, // We always have built-in tones as fallback
     };
     
     console.log('Audio diagnostics:', diagnostics);
