@@ -74,8 +74,12 @@
     --input: 30 50% 15%; /* Dark warm input */
     --ring: 42 74% 58%; /* Deep yellow ring */
     
-    --sidebar-background: 30 65% 5%; /* Very dark sidebar */
-    --sidebar-foreground: 47 82% 91%; /* Light cream sidebar text */
+    /*--sidebar-background: 30 65% 5%;  Very dark sidebar */
+    /*--sidebar-foreground: 47 82% 91%;  Light cream sidebar text */
+
+    --sidebar-background: 44 95% 60%;   /* Golden warm yellow */
+    --sidebar-foreground: 30 20% 20%;   /* Deep brown for text */
+
     --sidebar-primary: 42 74% 58%; /* Deep yellow sidebar primary */
     --sidebar-primary-foreground: 30 65% 12%; /* Dark brown on sidebar primary */
     --sidebar-accent: 30 50% 12%; /* Dark sidebar accent */
