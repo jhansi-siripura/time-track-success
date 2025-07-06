@@ -1,92 +1,87 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
+    --background: 47 82% 91%; /* Light cream background */
+    --foreground: 30 65% 12%; /* Dark chocolate brown text */
 
-    --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
+    --card: 47 82% 91%; /* Light cream cards */
+    --card-foreground: 30 65% 12%; /* Dark chocolate brown on cards */
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
+    --popover: 47 82% 91%; /* Light cream popover */
+    --popover-foreground: 30 65% 12%; /* Dark chocolate brown popover text */
 
-    --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 210 40% 98%;
+    --primary: 42 74% 58%; /* Deep yellow primary */
+    --primary-foreground: 30 65% 12%; /* Dark chocolate brown on primary */
 
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
+    --secondary: 30 65% 12%; /* Chocolate brown secondary */
+    --secondary-foreground: 47 82% 91%; /* Light cream on secondary */
 
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
+    --muted: 42 30% 85%; /* Muted warm beige */
+    --muted-foreground: 30 40% 30%; /* Darker brown for muted text */
 
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
+    --accent: 42 74% 58%; /* Deep yellow accent */
+    --accent-foreground: 30 65% 12%; /* Dark chocolate brown on accent */
 
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
+    --destructive: 0 84.2% 60.2%; /* Keep red for destructive */
+    --destructive-foreground: 47 82% 91%; /* Light cream on destructive */
 
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
+    --border: 42 30% 75%; /* Warm border color */
+    --input: 42 30% 85%; /* Warm input background */
+    --ring: 42 74% 58%; /* Deep yellow ring */
 
     --radius: 0.5rem;
 
-    --sidebar-background: 0 0% 98%;
-
-    --sidebar-foreground: 240 5.3% 26.1%;
-
-    --sidebar-primary: 240 5.9% 10%;
-
-    --sidebar-primary-foreground: 0 0% 98%;
-
-    --sidebar-accent: 240 4.8% 95.9%;
-
-    --sidebar-accent-foreground: 240 5.9% 10%;
-
-    --sidebar-border: 220 13% 91%;
-
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    --sidebar-background: 30 65% 12%; /* Chocolate brown sidebar */
+    --sidebar-foreground: 47 82% 91%; /* Light cream sidebar text */
+    --sidebar-primary: 42 74% 58%; /* Deep yellow sidebar primary */
+    --sidebar-primary-foreground: 30 65% 12%; /* Dark brown on sidebar primary */
+    --sidebar-accent: 30 50% 20%; /* Darker brown sidebar accent */
+    --sidebar-accent-foreground: 47 82% 91%; /* Light cream on sidebar accent */
+    --sidebar-border: 30 50% 25%; /* Sidebar border */
+    --sidebar-ring: 42 74% 58%; /* Deep yellow sidebar ring */
   }
 
   .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
+    --background: 30 65% 8%; /* Very dark chocolate brown */
+    --foreground: 47 82% 91%; /* Light cream text */
 
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
+    --card: 30 65% 10%; /* Dark chocolate brown cards */
+    --card-foreground: 47 82% 91%; /* Light cream on cards */
 
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
+    --popover: 30 65% 10%; /* Dark chocolate brown popover */
+    --popover-foreground: 47 82% 91%; /* Light cream popover text */
 
-    --primary: 210 40% 98%;
-    --primary-foreground: 222.2 47.4% 11.2%;
+    --primary: 42 74% 58%; /* Deep yellow primary */
+    --primary-foreground: 30 65% 12%; /* Dark chocolate brown on primary */
 
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
+    --secondary: 30 50% 15%; /* Medium brown secondary */
+    --secondary-foreground: 47 82% 91%; /* Light cream on secondary */
 
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
+    --muted: 30 50% 15%; /* Medium brown muted */
+    --muted-foreground: 42 30% 70%; /* Lighter warm text */
 
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
+    --accent: 42 74% 58%; /* Deep yellow accent */
+    --accent-foreground: 30 65% 12%; /* Dark chocolate brown on accent */
 
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
+    --destructive: 0 62.8% 30.6%; /* Darker red for destructive */
+    --destructive-foreground: 47 82% 91%; /* Light cream on destructive */
 
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 212.7 26.8% 83.9%;
-    --sidebar-background: 240 5.9% 10%;
-    --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 224.3 76.3% 48%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 3.7% 15.9%;
-    --sidebar-accent-foreground: 240 4.8% 95.9%;
-    --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    --border: 30 50% 20%; /* Dark warm border */
+    --input: 30 50% 15%; /* Dark warm input */
+    --ring: 42 74% 58%; /* Deep yellow ring */
+    
+    --sidebar-background: 30 65% 5%; /* Very dark sidebar */
+    --sidebar-foreground: 47 82% 91%; /* Light cream sidebar text */
+    --sidebar-primary: 42 74% 58%; /* Deep yellow sidebar primary */
+    --sidebar-primary-foreground: 30 65% 12%; /* Dark brown on sidebar primary */
+    --sidebar-accent: 30 50% 12%; /* Dark sidebar accent */
+    --sidebar-accent-foreground: 47 82% 91%; /* Light cream on sidebar accent */
+    --sidebar-border: 30 50% 12%; /* Dark sidebar border */
+    --sidebar-ring: 42 74% 58%; /* Deep yellow sidebar ring */
   }
 }
 
