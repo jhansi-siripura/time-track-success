@@ -48,6 +48,17 @@ function App() {
                 <Route path="/" element={<Index />} />
                 <Route path="/landing" element={<LandingPage />} />
                 <Route path="/auth" element={<AuthPage />} />
+
+                <Route 
+                  path="/home" 
+                  element={
+                    <ProtectedRoute>
+                      <MainLayout>
+                        <DashboardPage />
+                      </MainLayout>
+                    </ProtectedRoute>
+                  } 
+                />
                 <Route 
                   path="/dashboard" 
                   element={
