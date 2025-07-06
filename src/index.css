@@ -35,14 +35,18 @@
 
     --radius: 0.5rem;
 
-    --sidebar-background: 30 65% 12%; /* Chocolate brown sidebar */
-    --sidebar-foreground: 47 82% 91%; /* Light cream sidebar text */
-    --sidebar-primary: 42 74% 58%; /* Deep yellow sidebar primary */
-    --sidebar-primary-foreground: 30 65% 12%; /* Dark brown on sidebar primary */
-    --sidebar-accent: 30 50% 20%; /* Darker brown sidebar accent */
-    --sidebar-accent-foreground: 47 82% 91%; /* Light cream on sidebar accent */
-    --sidebar-border: 30 50% 25%; /* Sidebar border */
-    --sidebar-ring: 42 74% 58%; /* Deep yellow sidebar ring */
+    --sidebar-background: 44 100% 92%;         /* Light golden cream */
+    --sidebar-foreground: 30 30% 20%;          /* Deep brown text for contrast */
+
+    --sidebar-primary: 42 95% 60%;             /* Rich golden yellow */
+    --sidebar-primary-foreground: 30 25% 15%;  /* Strong brown on golden */
+
+    --sidebar-accent: 42 85% 85%;              /* Light yellow hover */
+    --sidebar-accent-foreground: 30 30% 20%;   /* Brown text on hover */
+
+    --sidebar-border: 42 40% 75%;              /* Subtle tan border */
+    --sidebar-ring: 42 95% 60%;                /* Golden highlight ring */
+
   }
 
   .dark {
