@@ -4,7 +4,7 @@ import RecapSidebar from '@/components/Recap/RecapSidebar';
 import { getTodayDate } from '@/lib/dateUtils';
 const RecapPage = () => {
   const [dateFilter, setDateFilter] = React.useState(getTodayDate());
-  return <div className="p-6 bg-yellow-300">
+  return <div className="p-6 bg-inherit">
       <div className="mb-6">
         <h1 className="text-2xl md:text-3xl font-bold text-gray-900">Study Recap</h1>
         <p className="text-gray-600">Review and edit your daily study sessions</p>
