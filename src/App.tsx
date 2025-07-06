@@ -54,7 +54,7 @@ function App() {
                   element={
                     <ProtectedRoute>
                       <MainLayout>
-                        <DashboardPage />
+                        <HomePage />
                       </MainLayout>
                     </ProtectedRoute>
                   } 
