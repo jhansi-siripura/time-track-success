@@ -23,7 +23,7 @@ const TopHeader = () => {
       <div className="flex items-center justify-between">
         <div className="flex items-center space-x-4">
           <SidebarTrigger />
-          <Link to="/dashboard" className="text-xl font-bold text-blue-600">
+          <Link to="/dashboard" className="text-xl font-bold text-cyan-600 ">
             Study Tracker
           </Link>
         </div>
