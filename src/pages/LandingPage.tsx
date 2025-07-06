@@ -211,12 +211,33 @@ const LandingPage = () => {
                   </div>
                 </div>
                 <div className="relative">
-                  <div className="bg-white/10 backdrop-blur-sm rounded-3xl p-8 shadow-2xl">
+                  <div className="relative overflow-hidden rounded-3xl shadow-2xl">
                     <img 
-                      src="/lovable-uploads/6c52fde8-95d4-4721-9e52-91722cfa3c83.png"
-                      alt="Student studying with laptop and books"
-                      className="w-full h-auto rounded-2xl shadow-lg"
+                      src="/lovable-uploads/afe1a72a-7972-44d1-b818-6b69557e3396.png"
+                      alt="Student focused on studying at desk with books"
+                      className="w-full h-auto object-cover"
                     />
+                    <div className="absolute inset-0 bg-gradient-to-t from-[#6B3F1D]/20 to-transparent"></div>
+                  </div>
+                  
+                  {/* Floating Study Stats */}
+                  <div className="absolute -top-4 -right-4 bg-white/95 backdrop-blur-sm rounded-2xl p-4 shadow-lg animate-bounce">
+                    <div className="flex items-center gap-2">
+                      <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
+                      <span className="text-sm font-semibold text-gray-800">Study Session Active</span>
+                    </div>
+                    <div className="text-2xl font-bold text-[#6B3F1D] mt-1">2h 15m</div>
+                  </div>
+                  
+                  <div className="absolute -bottom-4 -left-4 bg-white/95 backdrop-blur-sm rounded-2xl p-4 shadow-lg">
+                    <div className="flex items-center gap-2 mb-2">
+                      <Trophy className="h-4 w-4 text-[#E7BA40]" />
+                      <span className="text-sm font-semibold text-gray-800">Daily Goal</span>
+                    </div>
+                    <div className="w-24 h-2 bg-gray-200 rounded-full overflow-hidden">
+                      <div className="w-4/5 h-full bg-gradient-to-r from-[#E7BA40] to-[#6B3F1D] rounded-full"></div>
+                    </div>
+                    <div className="text-xs text-gray-600 mt-1">4/5 hours completed</div>
                   </div>
                 </div>
               </div>
