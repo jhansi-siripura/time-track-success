@@ -268,7 +268,7 @@ const LandingPage = () => {
   return <div className="min-h-screen bg-white">
       {/* Navigation */}
       <nav className="sticky top-0 z-50 bg-white/95 backdrop-blur-sm border-b border-gray-200">
-        <div className="max-w-7xl mx-auto py-[16px] px-[16px]">
+        <div className="max-w-7xl py-[16px] px-[16px] mx-0 my-0">
           <div className="flex justify-between items-center">
             {/* Logo */}
             <div className="flex items-center space-x-3">
