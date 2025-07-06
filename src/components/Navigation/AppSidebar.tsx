@@ -50,7 +50,7 @@ const AppSidebar = () => {
                     <SidebarMenuButton asChild isActive={isActive(item.path)}>
                       <Link to={item.path} className="flex items-center space-x-2">
                         <Icon className="h-4 w-4" />
-                        <span>{item.label}</span>
+                        <span className="text-cyan-400">{item.label}</span>
                       </Link>
                     </SidebarMenuButton>
                   </SidebarMenuItem>;
