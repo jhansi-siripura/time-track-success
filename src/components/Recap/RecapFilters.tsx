@@ -1,11 +1,9 @@
-
 import React from 'react';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Card, CardContent } from '@/components/ui/card';
 import { getTodayDate } from '@/lib/dateUtils';
-
 interface RecapFiltersProps {
   dateFilter: string;
   subjectFilter: string;
@@ -16,7 +14,6 @@ interface RecapFiltersProps {
   onSubjectFilterChange: (subject: string) => void;
   onTopicFilterChange: (topic: string) => void;
 }
-
 const RecapFilters: React.FC<RecapFiltersProps> = ({
   dateFilter,
   subjectFilter,
@@ -25,7 +22,7 @@ const RecapFilters: React.FC<RecapFiltersProps> = ({
   topics,
   onDateFilterChange,
   onSubjectFilterChange,
-  onTopicFilterChange,
+  onTopicFilterChange
 }) => {
   // Filter out empty, null, or undefined values
   const validSubjects = subjects.filter(subject => subject && subject.trim() !== '');
@@ -33,19 +30,12 @@ const RecapFilters: React.FC<RecapFiltersProps> = ({
 
   // Use local timezone for default date if no date filter is set
   const displayDate = dateFilter || getTodayDate();
-
-  return (
-    <Card>
-      <CardContent className="pt-6">
+  return <Card>
+      <CardContent className="pt-6 bg-yellow-500">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div className="space-y-2">
             <Label htmlFor="date-filter">Date</Label>
-            <Input
-              id="date-filter"
-              type="date"
-              value={displayDate}
-              onChange={(e) => onDateFilterChange(e.target.value)}
-            />
+            <Input id="date-filter" type="date" value={displayDate} onChange={e => onDateFilterChange(e.target.value)} />
           </div>
 
           <div className="space-y-2">
@@ -56,11 +46,9 @@ const RecapFilters: React.FC<RecapFiltersProps> = ({
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">All Subjects</SelectItem>
-                {validSubjects.map((subject) => (
-                  <SelectItem key={subject} value={subject}>
+                {validSubjects.map(subject => <SelectItem key={subject} value={subject}>
                     {subject}
-                  </SelectItem>
-                ))}
+                  </SelectItem>)}
               </SelectContent>
             </Select>
           </div>
@@ -73,18 +61,14 @@ const RecapFilters: React.FC<RecapFiltersProps> = ({
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">All Topics</SelectItem>
-                {validTopics.map((topic) => (
-                  <SelectItem key={topic} value={topic}>
+                {validTopics.map(topic => <SelectItem key={topic} value={topic}>
                     {topic}
-                  </SelectItem>
-                ))}
+                  </SelectItem>)}
               </SelectContent>
             </Select>
           </div>
         </div>
       </CardContent>
-    </Card>
-  );
+    </Card>;
 };
-
 export default RecapFilters;
