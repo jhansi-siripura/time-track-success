@@ -1,11 +1,10 @@
-
 import React, { useState, useEffect, useMemo } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
 import { getTodayDate } from '@/lib/dateUtils';
 import RecapFilters from './RecapFilters';
-import RecapCard from './RecapCard';
+import StudySessionGrouper from './StudySessionGrouper';
 import { validateAuthState, rateLimiter } from '@/lib/security';
 import { useNavigate } from 'react-router-dom';
 
@@ -58,8 +57,8 @@ const RecapContainer = ({ dateFilter, onDateFilterChange }: RecapContainerProps)
         .from('study_logs')
         .select('*')
         .eq('user_id', user.id)
-        .order('date', { ascending: true })
-        .order('time', { ascending: true });
+        .order('date', { ascending: false })
+        .order('time', { ascending: false });
 
       if (error) throw error;
 
@@ -219,9 +218,12 @@ const RecapContainer = ({ dateFilter, onDateFilterChange }: RecapContainerProps)
 
   if (loading) {
     return (
-      <div className="text-center py-8">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
-        <p className="mt-2 text-gray-600">Loading study logs...</p>
+      <div className="flex items-center justify-center py-12">
+        <div className="text-center">
+          <div className="inline-block animate-spin rounded-full h-12 w-12 border-4 border-amber-200 border-t-amber-600 mb-4"></div>
+          <p className="text-gray-600 font-medium">Loading your study sessions...</p>
+          <p className="text-sm text-gray-500 mt-1">Preparing your learning journey</p>
+        </div>
       </div>
     );
   }
@@ -239,23 +241,11 @@ const RecapContainer = ({ dateFilter, onDateFilterChange }: RecapContainerProps)
         onTopicFilterChange={setTopicFilter}
       />
 
-      {filteredLogs.length === 0 ? (
-        <div className="text-center py-12 text-gray-500">
-          <p className="text-lg">No study logs found for the selected filters.</p>
-          <p className="text-sm mt-2">Try adjusting your filters or add a new study session.</p>
-        </div>
-      ) : (
-        <div className="space-y-4">
-          {filteredLogs.map((log) => (
-            <RecapCard
-              key={log.id}
-              log={log}
-              onUpdate={handleLogUpdate}
-              onDelete={handleLogDelete}
-            />
-          ))}
-        </div>
-      )}
+      <StudySessionGrouper
+        logs={filteredLogs}
+        onUpdate={handleLogUpdate}
+        onDelete={handleLogDelete}
+      />
     </div>
   );
 };
