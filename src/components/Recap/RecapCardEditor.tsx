@@ -33,15 +33,15 @@ interface RecapCardEditorProps {
 
 const RecapCardEditor: React.FC<RecapCardEditorProps> = ({ log, onSave, onCancel }) => {
   const [formData, setFormData] = useState({
-    date: log.date,
-    time: log.time,
-    duration: log.duration.toString(),
-    subject: log.subject,
+    date: log.date || '',
+    time: log.time || '',
+    duration: (log.duration || 0).toString(),
+    subject: log.subject || '',
     topic: log.topic || '',
     source: log.source || '',
-    notes: log.notes,
-    achievements: log.achievements,
-    images: log.images || [],
+    notes: log.notes || '',
+    achievements: log.achievements || '',
+    images: Array.isArray(log.images) ? log.images : [],
   });
 
   const [showPreview, setShowPreview] = useState(false);
@@ -71,7 +71,7 @@ const RecapCardEditor: React.FC<RecapCardEditorProps> = ({ log, onSave, onCancel
       source: formData.source || null,
       notes: formData.notes,
       achievements: formData.achievements,
-      images: formData.images,
+      images: Array.isArray(formData.images) ? formData.images : [],
     };
 
     onSave(updatedData);
@@ -86,7 +86,7 @@ const RecapCardEditor: React.FC<RecapCardEditorProps> = ({ log, onSave, onCancel
     handleSave();
   };
 
-  const shouldShowPreview = formData.notes.trim() || formData.images.length > 0;
+  const shouldShowPreview = (formData.notes && formData.notes.trim()) || (Array.isArray(formData.images) && formData.images.length > 0);
 
   return (
     <>
@@ -187,15 +187,15 @@ const RecapCardEditor: React.FC<RecapCardEditorProps> = ({ log, onSave, onCancel
                 maxLength={1000}
               />
               <div className="text-xs text-muted-foreground">
-                {formData.achievements.length} / 1000 characters
+                {(formData.achievements || '').length} / 1000 characters
               </div>
             </div>
 
             <div className="space-y-2">
               <Label>Images</Label>
               <ImageUpload
-                images={formData.images}
-                onImagesChange={(images) => handleInputChange('images', images)}
+                images={Array.isArray(formData.images) ? formData.images : []}
+                onImagesChange={(images) => handleInputChange('images', Array.isArray(images) ? images : [])}
                 maxImages={3}
               />
             </div>
@@ -214,7 +214,7 @@ const RecapCardEditor: React.FC<RecapCardEditorProps> = ({ log, onSave, onCancel
           date: formData.date,
           time: formData.time,
           notes: formData.notes,
-          images: formData.images,
+          images: Array.isArray(formData.images) ? formData.images : [],
         }}
       />
     </>
