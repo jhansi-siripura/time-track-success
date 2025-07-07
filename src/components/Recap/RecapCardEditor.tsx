@@ -110,7 +110,7 @@ const RecapCardEditor: React.FC<RecapCardEditorProps> = ({ log, onSave, onCancel
                 <X className="h-4 w-4 mr-1" />
                 Cancel
               </Button>
-              
+              {onDelete && (
                 <Button 
                   onClick={onDelete} 
                   variant="outline" 
@@ -120,7 +120,7 @@ const RecapCardEditor: React.FC<RecapCardEditorProps> = ({ log, onSave, onCancel
                   <Trash2 className="h-4 w-4 mr-1" />
                   Delete
                 </Button>
-              
+              )}
             </div>
           </CardTitle>
         </CardHeader>
