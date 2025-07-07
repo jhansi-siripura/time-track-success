@@ -22,10 +22,9 @@ const PomodoroPage = () => {
     cycle: number;
   } | null>(null);
 
-  // Monitor for session completion
   React.useEffect(() => {
     if (timeLeft === 0 && isActive && sessionType === 'focus') {
-      const duration = getSessionDuration('focus') / 60; // Convert to minutes
+      const duration = getSessionDuration('focus') / 60;
       setLastCompletedSession({
         type: 'focus',
         duration,
@@ -37,16 +36,16 @@ const PomodoroPage = () => {
 
   return (
     <div className="p-6 bg-gradient-to-br from-amber-50/30 via-cream-50/20 to-yellow-50/30 min-h-full">
-      <div className="mb-8">
-        <div className="flex items-center space-x-4 mb-6">
-          <div className="p-3 bg-gradient-to-br from-red-500 to-red-600 rounded-xl shadow-lg">
-            <Timer className="h-6 w-6 text-white" />
+      <div className="mb-6">
+        <div className="flex items-center space-x-3 mb-4">
+          <div className="p-2 bg-gradient-to-br from-red-500 to-red-600 rounded-lg shadow-md">
+            <Timer className="h-5 w-5 text-white" />
           </div>
           <div>
-            <h1 className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-red-600 to-red-700 bg-clip-text text-transparent">
+            <h1 className="text-2xl font-bold bg-gradient-to-r from-red-600 to-red-700 bg-clip-text text-transparent">
               Pomodoro Timer
             </h1>
-            <p className="text-gray-600 text-lg">Focus on your studies with timed sessions and breaks</p>
+            <p className="text-sm text-gray-600">Focus with timed sessions</p>
           </div>
         </div>
       </div>

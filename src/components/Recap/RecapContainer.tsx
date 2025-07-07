@@ -3,7 +3,6 @@ import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
 import { getTodayDate } from '@/lib/dateUtils';
-import RecapFilters from './RecapFilters';
 import StudySessionGrouper from './StudySessionGrouper';
 import { validateAuthState, rateLimiter } from '@/lib/security';
 import { useNavigate } from 'react-router-dom';
@@ -29,19 +28,15 @@ interface RecapContainerProps {
 const RecapContainer = ({ dateFilter, onDateFilterChange }: RecapContainerProps) => {
   const [studyLogs, setStudyLogs] = useState<StudyLog[]>([]);
   const [loading, setLoading] = useState(true);
-  const [subjectFilter, setSubjectFilter] = useState('all');
-  const [topicFilter, setTopicFilter] = useState('all');
   const { user } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
 
-  // Use provided dateFilter or default to today using local timezone
   const currentDateFilter = dateFilter || getTodayDate();
 
   const fetchStudyLogs = async () => {
     if (!user) return;
 
-    // Validate authentication before fetching data
     const authValidation = await validateAuthState();
     if (!authValidation.isValid) {
       toast({
@@ -79,28 +74,14 @@ const RecapContainer = ({ dateFilter, onDateFilterChange }: RecapContainerProps)
     fetchStudyLogs();
   }, [user]);
 
-  const { filteredLogs, subjects, topics } = useMemo(() => {
-    if (!studyLogs) return { filteredLogs: [], subjects: [], topics: [] };
+  const filteredLogs = useMemo(() => {
+    if (!studyLogs) return [];
 
-    // Filter logs based on selected filters
-    let filtered = studyLogs.filter(log => {
+    return studyLogs.filter(log => {
       const isDateMatch = currentDateFilter === '' || log.date === currentDateFilter;
-      const isSubjectMatch = subjectFilter === 'all' || log.subject === subjectFilter;
-      const isTopicMatch = topicFilter === 'all' || log.topic === topicFilter;
-      
-      return isDateMatch && isSubjectMatch && isTopicMatch;
+      return isDateMatch;
     });
-
-    // Extract unique subjects and topics for filter options
-    const uniqueSubjects = Array.from(new Set(studyLogs.map(log => log.subject).filter(Boolean)));
-    const uniqueTopics = Array.from(new Set(studyLogs.map(log => log.topic).filter(Boolean)));
-
-    return {
-      filteredLogs: filtered,
-      subjects: uniqueSubjects,
-      topics: uniqueTopics
-    };
-  }, [studyLogs, currentDateFilter, subjectFilter, topicFilter]);
+  }, [studyLogs, currentDateFilter]);
 
   const handleLogUpdate = async (logId: number, updatedData: Partial<StudyLog>) => {
     if (!user) {
@@ -112,7 +93,6 @@ const RecapContainer = ({ dateFilter, onDateFilterChange }: RecapContainerProps)
       return;
     }
 
-    // Rate limiting check
     if (!rateLimiter.canMakeRequest(user.id + '_update')) {
       toast({
         title: "Too Many Requests",
@@ -122,7 +102,6 @@ const RecapContainer = ({ dateFilter, onDateFilterChange }: RecapContainerProps)
       return;
     }
 
-    // Validate authentication
     const authValidation = await validateAuthState();
     if (!authValidation.isValid) {
       toast({
@@ -138,7 +117,7 @@ const RecapContainer = ({ dateFilter, onDateFilterChange }: RecapContainerProps)
         .from('study_logs')
         .update(updatedData)
         .eq('id', logId)
-        .eq('user_id', user.id); // Additional security check
+        .eq('user_id', user.id);
 
       if (error) throw error;
 
@@ -170,7 +149,6 @@ const RecapContainer = ({ dateFilter, onDateFilterChange }: RecapContainerProps)
 
     if (!confirm('Are you sure you want to delete this study log?')) return;
 
-    // Rate limiting check
     if (!rateLimiter.canMakeRequest(user.id + '_delete')) {
       toast({
         title: "Too Many Requests",
@@ -180,7 +158,6 @@ const RecapContainer = ({ dateFilter, onDateFilterChange }: RecapContainerProps)
       return;
     }
 
-    // Validate authentication
     const authValidation = await validateAuthState();
     if (!authValidation.isValid) {
       toast({
@@ -196,7 +173,7 @@ const RecapContainer = ({ dateFilter, onDateFilterChange }: RecapContainerProps)
         .from('study_logs')
         .delete()
         .eq('id', logId)
-        .eq('user_id', user.id); // Additional security check
+        .eq('user_id', user.id);
 
       if (error) throw error;
 
@@ -222,7 +199,6 @@ const RecapContainer = ({ dateFilter, onDateFilterChange }: RecapContainerProps)
         <div className="text-center">
           <div className="inline-block animate-spin rounded-full h-12 w-12 border-4 border-amber-200 border-t-amber-600 mb-4"></div>
           <p className="text-gray-600 font-medium">Loading your study sessions...</p>
-          <p className="text-sm text-gray-500 mt-1">Preparing your learning journey</p>
         </div>
       </div>
     );
@@ -230,17 +206,6 @@ const RecapContainer = ({ dateFilter, onDateFilterChange }: RecapContainerProps)
 
   return (
     <div className="space-y-6">
-      <RecapFilters
-        dateFilter={currentDateFilter}
-        subjectFilter={subjectFilter}
-        topicFilter={topicFilter}
-        subjects={subjects}
-        topics={topics}
-        onDateFilterChange={onDateFilterChange}
-        onSubjectFilterChange={setSubjectFilter}
-        onTopicFilterChange={setTopicFilter}
-      />
-
       <StudySessionGrouper
         logs={filteredLogs}
         onUpdate={handleLogUpdate}
