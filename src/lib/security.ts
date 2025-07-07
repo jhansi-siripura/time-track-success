@@ -1,4 +1,3 @@
-
 // Security utility functions for the application
 import { supabase } from '@/integrations/supabase/client';
 import DOMPurify from 'dompurify';
@@ -51,7 +50,6 @@ export const sanitizeHtml = (html: string): string => {
       'ul', 'ol', 'li', 'blockquote', 'code', 'pre', 'span', 'div'
     ],
     ALLOWED_ATTR: ['class', 'style'],
-    FORBID_SCRIPT: true,
     FORBID_TAGS: ['script', 'object', 'embed', 'form', 'input', 'button', 'iframe'],
     FORBID_ATTR: ['onerror', 'onload', 'onclick', 'onmouseover', 'onfocus', 'onblur', 'href', 'src'],
   });
