@@ -9,7 +9,7 @@ import { RichTextEditor } from '@/components/ui/rich-text-editor';
 import { ImageUpload } from '@/components/ui/image-upload';
 import { CreatableCombobox } from '@/components/ui/creatable-combobox';
 import { PreviewModal } from '@/components/StudyLog/PreviewModal';
-import { Save, X, Eye } from 'lucide-react';
+import { Save, X, Eye, Trash2 } from 'lucide-react';
 import { useStudyAutocomplete } from '@/hooks/useStudyAutocomplete';
 
 interface StudyLog {
@@ -29,9 +29,10 @@ interface RecapCardEditorProps {
   log: StudyLog;
   onSave: (updatedData: Partial<StudyLog>) => void;
   onCancel: () => void;
+  onDelete?: () => void;
 }
 
-const RecapCardEditor: React.FC<RecapCardEditorProps> = ({ log, onSave, onCancel }) => {
+const RecapCardEditor: React.FC<RecapCardEditorProps> = ({ log, onSave, onCancel, onDelete }) => {
   const [formData, setFormData] = useState({
     date: log.date || '',
     time: log.time || '',
@@ -90,25 +91,36 @@ const RecapCardEditor: React.FC<RecapCardEditorProps> = ({ log, onSave, onCancel
 
   return (
     <>
-      <Card className="border-blue-200 shadow-lg">
+      <Card className="border-amber-200 shadow-lg bg-gradient-to-br from-amber-50/50 to-yellow-50/30">
         <CardHeader className="pb-4">
           <CardTitle className="text-lg flex items-center justify-between">
-            Edit Study Session
+            <span className="text-amber-800">Edit Study Session</span>
             <div className="flex gap-2">
               {shouldShowPreview && (
-                <Button onClick={handlePreview} variant="outline" size="sm" className="h-8">
+                <Button onClick={handlePreview} variant="outline" size="sm" className="h-8 border-amber-200 text-amber-700 hover:bg-amber-50">
                   <Eye className="h-4 w-4 mr-1" />
                   Preview
                 </Button>
               )}
-              <Button onClick={handleSave} size="sm" className="h-8">
+              <Button onClick={handleSave} size="sm" className="h-8 bg-amber-500 hover:bg-amber-600 text-white">
                 <Save className="h-4 w-4 mr-1" />
                 Save
               </Button>
-              <Button onClick={onCancel} variant="outline" size="sm" className="h-8">
+              <Button onClick={onCancel} variant="outline" size="sm" className="h-8 border-amber-200 text-amber-700 hover:bg-amber-50">
                 <X className="h-4 w-4 mr-1" />
                 Cancel
               </Button>
+              {onDelete && (
+                <Button 
+                  onClick={onDelete} 
+                  variant="outline" 
+                  size="sm" 
+                  className="h-8 border-orange-300 text-orange-700 hover:bg-orange-50 hover:border-orange-400"
+                >
+                  <Trash2 className="h-4 w-4 mr-1" />
+                  Delete
+                </Button>
+              )}
             </div>
           </CardTitle>
         </CardHeader>
