@@ -1,70 +1,81 @@
+
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useAuth } from '@/contexts/AuthContext';
-import { LogOut, Settings, Search, FileText } from 'lucide-react';
+import { LogOut, Settings, Search, FileText, User } from 'lucide-react';
 import { SidebarTrigger } from '@/components/ui/sidebar';
 import ChangelogNotificationBadge from './ChangelogNotificationBadge';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+
 const TopHeader = () => {
-  const {
-    user,
-    signOut
-  } = useAuth();
+  const { user, signOut } = useAuth();
   const [searchQuery, setSearchQuery] = useState('');
+
   if (!user) return null;
+
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
-    // TODO: Implement global search functionality
     console.log('Search query:', searchQuery);
   };
-  return <header className="sticky top-0 z-50 w-full border-b border-gray-200 px-4 py-3 bg-yellow-800">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center space-x-4">
-          <SidebarTrigger />
-          <Link to="/dashboard" className="text-xl font-bold text-cyan-600 ">
-            Study Tracker
+
+  return (
+    <header className="sticky top-0 z-50 w-full border-b border-amber-200/30 bg-gradient-to-r from-amber-50 to-yellow-50 shadow-sm backdrop-blur-md">
+      <div className="flex items-center justify-between px-6 py-4">
+        <div className="flex items-center space-x-6">
+          <SidebarTrigger className="p-2 hover:bg-amber-100 rounded-lg transition-colors" />
+          <Link to="/dashboard" className="flex items-center space-x-2 group">
+            <div className="w-8 h-8 bg-gradient-to-br from-amber-400 to-yellow-500 rounded-lg flex items-center justify-center shadow-md">
+              <span className="text-white font-bold text-sm">ST</span>
+            </div>
+            <span className="text-xl font-bold bg-gradient-to-r from-amber-600 to-yellow-600 bg-clip-text text-transparent group-hover:from-amber-700 group-hover:to-yellow-700 transition-all">
+              Study Tracker
+            </span>
           </Link>
         </div>
 
         <div className="flex-1 max-w-md mx-8 hidden md:block">
           <form onSubmit={handleSearch} className="relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-            <Input type="search" placeholder="Search logs, subjects, notes..." value={searchQuery} onChange={e => setSearchQuery(e.target.value)} className="pl-10 pr-4" />
+            <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 h-4 w-4 text-amber-500" />
+            <Input 
+              type="search" 
+              placeholder="Search logs, subjects, notes..." 
+              value={searchQuery} 
+              onChange={e => setSearchQuery(e.target.value)} 
+              className="pl-12 pr-4 py-3 bg-white/80 border-amber-200 focus:border-amber-400 focus:ring-amber-400 rounded-xl shadow-sm backdrop-blur-sm placeholder:text-amber-600/60"
+            />
           </form>
         </div>
 
         <div className="flex items-center space-x-4">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="sm" className="flex items-center space-x-2">
-                <span className="text-sm text-gray-600 hidden sm:block">
+              <Button variant="ghost" size="sm" className="flex items-center space-x-3 p-3 hover:bg-amber-100 rounded-xl transition-all">
+                <span className="text-sm text-amber-700 hidden sm:block font-medium">
                   {user.email}
                 </span>
-                <div className="w-6 h-6 bg-blue-600 rounded-full flex items-center justify-center">
-                  <span className="text-xs text-white font-medium">
-                    {user.email?.charAt(0).toUpperCase()}
-                  </span>
+                <div className="w-8 h-8 bg-gradient-to-br from-amber-500 to-yellow-600 rounded-full flex items-center justify-center shadow-md ring-2 ring-amber-200">
+                  <User className="h-4 w-4 text-white" />
                 </div>
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-56">
+            <DropdownMenuContent align="end" className="w-56 bg-white/95 backdrop-blur-md border-amber-200 shadow-xl">
               <DropdownMenuItem asChild>
-                <Link to="/settings" className="flex items-center space-x-2 cursor-pointer">
-                  <Settings className="h-4 w-4" />
-                  <span>Settings</span>
+                <Link to="/settings" className="flex items-center space-x-3 cursor-pointer p-3 hover:bg-amber-50">
+                  <Settings className="h-4 w-4 text-amber-600" />
+                  <span className="text-amber-700">Settings</span>
                 </Link>
               </DropdownMenuItem>
               <DropdownMenuItem asChild>
-                <Link to="/changelog" className="flex items-center space-x-2 cursor-pointer">
-                  <FileText className="h-4 w-4" />
-                  <span>Changelog</span>
+                <Link to="/changelog" className="flex items-center space-x-3 cursor-pointer p-3 hover:bg-amber-50">
+                  <FileText className="h-4 w-4 text-amber-600" />
+                  <span className="text-amber-700">Changelog</span>
                   <ChangelogNotificationBadge />
                 </Link>
               </DropdownMenuItem>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={signOut} className="flex items-center space-x-2 cursor-pointer text-red-600">
+              <DropdownMenuSeparator className="bg-amber-200" />
+              <DropdownMenuItem onClick={signOut} className="flex items-center space-x-3 cursor-pointer p-3 hover:bg-red-50 text-red-600">
                 <LogOut className="h-4 w-4" />
                 <span>Sign Out</span>
               </DropdownMenuItem>
@@ -74,12 +85,20 @@ const TopHeader = () => {
       </div>
 
       {/* Mobile search */}
-      <div className="mt-3 md:hidden">
+      <div className="px-6 pb-4 md:hidden">
         <form onSubmit={handleSearch} className="relative">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-          <Input type="search" placeholder="Search..." value={searchQuery} onChange={e => setSearchQuery(e.target.value)} className="pl-10 pr-4" />
+          <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 h-4 w-4 text-amber-500" />
+          <Input 
+            type="search" 
+            placeholder="Search..." 
+            value={searchQuery} 
+            onChange={e => setSearchQuery(e.target.value)} 
+            className="pl-12 pr-4 py-3 bg-white/80 border-amber-200 focus:border-amber-400 focus:ring-amber-400 rounded-xl shadow-sm"
+          />
         </form>
       </div>
-    </header>;
+    </header>
+  );
 };
+
 export default TopHeader;

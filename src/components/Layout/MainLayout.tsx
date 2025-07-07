@@ -11,7 +11,7 @@ interface MainLayoutProps {
 const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
   return (
     <SidebarProvider>
-      <div className="min-h-screen flex w-full">
+      <div className="min-h-screen flex w-full bg-gradient-to-br from-amber-50/30 via-white to-yellow-50/30">
         <AppSidebar />
         <SidebarInset className="flex-1">
           <TopHeader />
