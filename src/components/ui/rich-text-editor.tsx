@@ -1,6 +1,7 @@
 
 import React, { useEffect, useRef, useState } from 'react';
 import { cn } from '@/lib/utils';
+import { sanitizeHtml } from '@/lib/security';
 
 interface RichTextEditorProps {
   value: string;
@@ -106,10 +107,13 @@ export function RichTextEditor({
   ];
 
   const handleChange = (content: string) => {
-    // strip tags only for the live character count
-    const plain = content.replace(/<[^>]*>/g, '');
-    if (plain.length <= maxLength) {
-      onChange(content === '<p><br></p>' ? '' : content);
+    // Sanitize HTML content before setting
+    const sanitizedContent = sanitizeHtml(content);
+    
+    // Check character count on plain text
+    const plainText = sanitizedContent.replace(/<[^>]*>/g, '');
+    if (plainText.length <= maxLength) {
+      onChange(sanitizedContent === '<p><br></p>' ? '' : sanitizedContent);
     }
   };
 
@@ -122,14 +126,14 @@ export function RichTextEditor({
     );
   }
 
-  // Use value directly, let ReactQuill handle it properly
-  const editorValue = value || '';
+  // Sanitize value before displaying
+  const sanitizedValue = value ? sanitizeHtml(value) : '';
 
   return (
     <div className={cn("", className)}>
       <ReactQuill
         ref={quillRef}
-        value={editorValue}
+        value={sanitizedValue}
         onChange={handleChange}
         modules={modules}
         formats={formats}
@@ -140,11 +144,11 @@ export function RichTextEditor({
           backgroundColor: 'white',
           border: '1px solid hsl(var(--border))',
           borderRadius: '6px',
-          minHeight: '240px', // Increased overall height
+          minHeight: '240px',
         }}
       />
       <div className="text-xs text-muted-foreground mt-1">
-        {editorValue.replace(/<[^>]*>/g, '').length} / {maxLength} characters
+        {sanitizedValue.replace(/<[^>]*>/g, '').length} / {maxLength} characters
       </div>
     </div>
   );

@@ -6,6 +6,7 @@ import { toast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { cn } from '@/lib/utils';
+import { validateFileUpload, rateLimiter } from '@/lib/security';
 
 interface ImageUploadProps {
   images: string[];
@@ -41,6 +42,16 @@ export function ImageUpload({
       return;
     }
 
+    // Rate limiting check for file uploads
+    if (!rateLimiter.canMakeRequest(user.id, 'file-upload')) {
+      toast({
+        title: "Too many upload requests",
+        description: "Please wait before uploading more files",
+        variant: "destructive",
+      });
+      return;
+    }
+
     if (images.length + files.length > maxImages) {
       toast({
         title: "Too many images",
@@ -50,21 +61,33 @@ export function ImageUpload({
       return;
     }
 
-    // Validate files
+    // Enhanced file validation
     for (const file of files) {
-      if (!ALLOWED_TYPES.includes(file.type)) {
+      const validation = validateFileUpload(file);
+      if (!validation.isValid) {
         toast({
-          title: "Invalid file type",
-          description: "Only JPG, PNG, and WebP images are allowed",
+          title: "Invalid file",
+          description: validation.errors.join(', '),
           variant: "destructive",
         });
         return;
       }
 
+      // Additional security checks
       if (file.size > maxSizeBytes) {
         toast({
           title: "File too large",
           description: `Images must be smaller than ${MAX_SIZE_MB}MB`,
+          variant: "destructive",
+        });
+        return;
+      }
+
+      // Check for suspicious file patterns
+      if (file.name.includes('..') || file.name.includes('/') || file.name.includes('\\')) {
+        toast({
+          title: "Invalid file name",
+          description: "File name contains invalid characters",
           variant: "destructive",
         });
         return;
@@ -76,12 +99,17 @@ export function ImageUpload({
 
     try {
       for (const file of files) {
-        const fileExt = file.name.split('.').pop();
+        // Sanitize filename
+        const sanitizedName = file.name.replace(/[^a-zA-Z0-9.-]/g, '_');
+        const fileExt = sanitizedName.split('.').pop();
         const fileName = `${user.id}/${Date.now()}-${Math.random().toString(36).substring(2)}.${fileExt}`;
 
         const { data, error } = await supabase.storage
           .from('study-images')
-          .upload(fileName, file);
+          .upload(fileName, file, {
+            cacheControl: '3600',
+            upsert: false
+          });
 
         if (error) throw error;
 
@@ -208,6 +236,7 @@ export function ImageUpload({
       <div className="text-xs text-muted-foreground">
         <p>• Upload up to {maxImages} images (JPG, PNG, WebP)</p>
         <p>• Maximum file size: {MAX_SIZE_MB}MB per image</p>
+        <p>• Files are automatically scanned for security</p>
       </div>
     </div>
   );

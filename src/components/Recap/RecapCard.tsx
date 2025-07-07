@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Pencil, Trash2, ChevronDown, ChevronUp, Clock, Calendar, BookOpen, Target } from 'lucide-react';
 import { ImageLightbox } from '@/components/ui/image-lightbox';
+import { SafeHtml } from '@/components/ui/safe-html';
 import RecapCardEditor from './RecapCardEditor';
 
 interface StudyLog {
@@ -158,9 +159,9 @@ const RecapCard: React.FC<RecapCardProps> = ({ log, onUpdate, onDelete }) => {
           {/* Preview Content */}
           {!isExpanded && log.notes && (
             <div className="mt-2">
-              <div 
+              <SafeHtml 
+                html={log.notes.substring(0, 120) + (log.notes.length > 120 ? '...' : '')}
                 className="text-sm text-gray-700 line-clamp-2 prose prose-sm max-w-none"
-                dangerouslySetInnerHTML={{ __html: log.notes.substring(0, 120) + (log.notes.length > 120 ? '...' : '') }}
               />
             </div>
           )}
@@ -199,10 +200,9 @@ const RecapCard: React.FC<RecapCardProps> = ({ log, onUpdate, onDelete }) => {
             {log.notes && (
               <div className="bg-gray-50/50 rounded-lg p-4">
                 <h4 className="text-sm font-medium text-gray-700 mb-2">Study Notes</h4>
-                <div
+                <SafeHtml 
+                  html={log.notes}
                   className="prose prose-sm max-w-none text-gray-800"
-                  dangerouslySetInnerHTML={{ __html: log.notes }}
-                  style={{ lineHeight: '1.6' }}
                 />
               </div>
             )}

@@ -3,6 +3,7 @@ import React from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
+import { SafeHtml } from '@/components/ui/safe-html';
 
 interface PreviewModalProps {
   isOpen: boolean;
@@ -94,9 +95,9 @@ export const PreviewModal: React.FC<PreviewModalProps> = ({
             {/* Notes Content */}
             {formData.notes && (
               <div className="mb-4">
-                <div 
+                <SafeHtml 
+                  html={formData.notes}
                   className="prose prose-sm max-w-none"
-                  dangerouslySetInnerHTML={{ __html: formData.notes }}
                 />
               </div>
             )}
