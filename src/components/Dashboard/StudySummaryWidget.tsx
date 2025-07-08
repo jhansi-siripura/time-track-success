@@ -29,27 +29,34 @@ const StudySummaryWidget = ({ totalSessions, totalHours, totalSubjects }: StudyS
       label: 'Unique Subjects',
       value: totalSubjects.toString(),
       icon: Target,
-      color: 'text-purple-600',
-      bgColor: 'bg-purple-50',
+      color: 'text-orange-600',
+      bgColor: 'bg-orange-50',
     },
   ];
 
   return (
-    <Card>
-      <CardHeader className="pb-3">
-        <CardTitle className="text-lg">Study Summary</CardTitle>
+    <Card className="bg-white shadow-sm border border-gray-100">
+      <CardHeader className="pb-4">
+        <CardTitle className="text-lg font-semibold text-gray-900 flex items-center gap-3">
+          <div className="p-2 bg-orange-50 rounded-lg">
+            <BookOpen className="h-5 w-5 text-orange-600" />
+          </div>
+          Study Summary
+        </CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="space-y-3">
+        <div className="space-y-4">
           {summaryItems.map((item) => {
             const Icon = item.icon;
             return (
-              <div key={item.label} className={`flex items-center p-3 rounded-lg ${item.bgColor}`}>
-                <Icon className={`h-5 w-5 ${item.color} mr-3`} />
-                <div className="flex-1">
-                  <div className="text-sm text-muted-foreground">{item.label}</div>
-                  <div className={`text-xl font-bold ${item.color}`}>{item.value}</div>
+              <div key={item.label} className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className={`p-2 rounded-lg ${item.bgColor}`}>
+                    <Icon className={`h-4 w-4 ${item.color}`} />
+                  </div>
+                  <span className="text-sm text-gray-600">{item.label}</span>
                 </div>
+                <div className={`text-xl font-bold ${item.color}`}>{item.value}</div>
               </div>
             );
           })}

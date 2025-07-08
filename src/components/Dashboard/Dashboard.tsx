@@ -68,7 +68,6 @@ const Dashboard = () => {
     fetchStudyLogs();
   }, [user]);
 
-  // Calculate daily target data using timezone-aware utilities
   const calculateDailyTargets = () => {
     const today = getTodayDate();
     const yesterday = getYesterdayDate();
@@ -89,7 +88,6 @@ const Dashboard = () => {
     return { avg21Days, avg7Days, yesterdayHours, todayHours };
   };
 
-  // Calculate study summary
   const calculateStudySummary = () => {
     const totalSessions = studyLogs.length;
     const totalHours = studyLogs.reduce((sum, log) => sum + log.duration, 0) / 60;
@@ -98,7 +96,6 @@ const Dashboard = () => {
     return { totalSessions, totalHours, totalSubjects };
   };
 
-  // Calculate subject data for stacked bar chart
   const calculateSubjectData = () => {
     return studyLogs.map(log => ({
       subject: log.subject || 'Unknown',
@@ -107,7 +104,6 @@ const Dashboard = () => {
     }));
   };
 
-  // Calculate weekly distribution using timezone-aware start of week
   const calculateWeeklyDistribution = () => {
     const startOfWeek = getStartOfWeek();
 
@@ -140,7 +136,6 @@ const Dashboard = () => {
     });
   };
 
-  // Calculate 4-week consistency using timezone-aware dates
   const calculateFourWeekConsistency = () => {
     const weeks = [];
     const today = new Date();
@@ -163,7 +158,6 @@ const Dashboard = () => {
       
       const weekHours = weekLogs.reduce((sum, log) => sum + log.duration, 0) / 60;
       
-      // Calculate subject breakdown for this week
       const subjects: { [subject: string]: number } = {};
       weekLogs.forEach(log => {
         const subject = log.subject;
@@ -180,7 +174,6 @@ const Dashboard = () => {
     return weeks;
   };
 
-  // Calculate 12-month trend using timezone-aware month calculation
   const calculateTwelveMonthTrend = () => {
     if (studyLogs.length === 0) return [];
     
@@ -190,10 +183,8 @@ const Dashboard = () => {
     
     const months = [];
     
-    // Start from the first log month
     let monthIterator = new Date(firstLogDate.getFullYear(), firstLogDate.getMonth(), 1);
     
-    // Calculate months from first log until current month (inclusive)
     while (monthIterator <= currentDate) {
       const year = monthIterator.getFullYear();
       const month = monthIterator.getMonth() + 1;
@@ -203,7 +194,6 @@ const Dashboard = () => {
       const monthLogs = studyLogs.filter(log => log.date.startsWith(monthKey));
       const monthHours = monthLogs.reduce((sum, log) => sum + log.duration, 0) / 60;
       
-      // Calculate subject breakdown for this month
       const subjects: { [subject: string]: number } = {};
       monthLogs.forEach(log => {
         const subject = log.subject;
@@ -216,21 +206,22 @@ const Dashboard = () => {
         subjects 
       });
       
-      // Move to next month
       monthIterator.setMonth(monthIterator.getMonth() + 1);
       
-      // Limit to 12 months maximum
       if (months.length >= 12) break;
     }
     
-    // If we have more than 12 months, take the last 12
     return months.slice(-12);
   };
 
   if (loading) {
     return (
-      <div className="space-y-6">
-        <div className="text-center py-8">Loading dashboard...</div>
+      <div className="min-h-screen bg-gray-50 p-6">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center py-12">
+            <div className="text-lg text-gray-600">Loading dashboard...</div>
+          </div>
+        </div>
       </div>
     );
   }
@@ -244,31 +235,39 @@ const Dashboard = () => {
   const subjects = Array.from(new Set(studyLogs.map(log => log.subject)));
 
   return (
-    <div className="space-y-6">
-      {/* Top Row - Two widgets side by side */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <DailyTargetWidget {...dailyTargets} />
-        <StudySummaryWidget {...studySummary} />
-      </div>
+    <div className="min-h-screen bg-gray-50 p-6">
+      <div className="max-w-7xl mx-auto space-y-6">
+        {/* Header */}
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold text-gray-900">Dashboard</h1>
+          <p className="text-gray-600 mt-1">Track your study progress</p>
+        </div>
 
-      {/* Second Section - Full width */}
-      <SubjectBarChartWidget data={subjectData} />
+        {/* Top Row - Two widgets side by side */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <DailyTargetWidget {...dailyTargets} />
+          <StudySummaryWidget {...studySummary} />
+        </div>
 
-      {/* Third Row - Three equal widgets */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <WeeklyDistributionWidget 
-          data={weeklyData} 
-          subjects={subjects}
-          getSubjectColor={getSubjectColor}
-        />
-        <FourWeekConsistencyWidget 
-          data={fourWeekData} 
-          getSubjectColor={getSubjectColor}
-        />
-        <TwelveMonthTrendWidget 
-          data={twelveMonthData}
-          getSubjectColor={getSubjectColor}
-        />
+        {/* Second Section - Full width */}
+        <SubjectBarChartWidget data={subjectData} />
+
+        {/* Third Row - Three equal widgets */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <WeeklyDistributionWidget 
+            data={weeklyData} 
+            subjects={subjects}
+            getSubjectColor={getSubjectColor}
+          />
+          <FourWeekConsistencyWidget 
+            data={fourWeekData} 
+            getSubjectColor={getSubjectColor}
+          />
+          <TwelveMonthTrendWidget 
+            data={twelveMonthData}
+            getSubjectColor={getSubjectColor}
+          />
+        </div>
       </div>
     </div>
   );
