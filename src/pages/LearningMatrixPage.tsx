@@ -1,0 +1,56 @@
+
+import React, { useState } from 'react';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import KnownTechnologies from '@/components/LearningMatrix/KnownTechnologies';
+import UnknownTechnologies from '@/components/LearningMatrix/UnknownTechnologies';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { BookOpen, Target } from 'lucide-react';
+
+const LearningMatrixPage = () => {
+  return (
+    <div className="min-h-screen bg-background p-6">
+      <div className="max-w-7xl mx-auto">
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold text-foreground mb-2">Learning Matrix</h1>
+          <p className="text-muted-foreground">
+            Organize and prioritize your learning journey with known and unknown technologies
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
+          {/* Known Technologies Section */}
+          <Card className="h-fit">
+            <CardHeader className="pb-4">
+              <CardTitle className="flex items-center gap-2 text-xl">
+                <div className="w-6 h-6 rounded-full bg-green-500 flex items-center justify-center">
+                  <BookOpen className="w-4 h-4 text-white" />
+                </div>
+                Known Technologies
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <KnownTechnologies />
+            </CardContent>
+          </Card>
+
+          {/* Unknown Technologies Section */}
+          <Card className="h-fit">
+            <CardHeader className="pb-4">
+              <CardTitle className="flex items-center gap-2 text-xl">
+                <div className="w-6 h-6 rounded-full bg-orange-500 flex items-center justify-center">
+                  <Target className="w-4 h-4 text-white" />
+                </div>
+                Learning Priorities
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <UnknownTechnologies />
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default LearningMatrixPage;

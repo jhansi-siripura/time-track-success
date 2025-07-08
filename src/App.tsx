@@ -24,6 +24,7 @@ import ChangelogPage from "@/pages/ChangelogPage";
 import StudyGoalsPage from "@/pages/StudyGoalsPage";
 import SubjectsPage from "@/pages/SubjectsPage";
 import CoursesPage from "@/pages/CoursesPage";
+import LearningMatrixPage from "@/pages/LearningMatrixPage";
 import NotFound from "@/pages/NotFound";
 import NewFeatureToast from "@/components/Navigation/NewFeatureToast";
 import NewFeatureNotification from '@/components/Navigation/NewFeatureNotification';
@@ -115,6 +116,16 @@ function App() {
                     <ProtectedRoute>
                       <MainLayout>
                         <CoursesPage />
+                      </MainLayout>
+                    </ProtectedRoute>
+                  } 
+                />
+                <Route 
+                  path="/learning-matrix" 
+                  element={
+                    <ProtectedRoute>
+                      <MainLayout>
+                        <LearningMatrixPage />
                       </MainLayout>
                     </ProtectedRoute>
                   } 

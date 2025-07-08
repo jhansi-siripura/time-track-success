@@ -1,7 +1,9 @@
+
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { BookOpen, BarChart3, FileText, Plus, Target, Calendar, Timer, Sparkles } from 'lucide-react';
+
 const HomePage = () => {
   const navigationCards = [{
     title: 'Dashboard',
@@ -12,6 +14,15 @@ const HomePage = () => {
     bgColor: 'bg-white',
     borderColor: 'border-gray-200',
     iconBg: 'bg-gradient-to-br from-blue-500 to-blue-600'
+  }, {
+    title: 'Learning Matrix',
+    description: 'Organize and prioritize your learning goals',
+    icon: Target,
+    path: '/learning-matrix',
+    gradient: 'from-emerald-500 to-emerald-600',
+    bgColor: 'bg-white',
+    borderColor: 'border-gray-200',
+    iconBg: 'bg-gradient-to-br from-emerald-500 to-emerald-600'
   }, {
     title: 'Pomodoro Timer',
     description: 'Focus with timed study sessions',
@@ -40,15 +51,6 @@ const HomePage = () => {
     borderColor: 'border-gray-200',
     iconBg: 'bg-gradient-to-br from-orange-500 to-orange-600'
   }, {
-    title: 'Study Plan',
-    description: 'Manage your learning goals and subjects',
-    icon: Target,
-    path: '/study-plan',
-    gradient: 'from-purple-500 to-purple-600',
-    bgColor: 'bg-white',
-    borderColor: 'border-gray-200',
-    iconBg: 'bg-gradient-to-br from-purple-500 to-purple-600'
-  }, {
     title: 'Recap',
     description: 'Review and edit your daily study sessions',
     icon: Calendar,
@@ -58,6 +60,7 @@ const HomePage = () => {
     borderColor: 'border-gray-200',
     iconBg: 'bg-gradient-to-br from-indigo-500 to-indigo-600'
   }];
+
   return <div className="min-h-screen bg-white">
       <div className="max-w-7xl mx-auto px-6 py-8 bg-white">
         {/* Hero Section */}
@@ -103,12 +106,12 @@ const HomePage = () => {
               </div>
               <h2 className="text-2xl md:text-3xl font-semibold text-gray-900 mb-4">Ready to Start Learning?</h2>
               <p className="text-gray-600 mb-8 text-lg leading-relaxed max-w-2xl mx-auto">
-                Begin by setting up your study plan or log your first study session to track your progress and unlock powerful insights into your learning journey.
+                Begin by organizing your learning matrix or set up your study plan to track your progress and unlock powerful insights into your learning journey.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <Link to="/study-plan" className="inline-flex items-center justify-center space-x-3 bg-gradient-to-r from-purple-600 to-purple-700 text-white px-8 py-4 rounded-xl hover:from-purple-700 hover:to-purple-800 transition-all duration-300 font-semibold shadow-lg hover:shadow-xl transform hover:scale-105">
+                <Link to="/learning-matrix" className="inline-flex items-center justify-center space-x-3 bg-gradient-to-r from-emerald-600 to-emerald-700 text-white px-8 py-4 rounded-xl hover:from-emerald-700 hover:to-emerald-800 transition-all duration-300 font-semibold shadow-lg hover:shadow-xl transform hover:scale-105">
                   <Target className="h-5 w-5" />
-                  <span>Set Your Plan</span>
+                  <span>Organize Learning</span>
                 </Link>
                 <Link to="/add-session" className="inline-flex items-center justify-center space-x-3 bg-gradient-to-r from-amber-600 to-yellow-600 text-white px-8 py-4 rounded-xl hover:from-amber-700 hover:to-yellow-700 transition-all duration-300 font-semibold shadow-lg hover:shadow-xl transform hover:scale-105">
                   <Plus className="h-5 w-5" />
