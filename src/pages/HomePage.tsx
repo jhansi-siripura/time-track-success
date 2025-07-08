@@ -1,7 +1,8 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { BookOpen, BarChart3, FileText, Plus, Target, Calendar, Timer, Sparkles } from 'lucide-react';
+import { BookOpen, BarChart3, FileText, Plus, Target, Calendar, Timer, Sparkles, Brain } from 'lucide-react';
+
 const HomePage = () => {
   const navigationCards = [{
     title: 'Dashboard',
@@ -12,6 +13,15 @@ const HomePage = () => {
     bgColor: 'bg-white',
     borderColor: 'border-gray-200',
     iconBg: 'bg-gradient-to-br from-blue-500 to-blue-600'
+  }, {
+    title: 'Learning Matrix',
+    description: 'Organize and prioritize technologies to learn',
+    icon: Brain,
+    path: '/learning-matrix',
+    gradient: 'from-purple-500 to-purple-600',
+    bgColor: 'bg-white',
+    borderColor: 'border-gray-200',
+    iconBg: 'bg-gradient-to-br from-purple-500 to-purple-600'
   }, {
     title: 'Pomodoro Timer',
     description: 'Focus with timed study sessions',
@@ -58,6 +68,7 @@ const HomePage = () => {
     borderColor: 'border-gray-200',
     iconBg: 'bg-gradient-to-br from-indigo-500 to-indigo-600'
   }];
+
   return <div className="min-h-screen bg-white">
       <div className="max-w-7xl mx-auto px-6 py-8 bg-white">
         {/* Hero Section */}
@@ -121,4 +132,5 @@ const HomePage = () => {
       </div>
     </div>;
 };
+
 export default HomePage;

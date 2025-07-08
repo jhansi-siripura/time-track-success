@@ -94,6 +94,45 @@ export type Database = {
           },
         ]
       }
+      learning_matrix_unknown: {
+        Row: {
+          created_at: string
+          description: string | null
+          estimated_hours: number | null
+          expected_roi: Database["public"]["Enums"]["roi_level"] | null
+          id: string
+          priority_category: Database["public"]["Enums"]["learning_priority"]
+          technology_name: string
+          updated_at: string
+          urgency_level: Database["public"]["Enums"]["urgency_level"] | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          estimated_hours?: number | null
+          expected_roi?: Database["public"]["Enums"]["roi_level"] | null
+          id?: string
+          priority_category: Database["public"]["Enums"]["learning_priority"]
+          technology_name: string
+          updated_at?: string
+          urgency_level?: Database["public"]["Enums"]["urgency_level"] | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          estimated_hours?: number | null
+          expected_roi?: Database["public"]["Enums"]["roi_level"] | null
+          id?: string
+          priority_category?: Database["public"]["Enums"]["learning_priority"]
+          technology_name?: string
+          updated_at?: string
+          urgency_level?: Database["public"]["Enums"]["urgency_level"] | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       pomodoro_settings: {
         Row: {
           auto_start_breaks: boolean
@@ -393,7 +432,13 @@ export type Database = {
       }
     }
     Enums: {
-      [_ in never]: never
+      learning_priority:
+        | "job-critical"
+        | "important-not-urgent"
+        | "curious-emerging"
+        | "nice-to-know"
+      roi_level: "high" | "medium" | "low" | "unknown"
+      urgency_level: "high" | "medium" | "low"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -520,6 +565,15 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      learning_priority: [
+        "job-critical",
+        "important-not-urgent",
+        "curious-emerging",
+        "nice-to-know",
+      ],
+      roi_level: ["high", "medium", "low", "unknown"],
+      urgency_level: ["high", "medium", "low"],
+    },
   },
 } as const
