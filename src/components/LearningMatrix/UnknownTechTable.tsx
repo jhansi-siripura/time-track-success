@@ -9,7 +9,7 @@ import { MoreHorizontal, Edit, Trash2, Search } from 'lucide-react';
 import { Database } from '@/integrations/supabase/types';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
-import EditTechnologyDialog from './EditTechnologyDialog';
+import EditSubjectDialog from './EditTechnologyDialog';
 
 type LearningMatrixUnknown = Database['public']['Tables']['learning_matrix_unknown']['Row'];
 
@@ -24,8 +24,8 @@ const UnknownTechTable: React.FC<UnknownTechTableProps> = ({ technologies, onUpd
   const { toast } = useToast();
 
   const filteredTechnologies = technologies.filter(tech =>
-    tech.technology_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    (tech.description && tech.description.toLowerCase().includes(searchTerm.toLowerCase()))
+    tech.subject_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    (tech.topic_name && tech.topic_name.toLowerCase().includes(searchTerm.toLowerCase()))
   );
 
   const handleDelete = async (technology: LearningMatrixUnknown) => {
@@ -38,15 +38,15 @@ const UnknownTechTable: React.FC<UnknownTechTableProps> = ({ technologies, onUpd
       if (error) throw error;
 
       toast({
-        title: 'Technology deleted',
-        description: `${technology.technology_name} has been removed from your learning matrix.`,
+        title: 'Subject deleted',
+        description: `${technology.subject_name} has been removed from your learning matrix.`,
       });
       onUpdate();
     } catch (error) {
-      console.error('Error deleting technology:', error);
+      console.error('Error deleting subject:', error);
       toast({
         title: 'Error',
-        description: 'Failed to delete technology. Please try again.',
+        description: 'Failed to delete subject. Please try again.',
         variant: 'destructive',
       });
     }
@@ -78,7 +78,7 @@ const UnknownTechTable: React.FC<UnknownTechTableProps> = ({ technologies, onUpd
         <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
           <Input
-            placeholder="Search technologies..."
+            placeholder="Search subjects and topics..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="pl-10"
@@ -90,33 +90,32 @@ const UnknownTechTable: React.FC<UnknownTechTableProps> = ({ technologies, onUpd
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Technology</TableHead>
+              <TableHead>Subject</TableHead>
+              <TableHead>Topic</TableHead>
               <TableHead>Priority</TableHead>
-              <TableHead>Urgency</TableHead>
               <TableHead>Hours</TableHead>
-              <TableHead>ROI</TableHead>
               <TableHead className="w-[50px]"></TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {filteredTechnologies.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={6} className="text-center py-8 text-muted-foreground">
-                  {searchTerm ? 'No technologies match your search.' : 'No technologies added yet.'}
+                <TableCell colSpan={5} className="text-center py-8 text-muted-foreground">
+                  {searchTerm ? 'No subjects match your search.' : 'No subjects added yet.'}
                 </TableCell>
               </TableRow>
             ) : (
               filteredTechnologies.map((tech) => (
                 <TableRow key={tech.id}>
                   <TableCell>
-                    <div>
-                      <div className="font-medium">{tech.technology_name}</div>
-                      {tech.description && (
-                        <div className="text-sm text-muted-foreground mt-1">
-                          {tech.description}
-                        </div>
-                      )}
-                    </div>
+                    <div className="font-medium">{tech.subject_name}</div>
+                  </TableCell>
+                  <TableCell>
+                    {tech.topic_name && (
+                      <div className="text-sm text-muted-foreground">
+                        {tech.topic_name}
+                      </div>
+                    )}
                   </TableCell>
                   <TableCell>
                     <Badge className={`${getPriorityColor(tech.priority_category)} text-xs`}>
@@ -124,21 +123,7 @@ const UnknownTechTable: React.FC<UnknownTechTableProps> = ({ technologies, onUpd
                     </Badge>
                   </TableCell>
                   <TableCell>
-                    {tech.urgency_level && (
-                      <Badge variant="outline" className="text-xs">
-                        {tech.urgency_level.charAt(0).toUpperCase() + tech.urgency_level.slice(1)}
-                      </Badge>
-                    )}
-                  </TableCell>
-                  <TableCell>
                     {tech.estimated_hours ? `${tech.estimated_hours}h` : '-'}
-                  </TableCell>
-                  <TableCell>
-                    {tech.expected_roi && (
-                      <Badge variant="outline" className="text-xs">
-                        {tech.expected_roi.charAt(0).toUpperCase() + tech.expected_roi.slice(1)}
-                      </Badge>
-                    )}
                   </TableCell>
                   <TableCell>
                     <DropdownMenu>
@@ -170,7 +155,7 @@ const UnknownTechTable: React.FC<UnknownTechTableProps> = ({ technologies, onUpd
       </div>
 
       {editTech && (
-        <EditTechnologyDialog
+        <EditSubjectDialog
           open={!!editTech}
           onOpenChange={() => setEditTech(null)}
           technology={editTech}

@@ -4,7 +4,6 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
@@ -12,14 +11,14 @@ import { Database } from '@/integrations/supabase/types';
 
 type LearningMatrixUnknown = Database['public']['Tables']['learning_matrix_unknown']['Row'];
 
-interface EditTechnologyDialogProps {
+interface EditSubjectDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   technology: LearningMatrixUnknown;
   onSuccess: () => void;
 }
 
-const EditTechnologyDialog: React.FC<EditTechnologyDialogProps> = ({
+const EditSubjectDialog: React.FC<EditSubjectDialogProps> = ({
   open,
   onOpenChange,
   technology,
@@ -27,24 +26,20 @@ const EditTechnologyDialog: React.FC<EditTechnologyDialogProps> = ({
 }) => {
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
-    technology_name: '',
-    description: '',
+    subject_name: '',
+    topic_name: '',
     priority_category: 'important-not-urgent',
-    urgency_level: 'medium',
-    estimated_hours: '',
-    expected_roi: 'unknown'
+    estimated_hours: ''
   });
   const { toast } = useToast();
 
   useEffect(() => {
     if (technology) {
       setFormData({
-        technology_name: technology.technology_name,
-        description: technology.description || '',
+        subject_name: technology.subject_name,
+        topic_name: technology.topic_name || '',
         priority_category: technology.priority_category,
-        urgency_level: technology.urgency_level || 'medium',
-        estimated_hours: technology.estimated_hours?.toString() || '',
-        expected_roi: technology.expected_roi || 'unknown'
+        estimated_hours: technology.estimated_hours?.toString() || ''
       });
     }
   }, [technology]);
@@ -57,12 +52,10 @@ const EditTechnologyDialog: React.FC<EditTechnologyDialogProps> = ({
       const { error } = await supabase
         .from('learning_matrix_unknown')
         .update({
-          technology_name: formData.technology_name,
-          description: formData.description || null,
+          subject_name: formData.subject_name,
+          topic_name: formData.topic_name || null,
           priority_category: formData.priority_category as any,
-          urgency_level: formData.urgency_level as any,
           estimated_hours: formData.estimated_hours ? parseFloat(formData.estimated_hours) : null,
-          expected_roi: formData.expected_roi as any,
           updated_at: new Date().toISOString()
         })
         .eq('id', technology.id);
@@ -70,16 +63,16 @@ const EditTechnologyDialog: React.FC<EditTechnologyDialogProps> = ({
       if (error) throw error;
 
       toast({
-        title: 'Technology updated',
-        description: `${formData.technology_name} has been updated in your learning matrix.`,
+        title: 'Subject updated',
+        description: `${formData.subject_name} has been updated in your learning matrix.`,
       });
 
       onSuccess();
     } catch (error) {
-      console.error('Error updating technology:', error);
+      console.error('Error updating subject:', error);
       toast({
         title: 'Error',
-        description: 'Failed to update technology. Please try again.',
+        description: 'Failed to update subject. Please try again.',
         variant: 'destructive',
       });
     } finally {
@@ -95,29 +88,28 @@ const EditTechnologyDialog: React.FC<EditTechnologyDialogProps> = ({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[500px]">
         <DialogHeader>
-          <DialogTitle>Edit Technology</DialogTitle>
+          <DialogTitle>Edit Subject</DialogTitle>
         </DialogHeader>
         
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="technology_name">Technology Name</Label>
+            <Label htmlFor="subject_name">Subject</Label>
             <Input
-              id="technology_name"
-              value={formData.technology_name}
-              onChange={(e) => handleInputChange('technology_name', e.target.value)}
-              placeholder="e.g., React Native, Docker, GraphQL"
+              id="subject_name"
+              value={formData.subject_name}
+              onChange={(e) => handleInputChange('subject_name', e.target.value)}
+              placeholder="e.g., React, Python, Machine Learning"
               required
             />
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="description">Description (Optional)</Label>
-            <Textarea
-              id="description"
-              value={formData.description}
-              onChange={(e) => handleInputChange('description', e.target.value)}
-              placeholder="Brief description of what you want to learn"
-              rows={3}
+            <Label htmlFor="topic_name">Topic (Optional)</Label>
+            <Input
+              id="topic_name"
+              value={formData.topic_name}
+              onChange={(e) => handleInputChange('topic_name', e.target.value)}
+              placeholder="e.g., Hooks, Data Structures, Neural Networks"
             />
           </div>
 
@@ -139,53 +131,16 @@ const EditTechnologyDialog: React.FC<EditTechnologyDialogProps> = ({
             </Select>
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label>Urgency Level</Label>
-              <Select
-                value={formData.urgency_level}
-                onValueChange={(value) => handleInputChange('urgency_level', value)}
-              >
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="high">High</SelectItem>
-                  <SelectItem value="medium">Medium</SelectItem>
-                  <SelectItem value="low">Low</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="estimated_hours">Estimated Hours</Label>
-              <Input
-                id="estimated_hours"
-                type="number"
-                value={formData.estimated_hours}
-                onChange={(e) => handleInputChange('estimated_hours', e.target.value)}
-                placeholder="e.g., 40"
-                min="0"
-              />
-            </div>
-          </div>
-
           <div className="space-y-2">
-            <Label>Expected ROI</Label>
-            <Select
-              value={formData.expected_roi}
-              onValueChange={(value) => handleInputChange('expected_roi', value)}
-            >
-              <SelectTrigger>
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="high">High</SelectItem>
-                <SelectItem value="medium">Medium</SelectItem>
-                <SelectItem value="low">Low</SelectItem>
-                <SelectItem value="unknown">Unknown</SelectItem>
-              </SelectContent>
-            </Select>
+            <Label htmlFor="estimated_hours">Estimated Hours</Label>
+            <Input
+              id="estimated_hours"
+              type="number"
+              value={formData.estimated_hours}
+              onChange={(e) => handleInputChange('estimated_hours', e.target.value)}
+              placeholder="e.g., 40"
+              min="0"
+            />
           </div>
 
           <div className="flex justify-end gap-2 pt-4">
@@ -198,7 +153,7 @@ const EditTechnologyDialog: React.FC<EditTechnologyDialogProps> = ({
               Cancel
             </Button>
             <Button type="submit" disabled={loading}>
-              {loading ? 'Updating...' : 'Update Technology'}
+              {loading ? 'Updating...' : 'Update Subject'}
             </Button>
           </div>
         </form>
@@ -207,4 +162,4 @@ const EditTechnologyDialog: React.FC<EditTechnologyDialogProps> = ({
   );
 };
 
-export default EditTechnologyDialog;
+export default EditSubjectDialog;

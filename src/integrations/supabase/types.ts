@@ -97,38 +97,32 @@ export type Database = {
       learning_matrix_unknown: {
         Row: {
           created_at: string
-          description: string | null
           estimated_hours: number | null
-          expected_roi: Database["public"]["Enums"]["roi_level"] | null
           id: string
           priority_category: Database["public"]["Enums"]["learning_priority"]
-          technology_name: string
+          subject_name: string
+          topic_name: string | null
           updated_at: string
-          urgency_level: Database["public"]["Enums"]["urgency_level"] | null
           user_id: string
         }
         Insert: {
           created_at?: string
-          description?: string | null
           estimated_hours?: number | null
-          expected_roi?: Database["public"]["Enums"]["roi_level"] | null
           id?: string
           priority_category: Database["public"]["Enums"]["learning_priority"]
-          technology_name: string
+          subject_name: string
+          topic_name?: string | null
           updated_at?: string
-          urgency_level?: Database["public"]["Enums"]["urgency_level"] | null
           user_id: string
         }
         Update: {
           created_at?: string
-          description?: string | null
           estimated_hours?: number | null
-          expected_roi?: Database["public"]["Enums"]["roi_level"] | null
           id?: string
           priority_category?: Database["public"]["Enums"]["learning_priority"]
-          technology_name?: string
+          subject_name?: string
+          topic_name?: string | null
           updated_at?: string
-          urgency_level?: Database["public"]["Enums"]["urgency_level"] | null
           user_id?: string
         }
         Relationships: []

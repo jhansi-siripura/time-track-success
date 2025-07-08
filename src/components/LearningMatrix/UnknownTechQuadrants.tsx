@@ -73,7 +73,7 @@ const UnknownTechQuadrants: React.FC<UnknownTechQuadrantsProps> = ({ technologie
             <CardContent className="space-y-3">
               {quadrant.data.length === 0 ? (
                 <p className="text-xs text-muted-foreground text-center py-4">
-                  No technologies in this category
+                  No subjects in this category
                 </p>
               ) : (
                 quadrant.data.map((tech) => (

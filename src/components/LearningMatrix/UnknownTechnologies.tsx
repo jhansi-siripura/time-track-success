@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Plus } from 'lucide-react';
 import UnknownTechQuadrants from './UnknownTechQuadrants';
 import UnknownTechTable from './UnknownTechTable';
-import AddTechnologyDialog from './AddTechnologyDialog';
+import AddSubjectDialog from './AddTechnologyDialog';
 import { supabase } from '@/integrations/supabase/client';
 import { Database } from '@/integrations/supabase/types';
 
@@ -30,13 +30,13 @@ const UnknownTechnologies = () => {
       if (error) throw error;
       setTechnologies(data || []);
     } catch (error) {
-      console.error('Error fetching unknown technologies:', error);
+      console.error('Error fetching unknown subjects:', error);
     } finally {
       setLoading(false);
     }
   };
 
-  const handleAddTechnology = () => {
+  const handleAddSubject = () => {
     fetchUnknownTechnologies(); // Refresh the list
     setShowAddDialog(false);
   };
@@ -54,11 +54,11 @@ const UnknownTechnologies = () => {
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <p className="text-sm text-muted-foreground">
-          Prioritize and organize technologies you want to learn
+          Prioritize and organize subjects you want to learn
         </p>
         <Button onClick={() => setShowAddDialog(true)} size="sm">
           <Plus className="w-4 h-4 mr-2" />
-          Add Topic
+          Add Subject
         </Button>
       </div>
 
@@ -83,10 +83,10 @@ const UnknownTechnologies = () => {
         </TabsContent>
       </Tabs>
 
-      <AddTechnologyDialog
+      <AddSubjectDialog
         open={showAddDialog}
         onOpenChange={setShowAddDialog}
-        onSuccess={handleAddTechnology}
+        onSuccess={handleAddSubject}
       />
     </div>
   );
