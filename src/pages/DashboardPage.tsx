@@ -5,18 +5,18 @@ import { BarChart3 } from 'lucide-react';
 
 const DashboardPage = () => {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50/80 via-gray-50/60 to-blue-50/70">
+    <div className="min-h-screen bg-white">
       <div className="p-6">
-        <div className="mb-6">
-          <div className="flex items-center space-x-3 mb-4">
-            <div className="p-2 bg-gradient-to-br from-amber-500 to-yellow-600 rounded-lg shadow-md">
-              <BarChart3 className="h-5 w-5 text-white" />
+        <div className="mb-8">
+          <div className="flex items-center space-x-4 mb-2">
+            <div className="p-3 bg-gradient-to-br from-slate-700 to-slate-800 rounded-lg shadow-sm">
+              <BarChart3 className="h-6 w-6 text-white" />
             </div>
             <div>
-              <h1 className="text-2xl font-bold bg-gradient-to-r from-amber-600 to-yellow-600 bg-clip-text text-transparent">
+              <h1 className="text-3xl font-semibold text-slate-800">
                 Dashboard
               </h1>
-              <p className="text-sm text-gray-600">Track your study progress</p>
+              <p className="text-slate-600 mt-1">Track your study progress and analytics</p>
             </div>
           </div>
         </div>

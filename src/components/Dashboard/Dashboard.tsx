@@ -216,9 +216,9 @@ const Dashboard = () => {
 
   if (loading) {
     return (
-      <div className="max-w-7xl mx-auto">
+      <div className="max-w-7xl mx-auto bg-white">
         <div className="text-center py-12">
-          <div className="text-lg text-gray-600">Loading dashboard...</div>
+          <div className="text-lg text-slate-600">Loading dashboard...</div>
         </div>
       </div>
     );
@@ -233,7 +233,7 @@ const Dashboard = () => {
   const subjects = Array.from(new Set(studyLogs.map(log => log.subject)));
 
   return (
-    <div className="max-w-7xl mx-auto space-y-6">
+    <div className="max-w-7xl mx-auto space-y-8 bg-white">
       {/* Top Row - Two widgets side by side */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <DailyTargetWidget {...dailyTargets} />
