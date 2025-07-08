@@ -83,26 +83,26 @@ const PomodoroTimer = () => {
   };
 
   return (
-    <div className="flex flex-col items-center space-y-6 p-6">
-      <Card className="w-full max-w-md">
-        <CardContent className="p-8">
-          <div className="text-center space-y-6">
+    <div className="flex flex-col items-center space-y-4 sm:space-y-6 p-4 sm:p-6">
+      <Card className="w-full max-w-md bg-card border-border shadow-lg">
+        <CardContent className="p-6 sm:p-8">
+          <div className="text-center space-y-4 sm:space-y-6">
             {/* Session Title */}
             <div>
-              <h2 className="text-2xl font-bold text-gray-900">{getSessionTitle()}</h2>
-              <p className="text-sm text-gray-600">
+              <h2 className="text-xl sm:text-2xl font-bold text-foreground">{getSessionTitle()}</h2>
+              <p className="text-sm text-muted-foreground">
                 Cycle {currentCycle} of {totalCycles}
               </p>
             </div>
 
             {/* Timer Display */}
-            <div className={`relative w-48 h-48 mx-auto rounded-full bg-gradient-to-br ${getSessionColor()} p-2 shadow-lg`}>
-              <div className="w-full h-full bg-white rounded-full flex items-center justify-center">
+            <div className={`relative w-40 h-40 sm:w-48 sm:h-48 mx-auto rounded-full bg-gradient-to-br ${getSessionColor()} p-2 shadow-lg`}>
+              <div className="w-full h-full bg-card rounded-full flex items-center justify-center">
                 <div className="text-center">
-                  <div className="text-4xl font-mono font-bold text-gray-900">
+                  <div className="text-2xl sm:text-4xl font-mono font-bold text-foreground">
                     {formatTime(timeLeft)}
                   </div>
-                  <div className="text-sm text-gray-600 mt-1">
+                  <div className="text-xs sm:text-sm text-muted-foreground mt-1">
                     {isActive ? 'Running' : 'Paused'}
                   </div>
                 </div>
@@ -112,7 +112,7 @@ const PomodoroTimer = () => {
             {/* Progress Bar */}
             <div className="space-y-2">
               <Progress value={progress} className="h-2" />
-              <p className="text-xs text-gray-500 text-center">
+              <p className="text-xs text-muted-foreground text-center">
                 {Math.round(progress)}% complete
               </p>
             </div>
@@ -148,25 +148,25 @@ const PomodoroTimer = () => {
       </Card>
 
       {/* Session Info Cards */}
-      <div className="grid grid-cols-3 gap-4 w-full max-w-md">
-        <Card className={`${sessionType === 'focus' ? 'ring-2 ring-red-400' : ''}`}>
-          <CardContent className="p-4 text-center">
-            <div className="w-4 h-4 bg-gradient-to-r from-red-400 to-red-600 rounded-full mx-auto mb-2"></div>
-            <p className="text-xs font-medium">Focus</p>
+      <div className="grid grid-cols-3 gap-2 sm:gap-4 w-full max-w-md">
+        <Card className={`transition-all duration-200 bg-card border-border ${sessionType === 'focus' ? 'ring-2 ring-red-400 shadow-md' : 'hover:shadow-sm'}`}>
+          <CardContent className="p-3 sm:p-4 text-center">
+            <div className="w-3 h-3 sm:w-4 sm:h-4 bg-gradient-to-r from-red-400 to-red-600 rounded-full mx-auto mb-1 sm:mb-2"></div>
+            <p className="text-xs font-medium text-foreground">Focus</p>
           </CardContent>
         </Card>
         
-        <Card className={`${sessionType === 'short_break' ? 'ring-2 ring-green-400' : ''}`}>
-          <CardContent className="p-4 text-center">
-            <div className="w-4 h-4 bg-gradient-to-r from-green-400 to-green-600 rounded-full mx-auto mb-2"></div>
-            <p className="text-xs font-medium">Short Break</p>
+        <Card className={`transition-all duration-200 bg-card border-border ${sessionType === 'short_break' ? 'ring-2 ring-green-400 shadow-md' : 'hover:shadow-sm'}`}>
+          <CardContent className="p-3 sm:p-4 text-center">
+            <div className="w-3 h-3 sm:w-4 sm:h-4 bg-gradient-to-r from-green-400 to-green-600 rounded-full mx-auto mb-1 sm:mb-2"></div>
+            <p className="text-xs font-medium text-foreground">Short Break</p>
           </CardContent>
         </Card>
         
-        <Card className={`${sessionType === 'long_break' ? 'ring-2 ring-blue-400' : ''}`}>
-          <CardContent className="p-4 text-center">
-            <div className="w-4 h-4 bg-gradient-to-r from-blue-400 to-blue-600 rounded-full mx-auto mb-2"></div>
-            <p className="text-xs font-medium">Long Break</p>
+        <Card className={`transition-all duration-200 bg-card border-border ${sessionType === 'long_break' ? 'ring-2 ring-blue-400 shadow-md' : 'hover:shadow-sm'}`}>
+          <CardContent className="p-3 sm:p-4 text-center">
+            <div className="w-3 h-3 sm:w-4 sm:h-4 bg-gradient-to-r from-blue-400 to-blue-600 rounded-full mx-auto mb-1 sm:mb-2"></div>
+            <p className="text-xs font-medium text-foreground">Long Break</p>
           </CardContent>
         </Card>
       </div>

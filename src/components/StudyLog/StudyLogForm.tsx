@@ -263,18 +263,18 @@ const StudyLogForm: React.FC<StudyLogFormProps> = ({
 
   return (
     <>
-      <Card>
-        <CardHeader className="bg-yellow-400">
-          <div className="flex items-center gap-2">
-            <Button variant="ghost" size="sm" onClick={onCancel} className="p-2">
+      <Card className="border-border shadow-sm bg-card">
+        <CardHeader className="border-b border-border bg-card">
+          <div className="flex items-center gap-3">
+            <Button variant="ghost" size="sm" onClick={onCancel} className="h-8 w-8 p-0 hover:bg-muted">
               <ArrowLeft className="h-4 w-4" />
             </Button>
-            <CardTitle>
+            <CardTitle className="text-lg font-semibold text-foreground">
               {editingLog ? 'Edit Study Session' : 'Add Study Session'}
             </CardTitle>
           </div>
         </CardHeader>
-        <CardContent className="bg-amber-300">
+        <CardContent className="p-6 bg-card">
           <form onSubmit={handleSubmit} className="space-y-6">
             {/* Subject, Topic, Source Row */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -366,11 +366,11 @@ const StudyLogForm: React.FC<StudyLogFormProps> = ({
               </div>
             </div>
 
-            <div className="flex gap-2 pt-4">
-              <Button type="submit" disabled={loading} className="flex-1">
+            <div className="flex gap-3 pt-6 border-t border-border">
+              <Button type="submit" disabled={loading} className="flex-1 h-11">
                 {loading ? 'Saving...' : editingLog ? 'Update Session' : 'Save Session'}
               </Button>
-              <Button type="button" variant="outline" onClick={onCancel} disabled={loading} className="flex-1">
+              <Button type="button" variant="outline" onClick={onCancel} disabled={loading} className="flex-1 h-11">
                 Cancel
               </Button>
             </div>

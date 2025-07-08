@@ -36,47 +36,47 @@ const PomodoroPage = () => {
 
   return (
     <div className="min-h-screen bg-white">
-      <div className="p-6">
-        <div className="mb-8">
-          <div className="flex items-center space-x-4 mb-2">
-            <div className="p-2 bg-gradient-to-br from-red-500 to-red-600 rounded-lg shadow-md">
+      <div className="p-4 sm:p-6">
+        <div className="mb-6 sm:mb-8">
+          <div className="flex items-center space-x-3 mb-2">
+            <div className="p-2.5 bg-gradient-to-br from-red-500 to-red-600 rounded-xl shadow-sm">
               <Timer className="h-5 w-5 text-white" />
             </div>
             <div>
-              <h1 className="text-2xl font-semibold text-gray-900">
+              <h1 className="text-xl sm:text-2xl font-semibold text-foreground">
                 Pomodoro Timer
               </h1>
-              <p className="text-gray-600 mt-1">Focus with timed sessions</p>
+              <p className="text-muted-foreground text-sm sm:text-base">Focus with timed sessions</p>
             </div>
           </div>
         </div>
 
-        <Tabs defaultValue="timer" className="w-full">
-          <TabsList className="grid w-full grid-cols-2 bg-white border border-gray-200 shadow-sm">
+        <Tabs defaultValue="timer" className="w-full max-w-4xl mx-auto">
+          <TabsList className="grid w-full grid-cols-2 bg-card border border-border shadow-sm h-12">
             <TabsTrigger 
               value="timer" 
-              className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-red-500 data-[state=active]:to-red-600 data-[state=active]:text-white"
+              className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-red-500 data-[state=active]:to-red-600 data-[state=active]:text-white h-10 text-sm sm:text-base"
             >
-              <Timer className="h-4 w-4 mr-2" />
+              <Timer className="h-4 w-4 mr-1 sm:mr-2" />
               Timer
             </TabsTrigger>
             <TabsTrigger 
               value="settings"
-              className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-amber-500 data-[state=active]:to-yellow-500 data-[state=active]:text-white"
+              className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-primary data-[state=active]:to-primary/80 data-[state=active]:text-primary-foreground h-10 text-sm sm:text-base"
             >
-              <Settings className="h-4 w-4 mr-2" />
+              <Settings className="h-4 w-4 mr-1 sm:mr-2" />
               Settings
             </TabsTrigger>
           </TabsList>
           
-          <TabsContent value="timer" className="mt-6">
+          <TabsContent value="timer" className="mt-6 sm:mt-8">
             <div className="flex justify-center">
               <PomodoroTimer />
             </div>
           </TabsContent>
           
-          <TabsContent value="settings" className="mt-6">
-            <div className="max-w-2xl mx-auto">
+          <TabsContent value="settings" className="mt-6 sm:mt-8">
+            <div className="max-w-3xl mx-auto">
               <PomodoroSettings />
             </div>
           </TabsContent>

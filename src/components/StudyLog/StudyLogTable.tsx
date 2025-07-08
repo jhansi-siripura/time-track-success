@@ -296,24 +296,24 @@ const StudyLogTable = () => {
   if (showForm) {
     return <StudyLogForm editingLog={editingLog} onSuccess={handleFormSuccess} onCancel={handleFormCancel} />;
   }
-  return <Card>
-      <CardHeader className="flex flex-row items-center justify-between bg-white">
-        <CardTitle>Study Logs</CardTitle>
-        <Button onClick={() => setShowForm(true)}>
+  return <Card className="bg-card border-border shadow-sm">
+      <CardHeader className="flex flex-row items-center justify-between border-b border-border">
+        <CardTitle className="text-lg font-semibold text-foreground">Study Logs</CardTitle>
+        <Button onClick={() => setShowForm(true)} className="h-10">
           <Plus className="h-4 w-4 mr-2" />
           Add Session
         </Button>
       </CardHeader>
-      <CardContent className="bg-white">
-        {loading ? <div className="text-center py-4">Loading study logs...</div> : <>
-            {filteredLogs.length === 0 ? <div className="text-center py-8 text-gray-500">
-                <p>No study logs found.</p>
-                <Button onClick={() => setShowForm(true)} className="mt-4">
+      <CardContent className="p-0">
+        {loading ? <div className="text-center py-8"><div className="text-muted-foreground">Loading study logs...</div></div> : <>
+            {filteredLogs.length === 0 ? <div className="text-center py-12 text-muted-foreground">
+                <p className="mb-4">No study logs found.</p>
+                <Button onClick={() => setShowForm(true)} className="h-10">
                   Add Your First Study Session
                 </Button>
               </div> : <>
                 {/* Results summary */}
-                <div className="mb-4 text-sm text-gray-600">
+                <div className="px-6 py-4 border-b border-border text-sm text-muted-foreground bg-muted/30">
                   Showing {startIndex + 1}-{Math.min(endIndex, totalItems)} of {totalItems} results
                 </div>
 
@@ -399,14 +399,14 @@ const StudyLogTable = () => {
                 </div>
 
                 {/* Pagination */}
-                <div className="mt-4 flex items-center justify-between">
+                <div className="px-6 py-4 border-t border-border bg-muted/30 flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <span className="text-sm text-gray-600">Items per page:</span>
+                    <span className="text-sm text-muted-foreground">Items per page:</span>
                     <Select value={itemsPerPage.toString()} onValueChange={handleItemsPerPageChange}>
-                      <SelectTrigger className="w-20">
+                      <SelectTrigger className="w-20 h-9 border-border">
                         <SelectValue />
                       </SelectTrigger>
-                      <SelectContent>
+                      <SelectContent className="bg-popover border-border">
                         <SelectItem value="5">5</SelectItem>
                         <SelectItem value="10">10</SelectItem>
                         <SelectItem value="20">20</SelectItem>
