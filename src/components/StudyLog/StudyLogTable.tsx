@@ -297,14 +297,14 @@ const StudyLogTable = () => {
     return <StudyLogForm editingLog={editingLog} onSuccess={handleFormSuccess} onCancel={handleFormCancel} />;
   }
   return <Card>
-      <CardHeader className="flex flex-row items-center justify-between bg-yellow-300">
+      <CardHeader className="flex flex-row items-center justify-between bg-white">
         <CardTitle>Study Logs</CardTitle>
         <Button onClick={() => setShowForm(true)}>
           <Plus className="h-4 w-4 mr-2" />
           Add Session
         </Button>
       </CardHeader>
-      <CardContent className="bg-yellow-400">
+      <CardContent className="bg-white">
         {loading ? <div className="text-center py-4">Loading study logs...</div> : <>
             {filteredLogs.length === 0 ? <div className="text-center py-8 text-gray-500">
                 <p>No study logs found.</p>
