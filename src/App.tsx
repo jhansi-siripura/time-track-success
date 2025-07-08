@@ -24,6 +24,7 @@ import LandingPage from "./pages/LandingPage";
 import HomePage from "./pages/HomePage";
 import MainLayout from "./components/Layout/MainLayout";
 import ProtectedRoute from "./components/Layout/ProtectedRoute";
+import AuthPage from "./components/Auth/AuthPage";
 import { AuthProvider } from "./contexts/AuthContext";
 import { PomodoroProvider } from "./contexts/PomodoroContext";
 
@@ -41,6 +42,7 @@ function App() {
                 <BrowserRouter>
                   <Routes>
                     <Route path="/landing" element={<LandingPage />} />
+                    <Route path="/auth" element={<AuthPage />} />
                     <Route path="/" element={
                       <ProtectedRoute>
                         <MainLayout>
