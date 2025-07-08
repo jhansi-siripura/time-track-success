@@ -216,11 +216,9 @@ const Dashboard = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 p-6">
-        <div className="max-w-7xl mx-auto">
-          <div className="text-center py-12">
-            <div className="text-lg text-gray-600">Loading dashboard...</div>
-          </div>
+      <div className="max-w-7xl mx-auto">
+        <div className="text-center py-12">
+          <div className="text-lg text-gray-600">Loading dashboard...</div>
         </div>
       </div>
     );
@@ -235,39 +233,31 @@ const Dashboard = () => {
   const subjects = Array.from(new Set(studyLogs.map(log => log.subject)));
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
-      <div className="max-w-7xl mx-auto space-y-6">
-        {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">Dashboard</h1>
-          <p className="text-gray-600 mt-1">Track your study progress</p>
-        </div>
+    <div className="max-w-7xl mx-auto space-y-6">
+      {/* Top Row - Two widgets side by side */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <DailyTargetWidget {...dailyTargets} />
+        <StudySummaryWidget {...studySummary} />
+      </div>
 
-        {/* Top Row - Two widgets side by side */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <DailyTargetWidget {...dailyTargets} />
-          <StudySummaryWidget {...studySummary} />
-        </div>
+      {/* Second Section - Full width */}
+      <SubjectBarChartWidget data={subjectData} />
 
-        {/* Second Section - Full width */}
-        <SubjectBarChartWidget data={subjectData} />
-
-        {/* Third Row - Three equal widgets */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          <WeeklyDistributionWidget 
-            data={weeklyData} 
-            subjects={subjects}
-            getSubjectColor={getSubjectColor}
-          />
-          <FourWeekConsistencyWidget 
-            data={fourWeekData} 
-            getSubjectColor={getSubjectColor}
-          />
-          <TwelveMonthTrendWidget 
-            data={twelveMonthData}
-            getSubjectColor={getSubjectColor}
-          />
-        </div>
+      {/* Third Row - Three equal widgets */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <WeeklyDistributionWidget 
+          data={weeklyData} 
+          subjects={subjects}
+          getSubjectColor={getSubjectColor}
+        />
+        <FourWeekConsistencyWidget 
+          data={fourWeekData} 
+          getSubjectColor={getSubjectColor}
+        />
+        <TwelveMonthTrendWidget 
+          data={twelveMonthData}
+          getSubjectColor={getSubjectColor}
+        />
       </div>
     </div>
   );
