@@ -9,7 +9,7 @@ const AppSidebar = () => {
   const { state } = useSidebar();
 
   const mainNavItems = [
-    { path: '/', label: 'Home', icon: Home },
+    { path: '/home', label: 'Home', icon: Home },
     { path: '/dashboard', label: 'Dashboard', icon: BarChart3 },
     { path: '/learning-matrix', label: 'Learning Matrix', icon: Target },
     { path: '/pomodoro', label: 'Pomodoro', icon: Timer },

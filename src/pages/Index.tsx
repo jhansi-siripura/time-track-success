@@ -10,8 +10,8 @@ const Index = () => {
   useEffect(() => {
     if (!loading) {
       if (user) {
-        // User is authenticated, redirect to dashboard
-        navigate('/dashboard');
+        // User is authenticated, redirect to home page instead of dashboard
+        navigate('/home');
       } else {
         // User is not authenticated, redirect to landing page
         navigate('/landing');
