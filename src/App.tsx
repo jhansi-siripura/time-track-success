@@ -132,7 +132,7 @@ function App() {
                       <ProtectedRoute>
                         <MainLayout>
                           <SettingsPage />
-                        </MainLayout>
+                        </MainLayout>               
                       </ProtectedRoute>
                     } />
                     <Route path="/changelog" element={
