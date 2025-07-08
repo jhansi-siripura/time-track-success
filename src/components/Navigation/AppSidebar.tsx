@@ -25,13 +25,13 @@ const AppSidebar = () => {
 
   return (
     <Sidebar>
-      <SidebarContent className="bg-gradient-to-b from-yellow-400 to-yellow-500 border-r border-yellow-600/20">
+      <SidebarContent className="bg-gradient-to-b from-yellow-400 to-yellow-500 px-4 py-6">
         <SidebarGroup>
-          <SidebarGroupLabel className="text-yellow-900/80 font-semibold text-sm uppercase tracking-wider px-4 py-3">
-            Main
+          <SidebarGroupLabel className="text-yellow-900/90 font-bold text-sm uppercase tracking-wider mb-6 px-0">
+            MAIN
           </SidebarGroupLabel>
-          <SidebarGroupContent className="px-2">
-            <SidebarMenu className="space-y-1">
+          <SidebarGroupContent>
+            <SidebarMenu className="space-y-2">
               {mainNavItems.map((item) => {
                 const Icon = item.icon;
                 const active = isActive(item.path);
@@ -41,15 +41,15 @@ const AppSidebar = () => {
                       <Link 
                         to={item.path} 
                         className={`
-                          flex items-center space-x-3 px-4 py-3 rounded-xl transition-all duration-200 group
+                          flex items-center space-x-4 px-0 py-3 rounded-lg transition-colors duration-200
                           ${active 
-                            ? 'bg-white/90 text-yellow-900 shadow-lg shadow-yellow-600/20 font-medium' 
-                            : 'text-yellow-900/70 hover:bg-white/20 hover:text-yellow-900 hover:shadow-md'
+                            ? 'bg-yellow-600/30 text-yellow-900 font-medium' 
+                            : 'text-yellow-900/80 hover:text-yellow-900'
                           }
                         `}
                       >
-                        <Icon className={`h-5 w-5 transition-transform duration-200 ${active ? 'scale-110' : 'group-hover:scale-105'}`} />
-                        <span className="font-medium">{item.label}</span>
+                        <Icon className="h-5 w-5 flex-shrink-0" />
+                        <span className="text-base">{item.label}</span>
                       </Link>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
@@ -59,13 +59,13 @@ const AppSidebar = () => {
           </SidebarGroupContent>
         </SidebarGroup>
 
-        <div className="my-4 mx-4 border-t border-yellow-600/20"></div>
+        <div className="my-8"></div>
 
         <SidebarGroup>
-          <SidebarGroupLabel className="text-yellow-900/80 font-semibold text-sm uppercase tracking-wider px-4 py-3">
-            Settings
+          <SidebarGroupLabel className="text-yellow-900/90 font-bold text-sm uppercase tracking-wider mb-6 px-0">
+            SETTINGS
           </SidebarGroupLabel>
-          <SidebarGroupContent className="px-2">
+          <SidebarGroupContent>
             <SidebarMenu>
               {secondaryNavItems.map((item) => {
                 const Icon = item.icon;
@@ -76,15 +76,15 @@ const AppSidebar = () => {
                       <Link 
                         to={item.path} 
                         className={`
-                          flex items-center space-x-3 px-4 py-3 rounded-xl transition-all duration-200 group
+                          flex items-center space-x-4 px-0 py-3 rounded-lg transition-colors duration-200
                           ${active 
-                            ? 'bg-white/90 text-yellow-900 shadow-lg shadow-yellow-600/20 font-medium' 
-                            : 'text-yellow-900/70 hover:bg-white/20 hover:text-yellow-900 hover:shadow-md'
+                            ? 'bg-yellow-600/30 text-yellow-900 font-medium' 
+                            : 'text-yellow-900/80 hover:text-yellow-900'
                           }
                         `}
                       >
-                        <Icon className={`h-5 w-5 transition-transform duration-200 ${active ? 'scale-110' : 'group-hover:scale-105'}`} />
-                        <span className="font-medium">{item.label}</span>
+                        <Icon className="h-5 w-5 flex-shrink-0" />
+                        <span className="text-base">{item.label}</span>
                       </Link>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
