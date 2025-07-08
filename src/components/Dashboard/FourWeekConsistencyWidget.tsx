@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
@@ -68,11 +67,11 @@ const FourWeekConsistencyWidget = ({ data, getSubjectColor }: FourWeekConsistenc
   };
 
   return (
-    <Card>
-      <CardHeader className="pb-3">
+    <Card className="bg-white shadow-sm border border-gray-200">
+      <CardHeader className="pb-3 bg-white">
         <CardTitle className="text-lg">Last 4 Weeks Overview</CardTitle>
       </CardHeader>
-      <CardContent>
+      <CardContent className="bg-white">
         {data.length === 0 ? (
           <div className="text-center py-8 text-gray-500">
             <p>No weekly data available yet.</p>

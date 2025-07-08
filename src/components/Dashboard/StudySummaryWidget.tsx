@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { BookOpen, Clock, Target } from 'lucide-react';
@@ -35,8 +34,8 @@ const StudySummaryWidget = ({ totalSessions, totalHours, totalSubjects }: StudyS
   ];
 
   return (
-    <Card className="bg-white shadow-sm border border-gray-100">
-      <CardHeader className="pb-4">
+    <Card className="bg-white shadow-sm border border-gray-200">
+      <CardHeader className="pb-4 bg-white">
         <CardTitle className="text-lg font-semibold text-gray-900 flex items-center gap-3">
           <div className="p-2 bg-orange-50 rounded-lg">
             <BookOpen className="h-5 w-5 text-orange-600" />
@@ -44,7 +43,7 @@ const StudySummaryWidget = ({ totalSessions, totalHours, totalSubjects }: StudyS
           Study Summary
         </CardTitle>
       </CardHeader>
-      <CardContent>
+      <CardContent className="bg-white">
         <div className="space-y-4">
           {summaryItems.map((item) => {
             const Icon = item.icon;

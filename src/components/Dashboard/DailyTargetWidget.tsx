@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Trophy, Target, Medal, Clock } from 'lucide-react';
@@ -25,8 +24,8 @@ const DailyTargetWidget = ({ avg21Days, avg7Days, yesterdayHours, todayHours }: 
   const celebrationLevel = getCelebrationLevel();
 
   return (
-    <Card className="bg-white shadow-sm border border-gray-100">
-      <CardHeader className="pb-4">
+    <Card className="bg-white shadow-sm border border-gray-200">
+      <CardHeader className="pb-4 bg-white">
         <CardTitle className="text-lg font-semibold text-gray-900 flex items-center gap-3">
           <div className="p-2 bg-orange-50 rounded-lg">
             <Clock className="h-5 w-5 text-orange-600" />
@@ -37,7 +36,7 @@ const DailyTargetWidget = ({ avg21Days, avg7Days, yesterdayHours, todayHours }: 
           {celebrationLevel === 'gold' && <Target className="h-5 w-5 text-yellow-600" />}
         </CardTitle>
       </CardHeader>
-      <CardContent className="space-y-4">
+      <CardContent className="space-y-4 bg-white">
         <div className="grid grid-cols-2 gap-4">
           <div className="text-center">
             <div className="text-2xl font-bold text-gray-900">{avg21Days.toFixed(1)}h</div>
