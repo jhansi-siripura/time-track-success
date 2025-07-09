@@ -85,8 +85,9 @@ const HomePage = () => {
                     <CardDescription>{action.description}</CardDescription>
                   </CardContent>
                 </Card>
-              );
-            })}
+              </Link>
+            );
+          })}
         </div>
 
         <Card>
