@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { ArrowRight, BookOpen, TrendingUp, Target, BarChart3, CheckCircle, Star, Clock, Trophy, Users, FileText, Brain, Mic, Video, Zap, Shield, Calendar, MessageSquare } from 'lucide-react';
@@ -20,55 +19,64 @@ const LandingPage = () => {
       icon: BarChart3,
       title: 'Smart Analytics Dashboard',
       description: 'Comprehensive analytics showing study patterns, time distribution across subjects, and progress trends over weeks and months.',
-      highlight: 'Real-time insights with 12-month trend analysis'
+      highlight: 'Real-time insights with 12-month trend analysis',
+      image: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=500&h=300&fit=crop&crop=center'
     },
     {
       icon: Target,
       title: 'Intelligent Goal Tracking',
       description: 'Set daily study targets with AI-powered recommendations based on your historical performance and learning patterns.',
-      highlight: 'Adaptive goals that evolve with your progress'
+      highlight: 'Adaptive goals that evolve with your progress',
+      image: 'https://images.unsplash.com/photo-1484480974693-6ca0a78fb36b?w=500&h=300&fit=crop&crop=center'
     },
     {
       icon: FileText,
       title: 'Rich Session Logging',
       description: 'Capture detailed study sessions with subject categorization, duration tracking, achievements, and multimedia note attachments.',
-      highlight: 'Support for images, notes, and structured topics'
+      highlight: 'Support for images, notes, and structured topics',
+      image: 'https://images.unsplash.com/photo-1456324504439-367cee3b3c32?w=500&h=300&fit=crop&crop=center'
     },
     {
       icon: Brain,
       title: 'Learning Matrix System',
       description: 'Organize technologies and concepts by expertise level - from unknown to expert - with priority-based learning paths.',
-      highlight: 'Visual knowledge mapping for career growth'
+      highlight: 'Visual knowledge mapping for career growth',
+      image: 'https://images.unsplash.com/photo-1559757148-5c350d0d3c56?w=500&h=300&fit=crop&crop=center'
     },
     {
       icon: Calendar,
       title: 'Spaced Repetition & Recap',
       description: 'Built-in revision system with calendar-based review scheduling to combat forgetting curve and ensure long-term retention.',
-      highlight: 'Smart reminders for optimal memory retention'
+      highlight: 'Smart reminders for optimal memory retention',
+      image: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=500&h=300&fit=crop&crop=center'
     },
     {
       icon: Clock,
       title: 'Pomodoro Timer Integration',
       description: 'Built-in focus timer with customizable work/break intervals, automatic session logging, and productivity tracking.',
-      highlight: 'Seamlessly logs study time to your analytics'
+      highlight: 'Seamlessly logs study time to your analytics',
+      image: 'https://images.unsplash.com/photo-1506784983877-45594efa4cbe?w=500&h=300&fit=crop&crop=center'
     },
     {
       icon: Mic,
       title: 'Voice & AI Note Taking',
       description: 'Convert speech to text for quick note capture during lectures or while reviewing concepts on the go.',
-      highlight: 'Premium: AI-powered note organization and summarization'
+      highlight: 'Premium: AI-powered note organization and summarization',
+      image: 'https://images.unsplash.com/photo-1589903308904-1010c2294adc?w=500&h=300&fit=crop&crop=center'
     },
     {
       icon: Video,
       title: 'YouTube & Video Note Integration',
       description: 'Take timestamped notes while watching educational videos, with direct links back to specific video moments.',
-      highlight: 'Premium: Automatic transcript extraction and key point identification'
+      highlight: 'Premium: Automatic transcript extraction and key point identification',
+      image: 'https://images.unsplash.com/photo-1611532736597-de2d4265fba3?w=500&h=300&fit=crop&crop=center'
     },
     {
       icon: TrendingUp,
       title: 'Progress Visualization',
       description: 'Beautiful charts showing weekly consistency, subject distribution, and learning velocity over time.',
-      highlight: 'Gamified progress tracking with achievement badges'
+      highlight: 'Gamified progress tracking with achievement badges',
+      image: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=500&h=300&fit=crop&crop=center'
     }
   ];
 
@@ -84,25 +92,29 @@ const LandingPage = () => {
       number: '01',
       title: 'Capture Your Learning',
       description: 'Log study sessions with subject, topic, duration, and rich notes. Attach images, voice memos, or video timestamps.',
-      details: 'Supports multiple subjects simultaneously - perfect for professionals learning AWS, React, and Python in parallel'
+      details: 'Supports multiple subjects simultaneously - perfect for professionals learning AWS, React, and Python in parallel',
+      image: 'https://images.unsplash.com/photo-1456324504439-367cee3b3c32?w=400&h=250&fit=crop&crop=center'
     },
     {
       number: '02',
       title: 'Organize & Prioritize',
       description: 'Use the Learning Matrix to categorize technologies by expertise level and priority for your career goals.',
-      details: 'Visual knowledge mapping helps you focus on high-impact skills first'
+      details: 'Visual knowledge mapping helps you focus on high-impact skills first',
+      image: 'https://images.unsplash.com/photo-1559757148-5c350d0d3c56?w=400&h=250&fit=crop&crop=center'
     },
     {
       number: '03',
       title: 'Analyze Your Patterns',
       description: 'View detailed analytics showing your most productive times, subject distribution, and consistency trends.',
-      details: 'Data-driven insights help optimize your learning schedule and identify knowledge gaps'
+      details: 'Data-driven insights help optimize your learning schedule and identify knowledge gaps',
+      image: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=400&h=250&fit=crop&crop=center'
     },
     {
       number: '04',
       title: 'Review & Retain',
       description: 'Use spaced repetition calendar to review notes at optimal intervals, ensuring long-term retention.',
-      details: 'Combat the forgetting curve with smart revision scheduling'
+      details: 'Combat the forgetting curve with smart revision scheduling',
+      image: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&h=250&fit=crop&crop=center'
     }
   ];
 
@@ -111,19 +123,22 @@ const LandingPage = () => {
       name: 'Sarah Chen',
       role: 'Software Engineer (Career Switcher)',
       content: 'This app helped me transition from marketing to tech. The Learning Matrix kept me focused on job-critical skills while the analytics showed my progress.',
-      rating: 5
+      rating: 5,
+      image: 'https://images.unsplash.com/photo-1494790108755-2616b332c1cd?w=100&h=100&fit=crop&crop=face'
     },
     {
       name: 'Marcus Rodriguez',
       role: 'Medical Student',
       content: 'Managing multiple subjects was overwhelming until I found this. The spaced repetition feature is a game-changer for retaining complex information.',
-      rating: 5
+      rating: 5,
+      image: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&h=100&fit=crop&crop=face'
     },
     {
       name: 'Emily Watson',
       role: 'Working Professional',
       content: 'As a busy parent learning cloud computing, the Pomodoro integration and session logging help me make the most of my limited study time.',
-      rating: 5
+      rating: 5,
+      image: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=100&h=100&fit=crop&crop=face'
     }
   ];
 
@@ -154,9 +169,9 @@ const LandingPage = () => {
     },
     {
       name: 'Premium',
-      price: '$9',
+      price: '$8',
       period: 'per month',
-      yearlyPrice: '$89',
+      yearlyPrice: '$79',
       yearlyPeriod: 'per year (2 months free)',
       description: 'For serious learners who want advanced features and unlimited growth',
       features: [
@@ -182,22 +197,26 @@ const LandingPage = () => {
     {
       icon: Users,
       title: 'Working Professionals',
-      description: 'Reskilling in new technologies while managing a full-time job'
+      description: 'Reskilling in new technologies while managing a full-time job',
+      image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face'
     },
     {
       icon: BookOpen,
       title: 'Students & Freshers',
-      description: 'Managing multiple subjects and preparing for interviews'
+      description: 'Managing multiple subjects and preparing for interviews',
+      image: 'https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?w=150&h=150&fit=crop&crop=face'
     },
     {
       icon: Brain,
       title: 'Lifelong Learners',
-      description: 'Anyone from age 16 to 65+ committed to continuous learning'
+      description: 'Anyone from age 16 to 65+ committed to continuous learning',
+      image: 'https://images.unsplash.com/photo-1582750433449-6ca0a78fb36b?w=150&h=150&fit=crop&crop=face'
     },
     {
       icon: Zap,
       title: 'Career Switchers',
-      description: 'Transitioning careers and need structured learning approach'
+      description: 'Transitioning careers and need structured learning approach',
+      image: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?w=150&h=150&fit=crop&crop=face'
     }
   ];
 
@@ -220,9 +239,16 @@ const LandingPage = () => {
                 {features.map((feature, index) => {
                   const Icon = feature.icon;
                   return (
-                    <div key={index} className="group p-6 rounded-2xl bg-white border border-gray-100 hover:border-[#E7BA40] hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1">
-                      <div className="w-12 h-12 rounded-xl bg-[#E7BA40] flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
-                        <Icon className="h-6 w-6 text-[#6B3F1D]" />
+                    <div key={index} className="group p-6 rounded-2xl bg-white border border-gray-100 hover:border-[#E7BA40] hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2">
+                      <div className="relative mb-4 rounded-xl overflow-hidden">
+                        <img 
+                          src={feature.image} 
+                          alt={feature.title}
+                          className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
+                        />
+                        <div className="absolute top-3 left-3 w-12 h-12 rounded-xl bg-[#E7BA40] flex items-center justify-center shadow-lg">
+                          <Icon className="h-6 w-6 text-[#6B3F1D]" />
+                        </div>
                       </div>
                       <h3 className="text-xl font-semibold text-gray-900 mb-2">{feature.title}</h3>
                       <p className="text-gray-600 leading-relaxed mb-3">{feature.description}</p>
@@ -235,18 +261,25 @@ const LandingPage = () => {
               </div>
 
               {/* Target Audience Section */}
-              <div className="bg-gray-50 rounded-3xl p-8 mb-8">
-                <h3 className="text-2xl font-bold text-gray-900 mb-6 text-center">Who This App Is For</h3>
-                <p className="text-gray-600 text-center mb-8 max-w-3xl mx-auto">
-                  Though we use the word "student," this isn't just for school kids. We are ALL students today — whether you're a CEO understanding your team's tech stack or a retiree learning digital tools.
+              <div className="bg-gradient-to-br from-gray-50 to-[#E7BA40]/5 rounded-3xl p-8 mb-8">
+                <h3 className="text-3xl font-bold text-gray-900 mb-6 text-center">Who This App Is For</h3>
+                <p className="text-gray-600 text-center mb-8 max-w-4xl mx-auto text-lg leading-relaxed">
+                  Though we use the word "student," this isn't just for school kids. We are ALL students today — whether you're a CEO understanding your team's tech stack or a retiree learning digital tools. From age 16 to 65+, learning is part of everyone's life.
                 </p>
-                <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
                   {targetAudience.map((audience, index) => {
                     const Icon = audience.icon;
                     return (
-                      <div key={index} className="text-center p-4 bg-white rounded-xl shadow-sm">
-                        <div className="w-12 h-12 rounded-full bg-[#E7BA40] flex items-center justify-center mx-auto mb-3">
-                          <Icon className="h-6 w-6 text-[#6B3F1D]" />
+                      <div key={index} className="text-center p-6 bg-white rounded-2xl shadow-sm hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1">
+                        <div className="relative mb-4">
+                          <img 
+                            src={audience.image} 
+                            alt={audience.title}
+                            className="w-20 h-20 rounded-full mx-auto object-cover border-4 border-[#E7BA40]/20"
+                          />
+                          <div className="absolute -bottom-2 -right-2 w-8 h-8 rounded-full bg-[#E7BA40] flex items-center justify-center">
+                            <Icon className="h-4 w-4 text-[#6B3F1D]" />
+                          </div>
                         </div>
                         <h4 className="font-semibold text-gray-900 mb-2">{audience.title}</h4>
                         <p className="text-sm text-gray-600">{audience.description}</p>
@@ -272,21 +305,29 @@ const LandingPage = () => {
                 </p>
               </div>
 
-              <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8 mb-16">
+              <div className="grid md:grid-cols-2 gap-12 mb-16">
                 {steps.map((step, index) => (
-                  <div key={index} className="relative text-center group">
-                    {index < steps.length - 1 && (
-                      <div className="hidden lg:block absolute top-16 left-full w-full h-0.5 bg-[#E7BA40] transform translate-x-4 z-0"></div>
-                    )}
-                    <div className="relative z-10">
-                      <div className="bg-[#E7BA40] w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300 text-2xl font-bold text-[#6B3F1D]">
-                        {step.number}
+                  <div key={index} className="relative group">
+                    <div className="flex gap-6">
+                      <div className="flex-shrink-0">
+                        <div className="bg-[#E7BA40] w-16 h-16 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform duration-300 text-2xl font-bold text-[#6B3F1D] shadow-lg">
+                          {step.number}
+                        </div>
                       </div>
-                    </div>
-                    <h3 className="text-xl font-semibold text-gray-900 mb-3 mt-4">{step.title}</h3>
-                    <p className="text-gray-600 leading-relaxed mb-3">{step.description}</p>
-                    <div className="text-sm text-[#6B3F1D] bg-[#E7BA40]/10 px-3 py-2 rounded-lg">
-                      {step.details}
+                      <div className="flex-1">
+                        <h3 className="text-xl font-semibold text-gray-900 mb-3">{step.title}</h3>
+                        <p className="text-gray-600 leading-relaxed mb-4">{step.description}</p>
+                        <div className="text-sm text-[#6B3F1D] bg-[#E7BA40]/10 px-3 py-2 rounded-lg mb-4">
+                          {step.details}
+                        </div>
+                        <div className="rounded-xl overflow-hidden shadow-lg">
+                          <img 
+                            src={step.image} 
+                            alt={step.title}
+                            className="w-full h-40 object-cover hover:scale-105 transition-transform duration-300"
+                          />
+                        </div>
+                      </div>
                     </div>
                   </div>
                 ))}
@@ -294,36 +335,36 @@ const LandingPage = () => {
 
               {/* Pain Points Section */}
               <div className="bg-gradient-to-r from-[#E7BA40]/10 to-[#F4C842]/10 rounded-3xl p-8">
-                <h3 className="text-2xl font-bold text-gray-900 mb-6 text-center">The Problems We Solve</h3>
+                <h3 className="text-3xl font-bold text-gray-900 mb-8 text-center">The Problems We Solve</h3>
                 <div className="grid md:grid-cols-2 gap-8">
-                  <div className="space-y-4">
-                    <div className="flex items-start gap-3">
-                      <div className="w-2 h-2 bg-red-500 rounded-full mt-2"></div>
+                  <div className="space-y-6">
+                    <div className="flex items-start gap-4 p-4 bg-white rounded-lg shadow-sm">
+                      <div className="w-3 h-3 bg-red-500 rounded-full mt-2 flex-shrink-0"></div>
                       <div>
-                        <h4 className="font-semibold text-gray-900">Information Overload</h4>
+                        <h4 className="font-semibold text-gray-900 mb-1">Information Overload</h4>
                         <p className="text-gray-600">It's not enough to know "AWS" — you need Lambda, S3, ECS, and more. Tech evolves fast, making it easy to lose track.</p>
                       </div>
                     </div>
-                    <div className="flex items-start gap-3">
-                      <div className="w-2 h-2 bg-red-500 rounded-full mt-2"></div>
+                    <div className="flex items-start gap-4 p-4 bg-white rounded-lg shadow-sm">
+                      <div className="w-3 h-3 bg-red-500 rounded-full mt-2 flex-shrink-0"></div>
                       <div>
-                        <h4 className="font-semibold text-gray-900">Forgetting What You Learned</h4>
+                        <h4 className="font-semibold text-gray-900 mb-1">Forgetting What You Learned</h4>
                         <p className="text-gray-600">Without a revision system, even well-understood concepts fade from memory over time.</p>
                       </div>
                     </div>
                   </div>
-                  <div className="space-y-4">
-                    <div className="flex items-start gap-3">
-                      <div className="w-2 h-2 bg-red-500 rounded-full mt-2"></div>
+                  <div className="space-y-6">
+                    <div className="flex items-start gap-4 p-4 bg-white rounded-lg shadow-sm">
+                      <div className="w-3 h-3 bg-red-500 rounded-full mt-2 flex-shrink-0"></div>
                       <div>
-                        <h4 className="font-semibold text-gray-900">Parallel Subject Chaos</h4>
+                        <h4 className="font-semibold text-gray-900 mb-1">Parallel Subject Chaos</h4>
                         <p className="text-gray-600">Learning multiple subjects simultaneously makes traditional note-taking ineffective.</p>
                       </div>
                     </div>
-                    <div className="flex items-start gap-3">
-                      <div className="w-2 h-2 bg-red-500 rounded-full mt-2"></div>
+                    <div className="flex items-start gap-4 p-4 bg-white rounded-lg shadow-sm">
+                      <div className="w-3 h-3 bg-red-500 rounded-full mt-2 flex-shrink-0"></div>
                       <div>
-                        <h4 className="font-semibold text-gray-900">No Strategic Learning Path</h4>
+                        <h4 className="font-semibold text-gray-900 mb-1">No Strategic Learning Path</h4>
                         <p className="text-gray-600">Without prioritization, you end up learning nice-to-know skills instead of job-critical ones.</p>
                       </div>
                     </div>
@@ -351,11 +392,11 @@ const LandingPage = () => {
                 {pricingPlans.map((plan, index) => (
                   <div key={index} className={`relative p-8 rounded-3xl border-2 transition-all duration-300 ${
                     plan.popular 
-                      ? 'border-[#E7BA40] shadow-xl scale-105 bg-gradient-to-br from-white to-[#E7BA40]/5' 
+                      ? 'border-[#E7BA40] shadow-2xl scale-105 bg-gradient-to-br from-white to-[#E7BA40]/5' 
                       : 'border-gray-200 hover:border-[#E7BA40]/50 hover:shadow-lg'
                   }`}>
                     {plan.popular && (
-                      <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 bg-[#E7BA40] text-[#6B3F1D] px-6 py-2 rounded-full text-sm font-semibold">
+                      <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 bg-gradient-to-r from-[#E7BA40] to-[#F4C842] text-[#6B3F1D] px-6 py-2 rounded-full text-sm font-semibold shadow-lg">
                         {plan.highlight}
                       </div>
                     )}
@@ -363,28 +404,28 @@ const LandingPage = () => {
                     <div className="text-center mb-8">
                       <h3 className="text-2xl font-bold text-gray-900 mb-2">{plan.name}</h3>
                       <div className="mb-2">
-                        <span className="text-4xl font-bold text-[#6B3F1D]">{plan.price}</span>
-                        <span className="text-gray-600 ml-2">{plan.period}</span>
+                        <span className="text-5xl font-bold text-[#6B3F1D]">{plan.price}</span>
+                        <span className="text-gray-600 ml-2 text-lg">{plan.period}</span>
                       </div>
                       {plan.yearlyPrice && (
-                        <div className="text-sm text-gray-600">
-                          or <span className="font-semibold text-[#6B3F1D]">{plan.yearlyPrice}</span> {plan.yearlyPeriod}
+                        <div className="text-sm text-gray-600 bg-green-50 px-3 py-1 rounded-full inline-block">
+                          or <span className="font-semibold text-green-700">{plan.yearlyPrice}</span> {plan.yearlyPeriod}
                         </div>
                       )}
-                      <p className="text-gray-600 mt-3">{plan.description}</p>
+                      <p className="text-gray-600 mt-4 text-lg">{plan.description}</p>
                     </div>
 
                     <div className="space-y-4 mb-8">
                       <div>
-                        <h4 className="font-semibold text-gray-900 mb-3 flex items-center">
+                        <h4 className="font-semibold text-gray-900 mb-4 flex items-center text-lg">
                           <CheckCircle className="h-5 w-5 text-green-500 mr-2" />
                           What's Included
                         </h4>
-                        <ul className="space-y-2">
+                        <ul className="space-y-3">
                           {plan.features.map((feature, featureIndex) => (
-                            <li key={featureIndex} className="flex items-start gap-2 text-gray-600">
+                            <li key={featureIndex} className="flex items-start gap-3 text-gray-600">
                               <CheckCircle className="h-4 w-4 text-green-500 mt-0.5 flex-shrink-0" />
-                              <span className="text-sm">{feature}</span>
+                              <span className="text-sm leading-relaxed">{feature}</span>
                             </li>
                           ))}
                         </ul>
@@ -397,7 +438,7 @@ const LandingPage = () => {
                           </h4>
                           <ul className="space-y-2">
                             {plan.limitations.map((limitation, limitIndex) => (
-                              <li key={limitIndex} className="flex items-start gap-2 text-gray-500">
+                              <li key={limitIndex} className="flex items-start gap-3 text-gray-500">
                                 <div className="w-4 h-4 border border-gray-300 rounded mt-0.5 flex-shrink-0"></div>
                                 <span className="text-sm">{limitation}</span>
                               </li>
@@ -409,9 +450,9 @@ const LandingPage = () => {
 
                     <Link to="/auth" className="block">
                       <Button 
-                        className={`w-full py-3 rounded-xl font-semibold transition-all duration-300 ${
+                        className={`w-full py-4 rounded-xl font-semibold text-lg transition-all duration-300 ${
                           plan.popular
-                            ? 'bg-[#6B3F1D] text-white hover:bg-[#6B3F1D]/90 shadow-lg hover:shadow-xl'
+                            ? 'bg-gradient-to-r from-[#6B3F1D] to-[#8B5A2B] text-white hover:shadow-xl transform hover:-translate-y-1'
                             : 'bg-white border-2 border-[#6B3F1D] text-[#6B3F1D] hover:bg-[#6B3F1D] hover:text-white'
                         }`}
                       >
@@ -430,21 +471,21 @@ const LandingPage = () => {
                 ))}
               </div>
 
-              <div className="text-center mt-12 p-6 bg-gray-50 rounded-2xl">
-                <h3 className="text-lg font-semibold text-gray-900 mb-2">Not Sure Which Plan?</h3>
-                <p className="text-gray-600 mb-4">
+              <div className="text-center mt-12 p-8 bg-gradient-to-r from-gray-50 to-[#E7BA40]/10 rounded-2xl">
+                <h3 className="text-2xl font-semibold text-gray-900 mb-3">Not Sure Which Plan?</h3>
+                <p className="text-gray-600 mb-6 text-lg">
                   Start with our free plan and upgrade anytime. Your data and progress carry over seamlessly.
                 </p>
-                <div className="flex flex-wrap justify-center gap-4">
-                  <div className="flex items-center gap-2 text-sm text-gray-600">
+                <div className="flex flex-wrap justify-center gap-6">
+                  <div className="flex items-center gap-2 text-sm text-gray-600 bg-white px-4 py-2 rounded-full shadow-sm">
                     <CheckCircle className="h-4 w-4 text-green-500" />
                     <span>No credit card required for free plan</span>
                   </div>
-                  <div className="flex items-center gap-2 text-sm text-gray-600">
+                  <div className="flex items-center gap-2 text-sm text-gray-600 bg-white px-4 py-2 rounded-full shadow-sm">
                     <CheckCircle className="h-4 w-4 text-green-500" />
                     <span>Upgrade or downgrade anytime</span>
                   </div>
-                  <div className="flex items-center gap-2 text-sm text-gray-600">
+                  <div className="flex items-center gap-2 text-sm text-gray-600 bg-white px-4 py-2 rounded-full shadow-sm">
                     <CheckCircle className="h-4 w-4 text-green-500" />
                     <span>Export your data anytime</span>
                   </div>
@@ -467,11 +508,11 @@ const LandingPage = () => {
                     const Icon = benefit.icon;
                     return (
                       <div key={index} className="text-center group">
-                        <div className="bg-[#E7BA40] w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform duration-300">
-                          <Icon className="h-8 w-8 text-[#6B3F1D]" />
+                        <div className="bg-gradient-to-r from-[#E7BA40] to-[#F4C842] w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform duration-300 shadow-lg">
+                          <Icon className="h-10 w-10 text-[#6B3F1D]" />
                         </div>
-                        <div className="text-3xl font-bold text-[#6B3F1D] mb-2">{benefit.stat}</div>
-                        <div className="text-gray-600">{benefit.label}</div>
+                        <div className="text-4xl font-bold text-[#6B3F1D] mb-2">{benefit.stat}</div>
+                        <div className="text-gray-600 font-medium">{benefit.label}</div>
                       </div>
                     );
                   })}
@@ -479,18 +520,25 @@ const LandingPage = () => {
               </div>
               <div className="grid md:grid-cols-3 gap-8">
                 {testimonials.map((testimonial, index) => (
-                  <div key={index} className="bg-white p-6 rounded-2xl hover:shadow-lg transition-shadow duration-300 border border-gray-100">
+                  <div key={index} className="bg-white p-8 rounded-2xl hover:shadow-2xl transition-all duration-300 border border-gray-100 transform hover:-translate-y-1">
                     <div className="flex items-center mb-4">
                       {[...Array(testimonial.rating)].map((_, i) => (
                         <Star key={i} className="h-5 w-5 text-[#E7BA40] fill-current" />
                       ))}
                     </div>
-                    <p className="text-gray-600 mb-6 italic">
+                    <p className="text-gray-600 mb-6 italic leading-relaxed text-lg">
                       "{testimonial.content}"
                     </p>
-                    <div>
-                      <div className="font-semibold text-gray-900">{testimonial.name}</div>
-                      <div className="text-gray-600 text-sm">{testimonial.role}</div>
+                    <div className="flex items-center gap-4">
+                      <img 
+                        src={testimonial.image} 
+                        alt={testimonial.name}
+                        className="w-12 h-12 rounded-full object-cover border-2 border-[#E7BA40]/30"
+                      />
+                      <div>
+                        <div className="font-semibold text-gray-900">{testimonial.name}</div>
+                        <div className="text-gray-600 text-sm">{testimonial.role}</div>
+                      </div>
                     </div>
                   </div>
                 ))}
