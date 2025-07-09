@@ -12,28 +12,55 @@ import EditSubjectDialog from './EditTechnologyDialog';
 
 type LearningMatrixUnknown = Database['public']['Tables']['learning_matrix_unknown']['Row'];
 
+interface GroupedSubject {
+  subject_name: string;
+  topics: string[];
+  total_hours: number;
+  ids: string[];
+  priority_category: string;
+  representative_entry: LearningMatrixUnknown;
+}
+
 interface TechnologyCardProps {
-  technology: LearningMatrixUnknown;
+  technology?: LearningMatrixUnknown;
+  groupedData?: GroupedSubject;
   onUpdate: () => void;
   compact?: boolean;
 }
 
-const TechnologyCard: React.FC<TechnologyCardProps> = ({ technology, onUpdate, compact = false }) => {
+const TechnologyCard: React.FC<TechnologyCardProps> = ({ technology, groupedData, onUpdate, compact = false }) => {
   const [showEditDialog, setShowEditDialog] = useState(false);
   const { toast } = useToast();
 
+  // Use grouped data if available, otherwise fall back to individual technology
+  const displayData = groupedData || {
+    subject_name: technology?.subject_name || '',
+    topics: technology?.topic_name ? [technology.topic_name] : [],
+    total_hours: technology?.estimated_hours || 0,
+    ids: technology ? [technology.id] : [],
+    priority_category: technology?.priority_category || '',
+    representative_entry: technology!
+  };
+
   const handleDelete = async () => {
     try {
+      // If we have grouped data, we need to delete all entries for this subject in this quadrant
+      const idsToDelete = displayData.ids;
+      
       const { error } = await supabase
         .from('learning_matrix_unknown')
         .delete()
-        .eq('id', technology.id);
+        .in('id', idsToDelete);
 
       if (error) throw error;
 
+      const subjectText = displayData.topics.length > 1 
+        ? `${displayData.subject_name} with ${displayData.topics.length} topics`
+        : displayData.subject_name;
+
       toast({
         title: 'Subject deleted',
-        description: `${technology.subject_name} has been removed from your learning matrix.`,
+        description: `${subjectText} has been removed from your learning matrix.`,
       });
       onUpdate();
     } catch (error) {
@@ -53,18 +80,30 @@ const TechnologyCard: React.FC<TechnologyCardProps> = ({ technology, onUpdate, c
           <div className="flex items-start justify-between">
             <div className="flex-1 min-w-0">
               <h4 className={`font-medium text-gray-900 ${compact ? 'text-sm' : 'text-base'}`}>
-                {technology.subject_name}
+                {displayData.subject_name}
               </h4>
-              {technology.topic_name && (
-                <p className={`text-gray-600 mt-1 ${compact ? 'text-xs' : 'text-sm'}`}>
-                  {technology.topic_name}
-                </p>
+              
+              {displayData.topics.length > 0 && (
+                <div className={`mt-1 ${compact ? 'text-xs' : 'text-sm'} text-gray-600`}>
+                  {displayData.topics.length === 1 ? (
+                    <p>{displayData.topics[0]}</p>
+                  ) : (
+                    <div>
+                      <p className="font-medium mb-1">Topics:</p>
+                      <ul className="list-disc list-inside space-y-0.5 ml-2">
+                        {displayData.topics.map((topic, index) => (
+                          <li key={index}>{topic}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+                </div>
               )}
               
               <div className={`flex flex-wrap gap-1 ${compact ? 'mt-2' : 'mt-3'}`}>
-                {technology.estimated_hours && (
+                {displayData.total_hours > 0 && (
                   <Badge variant="outline" className={compact ? 'text-xs px-2 py-0' : 'text-xs'}>
-                    {technology.estimated_hours}h
+                    {displayData.total_hours}h
                   </Badge>
                 )}
               </div>
@@ -94,7 +133,7 @@ const TechnologyCard: React.FC<TechnologyCardProps> = ({ technology, onUpdate, c
       <EditSubjectDialog
         open={showEditDialog}
         onOpenChange={setShowEditDialog}
-        technology={technology}
+        technology={displayData.representative_entry}
         onSuccess={() => {
           setShowEditDialog(false);
           onUpdate();

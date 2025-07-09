@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -8,14 +7,55 @@ import TechnologyCard from './TechnologyCard';
 
 type LearningMatrixUnknown = Database['public']['Tables']['learning_matrix_unknown']['Row'];
 
+interface GroupedSubject {
+  subject_name: string;
+  topics: string[];
+  total_hours: number;
+  ids: string[]; // Keep track of individual IDs for actions
+  priority_category: string;
+  // We'll use the first entry for other properties
+  representative_entry: LearningMatrixUnknown;
+}
+
 interface UnknownTechQuadrantsProps {
   technologies: LearningMatrixUnknown[];
   onUpdate: () => void;
 }
 
 const UnknownTechQuadrants: React.FC<UnknownTechQuadrantsProps> = ({ technologies, onUpdate }) => {
-  const getQuadrantData = (priority: string) => {
-    return technologies.filter(tech => tech.priority_category === priority);
+  const getQuadrantData = (priority: string): GroupedSubject[] => {
+    const quadrantTechs = technologies.filter(tech => tech.priority_category === priority);
+    
+    // Group by subject name
+    const groupedBySubject = quadrantTechs.reduce((acc, tech) => {
+      const subjectName = tech.subject_name;
+      
+      if (!acc[subjectName]) {
+        acc[subjectName] = {
+          subject_name: subjectName,
+          topics: [],
+          total_hours: 0,
+          ids: [],
+          priority_category: priority,
+          representative_entry: tech
+        };
+      }
+      
+      // Add topic if it exists and isn't already in the list
+      if (tech.topic_name && !acc[subjectName].topics.includes(tech.topic_name)) {
+        acc[subjectName].topics.push(tech.topic_name);
+      }
+      
+      // Add to total hours
+      acc[subjectName].total_hours += tech.estimated_hours || 0;
+      
+      // Keep track of IDs
+      acc[subjectName].ids.push(tech.id);
+      
+      return acc;
+    }, {} as Record<string, GroupedSubject>);
+    
+    return Object.values(groupedBySubject);
   };
 
   const quadrants = [
@@ -76,10 +116,10 @@ const UnknownTechQuadrants: React.FC<UnknownTechQuadrantsProps> = ({ technologie
                   No subjects in this category
                 </p>
               ) : (
-                quadrant.data.map((tech) => (
+                quadrant.data.map((groupedSubject) => (
                   <TechnologyCard
-                    key={tech.id}
-                    technology={tech}
+                    key={`${groupedSubject.subject_name}-${quadrant.id}`}
+                    groupedData={groupedSubject}
                     onUpdate={onUpdate}
                     compact={true}
                   />
