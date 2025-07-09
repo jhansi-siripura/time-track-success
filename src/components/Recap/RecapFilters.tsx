@@ -55,13 +55,13 @@ const RecapFilters: React.FC<RecapFiltersProps> = ({
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-2">
             <Filter className="h-4 w-4 text-amber-600" />
-            <h3 className="text-sm font-semibold text-gray-800">Filters</h3>
+            <h3 className="text-base font-semibold text-gray-900">Filters</h3>
           </div>
           <Button
             variant="ghost"
             size="sm"
             onClick={onClearAllFilters}
-            className="h-6 px-2 text-xs text-gray-600 hover:text-gray-800"
+            className="h-6 px-2 text-sm text-gray-600 hover:text-gray-800"
           >
             Clear All
           </Button>
@@ -69,7 +69,7 @@ const RecapFilters: React.FC<RecapFiltersProps> = ({
       </CardHeader>
       <CardContent className="pt-0 space-y-3">
         <div className="space-y-1">
-          <Label htmlFor="date-filter" className="text-xs font-medium text-gray-700 flex items-center space-x-1">
+          <Label htmlFor="date-filter" className="text-sm font-medium text-gray-700 flex items-center space-x-1">
             <Calendar className="h-3 w-3 text-amber-600" />
             <span>Date</span>
           </Label>
@@ -79,7 +79,7 @@ const RecapFilters: React.FC<RecapFiltersProps> = ({
               type="date" 
               value={dateFilter || ''} 
               onChange={e => onDateFilterChange(e.target.value)}
-              className="h-8 text-xs border-amber-200 focus:border-amber-400 focus:ring-amber-400 flex-1"
+              className="h-8 text-sm border-amber-200 focus:border-amber-400 focus:ring-amber-400 flex-1"
             />
             {dateFilter && (
               <Button
@@ -95,12 +95,12 @@ const RecapFilters: React.FC<RecapFiltersProps> = ({
         </div>
 
         <div className="space-y-1">
-          <Label htmlFor="subject-filter" className="text-xs font-medium text-gray-700 flex items-center space-x-1">
+          <Label htmlFor="subject-filter" className="text-sm font-medium text-gray-700 flex items-center space-x-1">
             <BookOpen className="h-3 w-3 text-blue-600" />
             <span>Subject</span>
           </Label>
           <Select value={subjectFilter} onValueChange={handleSubjectChange}>
-            <SelectTrigger className="h-8 text-xs border-amber-200 focus:border-amber-400 focus:ring-amber-400">
+            <SelectTrigger className="h-8 text-sm border-amber-200 focus:border-amber-400 focus:ring-amber-400">
               <SelectValue placeholder="All subjects" />
             </SelectTrigger>
             <SelectContent>
@@ -115,12 +115,12 @@ const RecapFilters: React.FC<RecapFiltersProps> = ({
         </div>
 
         <div className="space-y-1">
-          <Label htmlFor="topic-filter" className="text-xs font-medium text-gray-700 flex items-center space-x-1">
+          <Label htmlFor="topic-filter" className="text-sm font-medium text-gray-700 flex items-center space-x-1">
             <Filter className="h-3 w-3 text-purple-600" />
             <span>Topic</span>
           </Label>
           <Select value={topicFilter} onValueChange={onTopicFilterChange}>
-            <SelectTrigger className="h-8 text-xs border-amber-200 focus:border-amber-400 focus:ring-amber-400">
+            <SelectTrigger className="h-8 text-sm border-amber-200 focus:border-amber-400 focus:ring-amber-400">
               <SelectValue placeholder="All topics" />
             </SelectTrigger>
             <SelectContent>

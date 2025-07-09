@@ -62,9 +62,9 @@ const CalendarWidget = ({ onRevisionStatusChange }: CalendarWidgetProps) => {
 
   return (
     <div className="bg-white rounded-lg shadow-sm border p-4">
-        <div className="mb-4 text-center">
-            <h3 className="text-lg font-semibold text-gray-900">Revision Streak</h3>
-        </div>
+      <div className="mb-4 text-center">
+        <h3 className="text-base font-semibold text-gray-900">Revision Streak</h3>
+      </div>
 
       <div className="w-full overflow-hidden">
         <Calendar

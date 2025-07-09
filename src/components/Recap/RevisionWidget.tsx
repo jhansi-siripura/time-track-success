@@ -21,16 +21,6 @@ const RevisionWidget = ({ dateFilter, onDateFilterChange, onRevisionStatusChange
   const { user } = useAuth();
   const { toast } = useToast();
 
- /* const revisionOptions = [
-    { value: '1', label: '1 Day ago', days: 1 },
-    { value: '3', label: '3 Days ago', days: 3 },
-    { value: '7', label: '7 Days ago', days: 7 },
-    { value: '15', label: '15 Days ago', days: 15 },
-    { value: '30', label: '30 Days ago', days: 30 }
-  ];*/
-
-  // 0, 1 , 3 , 7 , 15 , 31 , 63 
-
   const revisionOptions = [
     { value: '1', label: '1 Day ago', days: 1 },
     { value: '3', label: '3 Days ago', days: 3 },
@@ -147,8 +137,12 @@ const RevisionWidget = ({ dateFilter, onDateFilterChange, onRevisionStatusChange
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-sm border p-6 space-y-6">
-      <div className="space-y-5">
+    <div className="bg-white rounded-lg shadow-sm border p-4 space-y-4">
+      <div className="mb-4 text-center">
+        <h3 className="text-base font-semibold text-gray-900">Today's Revisions</h3>
+      </div>
+
+      <div className="space-y-4">
         {/* Today's Revisions Checkbox */}
         <div className="flex items-center space-x-3">
           <Checkbox
@@ -157,7 +151,7 @@ const RevisionWidget = ({ dateFilter, onDateFilterChange, onRevisionStatusChange
             disabled={loading}
             className="h-4 w-4"
           />
-          <span className="text-base font-semibold text-gray-900">
+          <span className="text-sm font-medium text-gray-900">
             Today's Revisions
           </span>
         </div>
@@ -167,7 +161,7 @@ const RevisionWidget = ({ dateFilter, onDateFilterChange, onRevisionStatusChange
           value={selectedRevision}
           onValueChange={handleRevisionSelect}
           disabled={todayCompleted}
-          className="space-y-3"
+          className="space-y-2"
         >
           {revisionOptions.map((option) => {
             const targetDate = getDaysAgoDate(option.days);
