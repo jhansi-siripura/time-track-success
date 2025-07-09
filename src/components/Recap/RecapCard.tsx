@@ -46,9 +46,6 @@ const RecapCard: React.FC<RecapCardProps> = ({ log, onUpdate, onDelete }) => {
     return colors[hash % colors.length];
   };
 
-  const getImageGridLayout = (count: number) =>
-    count === 1 ? 'grid-cols-1' : count === 2 ? 'grid-cols-2' : 'grid-cols-3';
-
   const handleImageClick = (i: number) => {
     setLightboxIndex(i);
     setLightboxOpen(true);
@@ -69,20 +66,6 @@ const RecapCard: React.FC<RecapCardProps> = ({ log, onUpdate, onDelete }) => {
       return Play;
     }
     return Target;
-  };
-
-  // Create a safe preview of notes for collapsed view
-  const getNotesPreview = (notes: string, maxLength: number = 150) => {
-    if (!notes) return '';
-    
-    // Strip HTML tags for preview but keep basic structure
-    const tempDiv = document.createElement('div');
-    tempDiv.innerHTML = notes;
-    const textContent = tempDiv.textContent || tempDiv.innerText || '';
-    
-    return textContent.length > maxLength 
-      ? textContent.substring(0, maxLength) + '...'
-      : textContent;
   };
 
   if (isEditing) {
@@ -212,11 +195,11 @@ const RecapCard: React.FC<RecapCardProps> = ({ log, onUpdate, onDelete }) => {
             {log.images && log.images.length > 0 && (
               <div className="bg-blue-50/50 rounded-md p-3">
                 <h4 className="text-xs font-medium text-blue-700 mb-2">Attachments ({log.images.length})</h4>
-                <div className={`grid ${getImageGridLayout(log.images.length)} gap-2`}>
+                <div className="grid grid-cols-4 gap-2">
                   {log.images.map((src, i) => (
                     <div
                       key={i}
-                      className="relative aspect-square rounded-md overflow-hidden border border-blue-200 cursor-pointer hover:shadow-sm transition-all duration-200 group"
+                      className="relative w-16 h-16 rounded-md overflow-hidden border border-blue-200 cursor-pointer hover:shadow-sm transition-all duration-200 group"
                       onClick={() => handleImageClick(i)}
                     >
                       <img
