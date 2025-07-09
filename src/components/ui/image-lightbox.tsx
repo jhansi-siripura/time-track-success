@@ -121,7 +121,6 @@ export const ImageLightbox: React.FC<ImageLightboxProps> = ({
   };
 
   const handleOverlayClick = (e: React.MouseEvent) => {
-    // Only close if clicking directly on the overlay, not on child elements
     if (e.target === e.currentTarget) {
       onClose();
     }
@@ -131,13 +130,13 @@ export const ImageLightbox: React.FC<ImageLightboxProps> = ({
 
   return (
     <div 
-      className="fixed inset-0 z-[10000] bg-black/90 flex items-center justify-center p-4"
+      className="fixed inset-0 z-[9999] bg-black/75 flex items-center justify-center p-4"
       onClick={handleOverlayClick}
     >
       {/* Close button */}
       <button
         onClick={onClose}
-        className="absolute top-4 right-4 z-10 p-3 bg-black/70 text-white rounded-full hover:bg-black/90 transition-colors backdrop-blur-sm"
+        className="absolute top-4 right-4 z-10 p-2 bg-black/50 text-white rounded-full hover:bg-black/70 transition-colors"
         aria-label="Close lightbox"
       >
         <X className="h-6 w-6" />
@@ -148,14 +147,14 @@ export const ImageLightbox: React.FC<ImageLightboxProps> = ({
         <>
           <button
             onClick={handlePrevious}
-            className="absolute left-4 top-1/2 -translate-y-1/2 z-10 p-3 bg-black/70 text-white rounded-full hover:bg-black/90 transition-colors backdrop-blur-sm"
+            className="absolute left-4 top-1/2 -translate-y-1/2 z-10 p-2 bg-black/50 text-white rounded-full hover:bg-black/70 transition-colors"
             aria-label="Previous image"
           >
             <ChevronLeft className="h-6 w-6" />
           </button>
           <button
             onClick={handleNext}
-            className="absolute right-4 top-1/2 -translate-y-1/2 z-10 p-3 bg-black/70 text-white rounded-full hover:bg-black/90 transition-colors backdrop-blur-sm"
+            className="absolute right-4 top-1/2 -translate-y-1/2 z-10 p-2 bg-black/50 text-white rounded-full hover:bg-black/70 transition-colors"
             aria-label="Next image"
           >
             <ChevronRight className="h-6 w-6" />
@@ -164,14 +163,14 @@ export const ImageLightbox: React.FC<ImageLightboxProps> = ({
       )}
 
       {/* Image container */}
-      <div className="relative w-full h-full flex items-center justify-center overflow-hidden">
+      <div className="relative w-full h-full flex items-center justify-center overflow-auto">
         <img
           src={images[currentIndex]}
           alt={`Image ${currentIndex + 1} of ${images.length}`}
           className={cn(
             "transition-all duration-300 cursor-pointer select-none",
-            "max-w-[90%] sm:max-w-[85%] max-h-[85vh] sm:max-h-[80vh]",
-            "object-contain rounded-lg shadow-2xl",
+            "max-w-[95%] sm:max-w-[80%] max-h-[90vh] sm:max-h-[80vh]",
+            "object-contain rounded-lg",
             isZoomed && "scale-150 sm:scale-200 cursor-zoom-out",
             !isZoomed && "cursor-zoom-in"
           )}
@@ -183,15 +182,12 @@ export const ImageLightbox: React.FC<ImageLightboxProps> = ({
           style={{
             touchAction: isZoomed ? 'pan-x pan-y' : 'manipulation'
           }}
-          onError={(e) => {
-            (e.target as HTMLImageElement).src = '/placeholder.svg';
-          }}
         />
       </div>
 
       {/* Image counter */}
       {images.length > 1 && (
-        <div className="absolute bottom-6 left-1/2 -translate-x-1/2 px-4 py-2 bg-black/70 text-white text-sm rounded-full backdrop-blur-sm">
+        <div className="absolute bottom-4 left-1/2 -translate-x-1/2 px-3 py-1 bg-black/50 text-white text-sm rounded-full">
           {currentIndex + 1} / {images.length}
         </div>
       )}
