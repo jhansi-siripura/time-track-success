@@ -70,7 +70,7 @@ const CompactRecapCard: React.FC<CompactRecapCardProps> = ({
                   <MoreVertical className="h-3.5 w-3.5 text-gray-500" />
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-40">
+              <DropdownMenuContent align="end" className="w-40 bg-white">
                 <DropdownMenuItem onClick={onEdit} className="cursor-pointer bg-white">
                   <Pencil className="h-3.5 w-3.5 mr-2" />
                   Edit
