@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -162,12 +163,15 @@ const RecapCard: React.FC<RecapCardProps> = ({ log, onUpdate, onDelete }) => {
             </div>
           </div>
           
-          {/* Preview Content */}
+          {/* Preview Content - Show rich text preview when collapsed */}
           {!isExpanded && log.notes && (
             <div className="mt-2">
-              <p className="text-xs text-gray-600 line-clamp-2">
-                {getNotesPreview(log.notes)}
-              </p>
+              <div className="text-xs text-gray-600 line-clamp-2">
+                <SafeHtml 
+                  html={log.notes.length > 150 ? log.notes.substring(0, 150) + '...' : log.notes}
+                  className="text-xs text-gray-600"
+                />
+              </div>
             </div>
           )}
           
@@ -207,7 +211,7 @@ const RecapCard: React.FC<RecapCardProps> = ({ log, onUpdate, onDelete }) => {
                 <h4 className="text-xs font-medium text-gray-700 mb-2">Study Notes</h4>
                 <SafeHtml 
                   html={log.notes}
-                  className="prose prose-sm max-w-none text-gray-800 [&_ul]:list-disc [&_ol]:list-decimal [&_li]:ml-4 [&_p]:mb-2 [&_strong]:font-semibold [&_em]:italic"
+                  className="text-gray-800"
                 />
               </div>
             )}
