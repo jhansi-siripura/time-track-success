@@ -108,19 +108,7 @@ const RecapCard: React.FC<RecapCardProps> = ({ log, onUpdate, onDelete }) => {
                 </div>
               </div>
               
-              {/* Compact Meta Pills */}
-              <div className="flex items-center space-x-2 mb-2">
-                <Badge variant="secondary" className="text-xs px-2 py-0.5 bg-blue-50 text-blue-700 border-blue-200">
-                  <Clock className="h-3 w-3 mr-1" />
-                  {log.duration} min
-                </Badge>
-                {log.source && (
-                  <Badge variant="secondary" className="text-xs px-2 py-0.5 bg-green-50 text-green-700 border-green-200">
-                    {React.createElement(getSourceIcon(log.source), { className: "h-3 w-3 mr-1" })}
-                    {log.source.length > 12 ? log.source.substring(0, 12) + '...' : log.source}
-                  </Badge>
-                )}
-              </div>
+            
             </div>
             
             {/* Action Buttons */}
