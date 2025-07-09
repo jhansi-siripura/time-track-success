@@ -194,7 +194,7 @@ const RecapCard: React.FC<RecapCardProps> = ({ log, onUpdate, onDelete }) => {
             {log.images && log.images.length > 0 && (
               <div className="bg-blue-50/50 rounded-md p-3">
                 <h4 className="text-xs font-medium text-blue-700 mb-2">Attachments ({log.images.length})</h4>
-                <div className="grid grid-cols-4 gap-2">
+                <div className="grid grid-cols-2 gap-2">
                   {log.images.map((src, i) => (
                     <div
                       key={i}
