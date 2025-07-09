@@ -16,7 +16,8 @@ import {
   Clock, 
   BookOpen, 
   Target,
-  Calendar
+  Calendar,
+  X
 } from 'lucide-react';
 import { ImageLightbox } from '@/components/ui/image-lightbox';
 import { SafeHtml } from '@/components/ui/safe-html';
@@ -64,6 +65,19 @@ const StudyLogModal: React.FC<StudyLogModalProps> = ({
 
   if (!log) return null;
 
+  const getSubjectColor = (subject: string) => {
+    const colors = [
+      'from-blue-500 to-blue-600',
+      'from-green-500 to-green-600',
+      'from-purple-500 to-purple-600',
+      'from-orange-500 to-orange-600',
+      'from-pink-500 to-pink-600',
+      'from-indigo-500 to-indigo-600'
+    ];
+    const hash = subject.split('').reduce((a, b) => a + b.charCodeAt(0), 0);
+    return colors[hash % colors.length];
+  };
+
   const handleImageClick = (index: number) => {
     setLightboxIndex(index);
     setLightboxOpen(true);
@@ -94,8 +108,34 @@ const StudyLogModal: React.FC<StudyLogModalProps> = ({
   return (
     <>
       <Dialog open={isOpen} onOpenChange={onClose}>
-        <DialogContent className="max-w-4xl max-h-[90vh] overflow-auto">
-          <DialogHeader>
+        <DialogContent className="max-w-4xl max-h-[90vh] overflow-auto bg-white/95 backdrop-blur-sm border-0 shadow-2xl">
+          {/* Subject Color Bar */}
+          <div className={`absolute top-0 left-0 right-0 h-1 bg-gradient-to-r ${getSubjectColor(log.subject)} rounded-t-lg`} />
+          
+          {/* Navigation Arrows */}
+          {hasPrevious && onPrevious && (
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={onPrevious}
+              className="absolute left-4 top-1/2 -translate-y-1/2 z-10 h-10 w-10 p-0 bg-white/80 hover:bg-white/90 shadow-md rounded-full"
+            >
+              <ChevronLeft className="h-5 w-5" />
+            </Button>
+          )}
+          
+          {hasNext && onNext && (
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={onNext}
+              className="absolute right-4 top-1/2 -translate-y-1/2 z-10 h-10 w-10 p-0 bg-white/80 hover:bg-white/90 shadow-md rounded-full"
+            >
+              <ChevronRight className="h-5 w-5" />
+            </Button>
+          )}
+
+          <DialogHeader className="pt-4">
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-3">
                 <div className="p-2 bg-gradient-to-br from-blue-100 to-blue-200 rounded-lg">
@@ -127,30 +167,8 @@ const StudyLogModal: React.FC<StudyLogModalProps> = ({
                 </div>
               </div>
               
-              {/* Navigation and Action Buttons */}
+              {/* Action Buttons */}
               <div className="flex items-center space-x-2">
-                {hasPrevious && onPrevious && (
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={onPrevious}
-                    className="h-8 w-8 p-0"
-                  >
-                    <ChevronLeft className="h-4 w-4" />
-                  </Button>
-                )}
-                
-                {hasNext && onNext && (
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={onNext}
-                    className="h-8 w-8 p-0"
-                  >
-                    <ChevronRight className="h-4 w-4" />
-                  </Button>
-                )}
-                
                 <Button
                   variant="outline"
                   size="sm"
@@ -174,7 +192,7 @@ const StudyLogModal: React.FC<StudyLogModalProps> = ({
             </div>
           </DialogHeader>
 
-          <div className="mt-6 space-y-6">
+          <div className="mt-6 space-y-6 px-6">
             {isEditing ? (
               <RecapCardEditor 
                 log={log} 
@@ -185,7 +203,7 @@ const StudyLogModal: React.FC<StudyLogModalProps> = ({
               <>
                 {/* Study Notes */}
                 {log.notes && (
-                  <div className="bg-gray-50 rounded-lg p-4">
+                  <div className="bg-gray-50/80 rounded-lg p-4 border border-gray-200/50">
                     <h4 className="text-sm font-medium text-gray-700 mb-3 flex items-center">
                       <BookOpen className="h-4 w-4 mr-2" />
                       Study Notes
@@ -199,7 +217,7 @@ const StudyLogModal: React.FC<StudyLogModalProps> = ({
 
                 {/* Achievements */}
                 {log.achievements && (
-                  <div className="bg-green-50 rounded-lg p-4">
+                  <div className="bg-green-50/80 rounded-lg p-4 border border-green-200/50">
                     <h4 className="text-sm font-medium text-green-700 mb-3 flex items-center">
                       <Target className="h-4 w-4 mr-2" />
                       Achievements
@@ -210,7 +228,7 @@ const StudyLogModal: React.FC<StudyLogModalProps> = ({
 
                 {/* Attachments */}
                 {log.images && log.images.length > 0 && (
-                  <div className="bg-blue-50 rounded-lg p-4">
+                  <div className="bg-blue-50/80 rounded-lg p-4 border border-blue-200/50">
                     <h4 className="text-sm font-medium text-blue-700 mb-3 flex items-center">
                       <Target className="h-4 w-4 mr-2" />
                       Attachments ({log.images.length})

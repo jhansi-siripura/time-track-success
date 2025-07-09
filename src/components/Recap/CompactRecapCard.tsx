@@ -1,9 +1,15 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Eye, Clock, BookOpen, Image } from 'lucide-react';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import { Eye, Clock, BookOpen, Image, MoreVertical, Pencil, Trash2 } from 'lucide-react';
 
 interface StudyLog {
   id: number;
@@ -21,9 +27,16 @@ interface StudyLog {
 interface CompactRecapCardProps {
   log: StudyLog;
   onViewDetails: () => void;
+  onEdit: () => void;
+  onDelete: () => void;
 }
 
-const CompactRecapCard: React.FC<CompactRecapCardProps> = ({ log, onViewDetails }) => {
+const CompactRecapCard: React.FC<CompactRecapCardProps> = ({ 
+  log, 
+  onViewDetails, 
+  onEdit, 
+  onDelete 
+}) => {
   const getSubjectColor = (subject: string) => {
     const colors = [
       'from-blue-500 to-blue-600',
@@ -44,6 +57,12 @@ const CompactRecapCard: React.FC<CompactRecapCardProps> = ({ log, onViewDetails 
     return textOnly.length > 80 ? textOnly.substring(0, 80) + '...' : textOnly;
   };
 
+  const handleDelete = () => {
+    if (confirm('Are you sure you want to delete this study log?')) {
+      onDelete();
+    }
+  };
+
   return (
     <Card className="group hover:shadow-lg transition-all duration-200 border-0 bg-white/90 backdrop-blur-sm h-[200px] flex flex-col">
       {/* Subject Color Bar */}
@@ -62,14 +81,41 @@ const CompactRecapCard: React.FC<CompactRecapCardProps> = ({ log, onViewDetails 
             )}
           </div>
           
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={onViewDetails}
-            className="h-7 w-7 p-0 opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0"
-          >
-            <Eye className="h-3.5 w-3.5 text-gray-500" />
-          </Button>
+          <div className="flex items-center space-x-1 opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={onViewDetails}
+              className="h-7 w-7 p-0"
+            >
+              <Eye className="h-3.5 w-3.5 text-gray-500" />
+            </Button>
+            
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="h-7 w-7 p-0"
+                >
+                  <MoreVertical className="h-3.5 w-3.5 text-gray-500" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-40">
+                <DropdownMenuItem onClick={onEdit} className="cursor-pointer">
+                  <Pencil className="h-3.5 w-3.5 mr-2" />
+                  Edit
+                </DropdownMenuItem>
+                <DropdownMenuItem 
+                  onClick={handleDelete} 
+                  className="cursor-pointer text-destructive focus:text-destructive"
+                >
+                  <Trash2 className="h-3.5 w-3.5 mr-2" />
+                  Delete
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
         </div>
 
         {/* Notes Preview */}

@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import CompactRecapCard from './CompactRecapCard';
 import StudyLogModal from './StudyLogModal';
+import RecapCardEditor from './RecapCardEditor';
 import { BookOpen, Clock, Calendar, Target } from 'lucide-react';
 
 interface StudyLog {
@@ -28,6 +29,8 @@ interface StudySessionGrouperProps {
 const StudySessionGrouper: React.FC<StudySessionGrouperProps> = ({ logs, onUpdate, onDelete }) => {
   const [selectedLog, setSelectedLog] = useState<StudyLog | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [editingLog, setEditingLog] = useState<StudyLog | null>(null);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
   // Group logs by date
   const groupedLogs = logs.reduce((groups, log) => {
@@ -80,9 +83,30 @@ const StudySessionGrouper: React.FC<StudySessionGrouperProps> = ({ logs, onUpdat
     setIsModalOpen(true);
   };
 
+  const handleEdit = (log: StudyLog) => {
+    setEditingLog(log);
+    setIsEditModalOpen(true);
+  };
+
+  const handleDelete = (logId: number) => {
+    onDelete(logId);
+  };
+
   const handleCloseModal = () => {
     setIsModalOpen(false);
     setSelectedLog(null);
+  };
+
+  const handleCloseEditModal = () => {
+    setIsEditModalOpen(false);
+    setEditingLog(null);
+  };
+
+  const handleSave = (data: Partial<StudyLog>) => {
+    if (editingLog) {
+      onUpdate(editingLog.id, data);
+      handleCloseEditModal();
+    }
   };
 
   const handleNext = () => {
@@ -205,6 +229,8 @@ const StudySessionGrouper: React.FC<StudySessionGrouperProps> = ({ logs, onUpdat
                       key={log.id}
                       log={log}
                       onViewDetails={() => handleViewDetails(log)}
+                      onEdit={() => handleEdit(log)}
+                      onDelete={() => handleDelete(log.id)}
                     />
                   ))}
               </div>
@@ -213,6 +239,7 @@ const StudySessionGrouper: React.FC<StudySessionGrouperProps> = ({ logs, onUpdat
         })}
       </div>
 
+      {/* Preview Modal */}
       <StudyLogModal
         log={selectedLog}
         isOpen={isModalOpen}
@@ -224,6 +251,21 @@ const StudySessionGrouper: React.FC<StudySessionGrouperProps> = ({ logs, onUpdat
         hasNext={navInfo.hasNext}
         hasPrevious={navInfo.hasPrevious}
       />
+
+      {/* Edit Modal */}
+      {editingLog && (
+        <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-lg shadow-xl max-w-4xl w-full max-h-[90vh] overflow-auto">
+            <div className="p-6">
+              <RecapCardEditor 
+                log={editingLog} 
+                onSave={handleSave} 
+                onCancel={handleCloseEditModal} 
+              />
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 };
