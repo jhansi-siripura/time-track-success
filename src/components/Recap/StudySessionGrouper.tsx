@@ -74,58 +74,58 @@ const StudySessionGrouper: React.FC<StudySessionGrouperProps> = ({ logs, onUpdat
   if (sortedDates.length === 0) {
     return (
       <div className="text-center py-12">
-        <div className="w-24 h-24 mx-auto mb-4 rounded-full bg-gradient-to-br from-amber-100 to-yellow-100 flex items-center justify-center">
-          <BookOpen className="h-12 w-12 text-amber-600" />
+        <div className="w-20 h-20 mx-auto mb-4 rounded-full bg-gradient-to-br from-amber-100 to-yellow-100 flex items-center justify-center">
+          <BookOpen className="h-10 w-10 text-amber-600" />
         </div>
-        <h3 className="text-xl font-semibold text-gray-800 mb-2">No Study Sessions Found</h3>
+        <h3 className="text-lg font-semibold text-gray-800 mb-2">No Study Sessions Found</h3>
         <p className="text-gray-600">Start your learning journey by adding your first study session!</p>
       </div>
     );
   }
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-6">
       {sortedDates.map((date) => {
         const dayLogs = groupedLogs[date];
         const stats = getDateStats(dayLogs);
         
         return (
-          <div key={date} className="space-y-4">
-            {/* Date Header with Stats */}
+          <div key={date} className="space-y-3">
+            {/* Compressed Date Header with Stats */}
             <Card className="bg-gradient-to-r from-amber-50 to-yellow-50 border-amber-200 shadow-sm">
-              <CardHeader className="pb-4">
+              <CardHeader className="pb-2 pt-3">
                 <div className="flex items-center justify-between">
-                  <div className="flex items-center space-x-3">
-                    <div className="w-10 h-10 rounded-full bg-gradient-to-br from-amber-400 to-yellow-500 flex items-center justify-center shadow-md">
-                      <Calendar className="h-5 w-5 text-white" />
+                  <div className="flex items-center space-x-2.5">
+                    <div className="w-8 h-8 rounded-full bg-gradient-to-br from-amber-400 to-yellow-500 flex items-center justify-center shadow-sm">
+                      <Calendar className="h-4 w-4 text-white" />
                     </div>
                     <div>
-                      <CardTitle className="text-xl text-gray-800">{formatDate(date)}</CardTitle>
-                      <p className="text-sm text-gray-600">{new Date(date).toLocaleDateString()}</p>
+                      <CardTitle className="text-lg text-gray-800">{formatDate(date)}</CardTitle>
+                      <p className="text-xs text-gray-600">{new Date(date).toLocaleDateString()}</p>
                     </div>
                   </div>
                   
-                  <div className="flex items-center space-x-4 text-sm">
+                  <div className="flex items-center space-x-3 text-sm">
                     <div className="flex items-center space-x-1 text-blue-600">
-                      <Clock className="h-4 w-4" />
-                      <span className="font-medium">{Math.floor(stats.totalDuration / 60)}h {stats.totalDuration % 60}m</span>
+                      <Clock className="h-3.5 w-3.5" />
+                      <span className="font-medium text-xs">{Math.floor(stats.totalDuration / 60)}h {stats.totalDuration % 60}m</span>
                     </div>
                     <div className="flex items-center space-x-1 text-green-600">
-                      <Target className="h-4 w-4" />
-                      <span className="font-medium">{stats.sessionCount} sessions</span>
+                      <Target className="h-3.5 w-3.5" />
+                      <span className="font-medium text-xs">{stats.sessionCount} sessions</span>
                     </div>
                   </div>
                 </div>
                 
-                {/* Subject Overview */}
-                <div className="flex flex-wrap gap-2 mt-4">
+                {/* Compact Subject Overview */}
+                <div className="flex flex-wrap gap-1.5 mt-2">
                   {stats.subjects.map((subject, index) => (
                     <Badge 
                       key={subject} 
                       variant="secondary" 
-                      className="bg-white/70 text-gray-700 hover:bg-white/90 transition-colors"
+                      className="bg-white/70 text-gray-700 hover:bg-white/90 transition-colors text-xs px-2 py-0.5"
                     >
-                      <BookOpen className="h-3 w-3 mr-1" />
+                      <BookOpen className="h-2.5 w-2.5 mr-1" />
                       {subject}
                     </Badge>
                   ))}
@@ -134,7 +134,7 @@ const StudySessionGrouper: React.FC<StudySessionGrouperProps> = ({ logs, onUpdat
             </Card>
             
             {/* Study Session Cards */}
-            <div className="grid gap-4">
+            <div className="grid gap-2.5">
               {dayLogs
                 .sort((a, b) => a.time.localeCompare(b.time))
                 .map((log) => (

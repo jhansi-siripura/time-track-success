@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Pencil, Trash2, ChevronDown, ChevronUp, Clock, Calendar, BookOpen, Target } from 'lucide-react';
+import { Pencil, Trash2, ChevronDown, ChevronUp, Clock, BookOpen, Target, Play } from 'lucide-react';
 import { ImageLightbox } from '@/components/ui/image-lightbox';
 import { SafeHtml } from '@/components/ui/safe-html';
 import RecapCardEditor from './RecapCardEditor';
@@ -32,20 +32,6 @@ const RecapCard: React.FC<RecapCardProps> = ({ log, onUpdate, onDelete }) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [lightboxIndex, setLightboxIndex] = useState(0);
-
-  const formatDateTime = (dateStr: string, timeStr: string) => {
-    try {
-      const [y, m, d] = dateStr.split('-').map(Number);
-      const [h, mm] = timeStr.split(':').map(Number);
-      const dt = new Date(y, m - 1, d, h, mm);
-      const ampm = dt.getHours() >= 12 ? 'PM' : 'AM';
-      const h12 = dt.getHours() % 12 === 0 ? 12 : dt.getHours() % 12;
-      const month = dt.toLocaleString('en-US', { month: 'short' });
-      return `${dt.getDate()} ${month}, ${h12}:${mm.toString().padStart(2, '0')} ${ampm}`;
-    } catch (e) {
-      return `${dateStr} ${timeStr}`;
-    }
-  };
 
   const getSubjectColor = (subject: string) => {
     const colors = [
@@ -77,6 +63,14 @@ const RecapCard: React.FC<RecapCardProps> = ({ log, onUpdate, onDelete }) => {
     if (confirm('Are you sure you want to delete this study log?')) onDelete(log.id);
   };
 
+  const getSourceIcon = (source: string) => {
+    const lowerSource = source.toLowerCase();
+    if (lowerSource.includes('youtube') || lowerSource.includes('video')) {
+      return Play;
+    }
+    return Target;
+  };
+
   if (isEditing) {
     return (
       <div className="space-y-4">
@@ -92,42 +86,39 @@ const RecapCard: React.FC<RecapCardProps> = ({ log, onUpdate, onDelete }) => {
 
   return (
     <>
-      <Card className="group hover:shadow-lg transition-all duration-300 border-0 bg-white/80 backdrop-blur-sm overflow-hidden transform hover:-translate-y-1 relative">
+      <Card className="group hover:shadow-md transition-all duration-200 border-0 bg-white/80 backdrop-blur-sm overflow-hidden">
         {/* Subject Color Bar */}
-        <div className={`h-1 w-full bg-gradient-to-r ${getSubjectColor(log.subject)}`} />
+        <div className={`h-0.5 w-full bg-gradient-to-r ${getSubjectColor(log.subject)}`} />
         
         {/* Card Header */}
-        <div className="p-4 pb-3">
+        <div className="p-3">
           <div className="flex items-start justify-between">
             <div className="flex-1">
-              {/* Subject Badge */}
+              {/* Subject and Topic Line */}
               <div className="flex items-center space-x-2 mb-2">
-                <div className={`w-8 h-8 rounded-lg bg-gradient-to-br ${getSubjectColor(log.subject)} flex items-center justify-center shadow-sm`}>
-                  <BookOpen className="h-4 w-4 text-white" />
-                </div>
-                <div>
-                  <h3 className="font-semibold text-gray-800 text-lg">{log.subject}</h3>
+                <BookOpen className="h-3.5 w-3.5 text-gray-500" />
+                <div className="flex items-center space-x-1.5">
+                  <h3 className="font-medium text-gray-800 text-sm">{log.subject}</h3>
                   {log.topic && (
-                    <p className="text-sm text-gray-600">{log.topic}</p>
+                    <>
+                      <span className="text-gray-400 text-xs">·</span>
+                      <p className="text-sm text-gray-600">{log.topic}</p>
+                    </>
                   )}
                 </div>
               </div>
               
-              {/* Meta Information */}
-              <div className="flex items-center space-x-4 text-sm text-gray-500 mb-3">
-                <div className="flex items-center space-x-1">
-                  <Calendar className="h-3 w-3" />
-                  <span>{formatDateTime(log.date, log.time)}</span>
-                </div>
-                <div className="flex items-center space-x-1">
-                  <Clock className="h-3 w-3" />
-                  <span>{log.duration} min</span>
-                </div>
+              {/* Compact Meta Pills */}
+              <div className="flex items-center space-x-2 mb-2">
+                <Badge variant="secondary" className="text-xs px-2 py-0.5 bg-blue-50 text-blue-700 border-blue-200">
+                  <Clock className="h-3 w-3 mr-1" />
+                  {log.duration} min
+                </Badge>
                 {log.source && (
-                  <div className="flex items-center space-x-1">
-                    <Target className="h-3 w-3" />
-                    <span className="truncate max-w-24">{log.source}</span>
-                  </div>
+                  <Badge variant="secondary" className="text-xs px-2 py-0.5 bg-green-50 text-green-700 border-green-200">
+                    {React.createElement(getSourceIcon(log.source), { className: "h-3 w-3 mr-1" })}
+                    {log.source.length > 12 ? log.source.substring(0, 12) + '...' : log.source}
+                  </Badge>
                 )}
               </div>
             </div>
@@ -137,20 +128,20 @@ const RecapCard: React.FC<RecapCardProps> = ({ log, onUpdate, onDelete }) => {
               <Button 
                 variant="ghost" 
                 size="sm" 
-                className="h-8 w-8 p-0 opacity-0 group-hover:opacity-100 transition-opacity" 
+                className="h-7 w-7 p-0 opacity-0 group-hover:opacity-100 transition-opacity" 
                 onClick={() => setIsEditing(true)}
               >
-                <Pencil className="h-4 w-4 text-gray-400 hover:text-gray-600" />
+                <Pencil className="h-3.5 w-3.5 text-gray-400 hover:text-gray-600" />
               </Button>
               <Button 
                 variant="ghost" 
                 size="sm" 
-                className="h-8 w-8 p-0" 
+                className="h-7 w-7 p-0" 
                 onClick={() => setIsExpanded(!isExpanded)}
               >
                 {isExpanded ? 
-                  <ChevronUp className="h-4 w-4 text-gray-400" /> : 
-                  <ChevronDown className="h-4 w-4 text-gray-400" />
+                  <ChevronUp className="h-3.5 w-3.5 text-gray-400" /> : 
+                  <ChevronDown className="h-3.5 w-3.5 text-gray-400" />
                 }
               </Button>
             </div>
@@ -160,19 +151,19 @@ const RecapCard: React.FC<RecapCardProps> = ({ log, onUpdate, onDelete }) => {
           {!isExpanded && log.notes && (
             <div className="mt-2">
               <SafeHtml 
-                html={log.notes.substring(0, 120) + (log.notes.length > 120 ? '...' : '')}
-                className="text-sm text-gray-700 line-clamp-2 prose prose-sm max-w-none"
+                html={log.notes.substring(0, 100) + (log.notes.length > 100 ? '...' : '')}
+                className="text-xs text-gray-600 line-clamp-2 prose prose-sm max-w-none"
               />
             </div>
           )}
           
           {/* Quick Image Preview */}
           {!isExpanded && log.images && log.images.length > 0 && (
-            <div className="mt-3 flex space-x-2">
-              {log.images.slice(0, 3).map((src, i) => (
+            <div className="mt-2 flex space-x-1.5">
+              {log.images.slice(0, 4).map((src, i) => (
                 <div
                   key={i}
-                  className="w-12 h-12 rounded-lg overflow-hidden border-2 border-white shadow-sm cursor-pointer hover:scale-105 transition-transform"
+                  className="w-8 h-8 rounded-md overflow-hidden border border-gray-200 cursor-pointer hover:scale-105 transition-transform"
                   onClick={() => handleImageClick(i)}
                 >
                   <img
@@ -185,9 +176,9 @@ const RecapCard: React.FC<RecapCardProps> = ({ log, onUpdate, onDelete }) => {
                   />
                 </div>
               ))}
-              {log.images.length > 3 && (
-                <div className="w-12 h-12 rounded-lg bg-gray-100 border-2 border-white shadow-sm flex items-center justify-center text-xs text-gray-500 font-medium">
-                  +{log.images.length - 3}
+              {log.images.length > 4 && (
+                <div className="w-8 h-8 rounded-md bg-gray-100 border border-gray-200 flex items-center justify-center text-xs text-gray-500 font-medium">
+                  +{log.images.length - 4}
                 </div>
               )}
             </div>
@@ -196,10 +187,10 @@ const RecapCard: React.FC<RecapCardProps> = ({ log, onUpdate, onDelete }) => {
 
         {/* Expanded Content */}
         {isExpanded && (
-          <CardContent className="pt-0 px-4 pb-4 space-y-4">
+          <CardContent className="pt-0 px-3 pb-3 space-y-3">
             {log.notes && (
-              <div className="bg-gray-50/50 rounded-lg p-4">
-                <h4 className="text-sm font-medium text-gray-700 mb-2">Study Notes</h4>
+              <div className="bg-gray-50/50 rounded-md p-3">
+                <h4 className="text-xs font-medium text-gray-700 mb-2">Study Notes</h4>
                 <SafeHtml 
                   html={log.notes}
                   className="prose prose-sm max-w-none text-gray-800"
@@ -208,31 +199,31 @@ const RecapCard: React.FC<RecapCardProps> = ({ log, onUpdate, onDelete }) => {
             )}
 
             {log.achievements && (
-              <div className="bg-green-50/50 rounded-lg p-4">
-                <h4 className="text-sm font-medium text-green-700 mb-2">Achievements</h4>
+              <div className="bg-green-50/50 rounded-md p-3">
+                <h4 className="text-xs font-medium text-green-700 mb-2">Achievements</h4>
                 <p className="text-sm text-green-800">{log.achievements}</p>
               </div>
             )}
 
             {log.images && log.images.length > 0 && (
-              <div className="bg-blue-50/50 rounded-lg p-4">
-                <h4 className="text-sm font-medium text-blue-700 mb-3">Attachments ({log.images.length})</h4>
-                <div className={`grid ${getImageGridLayout(log.images.length)} gap-3`}>
+              <div className="bg-blue-50/50 rounded-md p-3">
+                <h4 className="text-xs font-medium text-blue-700 mb-2">Attachments ({log.images.length})</h4>
+                <div className={`grid ${getImageGridLayout(log.images.length)} gap-2`}>
                   {log.images.map((src, i) => (
                     <div
                       key={i}
-                      className="relative aspect-square rounded-lg overflow-hidden border border-blue-200 shadow-sm cursor-pointer hover:shadow-md transition-all duration-200 group"
+                      className="relative aspect-square rounded-md overflow-hidden border border-blue-200 cursor-pointer hover:shadow-sm transition-all duration-200 group"
                       onClick={() => handleImageClick(i)}
                     >
                       <img
                         src={src}
                         alt={`attachment-${i}`}
-                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-200"
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200"
                         onError={(e) => {
                           (e.target as HTMLImageElement).src = 'fallback.png';
                         }}
                       />
-                      <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-10 transition-all duration-200 rounded-lg" />
+                      <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-5 transition-all duration-200 rounded-md" />
                     </div>
                   ))}
                 </div>
