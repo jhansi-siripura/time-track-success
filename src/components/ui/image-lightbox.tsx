@@ -28,7 +28,11 @@ export const ImageLightbox: React.FC<ImageLightboxProps> = ({
   }, [isOpen, initialIndex]);
 
   useEffect(() => {
-    document.body.style.overflow = isOpen ? 'hidden' : 'unset';
+    if (isOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
     return () => {
       document.body.style.overflow = 'unset';
     };
@@ -37,49 +41,73 @@ export const ImageLightbox: React.FC<ImageLightboxProps> = ({
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (!isOpen) return;
+
       switch (e.key) {
         case 'Escape':
           onClose();
           break;
         case 'ArrowLeft':
-          setCurrentIndex((prev) => (prev === 0 ? images.length - 1 : prev - 1));
+          if (images.length > 1) {
+            setCurrentIndex((prev) => (prev === 0 ? images.length - 1 : prev - 1));
+          }
           break;
         case 'ArrowRight':
-          setCurrentIndex((prev) => (prev === images.length - 1 ? 0 : prev + 1));
+          if (images.length > 1) {
+            setCurrentIndex((prev) => (prev === images.length - 1 ? 0 : prev + 1));
+          }
           break;
       }
     };
+
     document.addEventListener('keydown', handleKeyDown);
     return () => document.removeEventListener('keydown', handleKeyDown);
   }, [isOpen, images.length, onClose]);
 
   const handleTouchStart = useCallback((e: React.TouchEvent) => {
     setTouchEnd(null);
-    setTouchStart({ x: e.targetTouches[0].clientX, y: e.targetTouches[0].clientY });
+    setTouchStart({
+      x: e.targetTouches[0].clientX,
+      y: e.targetTouches[0].clientY,
+    });
   }, []);
 
   const handleTouchMove = useCallback((e: React.TouchEvent) => {
-    setTouchEnd({ x: e.targetTouches[0].clientX, y: e.targetTouches[0].clientY });
+    setTouchEnd({
+      x: e.targetTouches[0].clientX,
+      y: e.targetTouches[0].clientY,
+    });
   }, []);
 
   const handleTouchEnd = useCallback(() => {
     if (!touchStart || !touchEnd) return;
-    const dx = touchStart.x - touchEnd.x;
-    const dy = touchStart.y - touchEnd.y;
-    if (Math.abs(dx) > Math.abs(dy) && !isZoomed) {
-      if (dx > 50) handleNext(new MouseEvent('click'));
-      else if (dx < -50) handlePrevious(new MouseEvent('click'));
-    }
-  }, [touchStart, touchEnd, isZoomed]);
 
-  const handlePrevious = (e: React.MouseEvent | MouseEvent) => {
+    const distanceX = touchStart.x - touchEnd.x;
+    const distanceY = touchStart.y - touchEnd.y;
+    const isLeftSwipe = distanceX > 50;
+    const isRightSwipe = distanceX < -50;
+    const isVerticalSwipe = Math.abs(distanceY) > Math.abs(distanceX);
+
+    if (!isZoomed && !isVerticalSwipe && images.length > 1) {
+      if (isLeftSwipe) {
+        setCurrentIndex((prev) => (prev === images.length - 1 ? 0 : prev + 1));
+      } else if (isRightSwipe) {
+        setCurrentIndex((prev) => (prev === 0 ? images.length - 1 : prev - 1));
+      }
+    }
+  }, [touchStart, touchEnd, isZoomed, images.length]);
+
+  const handlePrevious = (e: React.MouseEvent) => {
     e.stopPropagation();
-    setCurrentIndex((prev) => (prev === 0 ? images.length - 1 : prev - 1));
+    if (images.length > 1) {
+      setCurrentIndex((prev) => (prev === 0 ? images.length - 1 : prev - 1));
+    }
   };
 
-  const handleNext = (e: React.MouseEvent | MouseEvent) => {
+  const handleNext = (e: React.MouseEvent) => {
     e.stopPropagation();
-    setCurrentIndex((prev) => (prev === images.length - 1 ? 0 : prev + 1));
+    if (images.length > 1) {
+      setCurrentIndex((prev) => (prev === images.length - 1 ? 0 : prev + 1));
+    }
   };
 
   const handleClose = (e: React.MouseEvent) => {
@@ -87,52 +115,45 @@ export const ImageLightbox: React.FC<ImageLightboxProps> = ({
     onClose();
   };
 
-  const handleOverlayClick = (e: React.MouseEvent) => {
-    if (e.target === e.currentTarget) onClose();
-  };
-
   const handleImageClick = (e: React.MouseEvent) => {
     e.stopPropagation();
     setIsZoomed(!isZoomed);
   };
 
+  const handleOverlayClick = (e: React.MouseEvent) => {
+    if (e.target === e.currentTarget) {
+      onClose();
+    }
+  };
+
   if (!isOpen) return null;
 
   return (
-    <div
-      className="fixed inset-0 z-[999999] bg-black/90 flex items-center justify-center p-4"
+    <div 
+      className="fixed inset-0 z-[99999] bg-black/90 flex items-center justify-center p-4"
       onClick={handleOverlayClick}
     >
-      {/* Close */}
-      <button
-        onClick={handleClose}
-        className="absolute top-4 right-4 z-10 p-2 bg-black/50 text-white rounded-full hover:bg-black/70"
-        aria-label="Close lightbox"
-      >
-        <X className="h-6 w-6" />
-      </button>
-
-      {/* Navigation */}
+      {/* Navigation Arrows */}
       {images.length > 1 && (
         <>
           <button
             onClick={handlePrevious}
             className="absolute left-4 top-1/2 -translate-y-1/2 z-10 p-2 bg-black/50 text-white rounded-full hover:bg-black/70"
-            aria-label="Previous"
+            aria-label="Previous image"
           >
             <ChevronLeft className="h-6 w-6" />
           </button>
           <button
             onClick={handleNext}
             className="absolute right-4 top-1/2 -translate-y-1/2 z-10 p-2 bg-black/50 text-white rounded-full hover:bg-black/70"
-            aria-label="Next"
+            aria-label="Next image"
           >
             <ChevronRight className="h-6 w-6" />
           </button>
         </>
       )}
 
-      {/* Image */}
+      {/* Image container with close inside */}
       <div className="relative w-full h-full flex items-center justify-center overflow-auto">
         <img
           src={images[currentIndex]}
@@ -141,7 +162,8 @@ export const ImageLightbox: React.FC<ImageLightboxProps> = ({
             "transition-all duration-300 cursor-pointer select-none",
             "max-w-[95%] sm:max-w-[80%] max-h-[90vh] sm:max-h-[80vh]",
             "object-contain rounded-lg",
-            isZoomed ? "scale-150 sm:scale-200 cursor-zoom-out" : "cursor-zoom-in"
+            isZoomed && "scale-150 sm:scale-200 cursor-zoom-out",
+            !isZoomed && "cursor-zoom-in"
           )}
           onClick={handleImageClick}
           onTouchStart={handleTouchStart}
@@ -152,9 +174,18 @@ export const ImageLightbox: React.FC<ImageLightboxProps> = ({
             touchAction: isZoomed ? 'pan-x pan-y' : 'manipulation'
           }}
         />
+
+        {/* Close button inside image area */}
+        <button
+          onClick={handleClose}
+          className="absolute top-2 right-2 z-20 p-1 bg-black/60 text-white rounded-full hover:bg-black/80"
+          aria-label="Close lightbox"
+        >
+          <X className="h-5 w-5" />
+        </button>
       </div>
 
-      {/* Counter */}
+      {/* Image counter */}
       {images.length > 1 && (
         <div className="absolute bottom-4 left-1/2 -translate-x-1/2 px-3 py-1 bg-black/50 text-white text-sm rounded-full">
           {currentIndex + 1} / {images.length}
