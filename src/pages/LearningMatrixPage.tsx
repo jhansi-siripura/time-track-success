@@ -13,19 +13,19 @@ const LearningMatrixPage = () => {
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-foreground mb-2">Learning Matrix</h1>
           <p className="text-muted-foreground">
-            Organize and prioritize your learning journey with known and unknown technologies
+            Organize and prioritize your learning journey with known and unknown subjects
           </p>
         </div>
 
         <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
-          {/* Known Technologies Section */}
+          {/* Known Subjects Section */}
           <Card className="h-fit">
             <CardHeader className="pb-4">
               <CardTitle className="flex items-center gap-2 text-xl">
                 <div className="w-6 h-6 rounded-full bg-green-500 flex items-center justify-center">
                   <BookOpen className="w-4 h-4 text-white" />
                 </div>
-                Known Technologies
+                Known Subjects
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -33,7 +33,7 @@ const LearningMatrixPage = () => {
             </CardContent>
           </Card>
 
-          {/* Unknown Technologies Section */}
+          {/* Unknown Subjects Section */}
           <Card className="h-fit">
             <CardHeader className="pb-4">
               <CardTitle className="flex items-center gap-2 text-xl">

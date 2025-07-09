@@ -4,12 +4,17 @@ import { supabase } from '@/integrations/supabase/client';
 import { ChevronDown, ChevronRight } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
+import { getExpertiseLevel, formatHours, EXPERTISE_LEVELS } from '@/utils/expertiseUtils';
 
 interface StudyData {
   subject: string;
-  topics: string[];
+  topics: Array<{
+    name: string;
+    hours: number;
+    sessions: number;
+  }>;
+  totalHours: number;
   totalSessions: number;
-  level: 'Beginner' | 'Intermediate' | 'Advanced' | 'Expert';
 }
 
 const KnownTechnologies = () => {
@@ -18,10 +23,10 @@ const KnownTechnologies = () => {
   const [openSections, setOpenSections] = useState<Set<string>>(new Set());
 
   useEffect(() => {
-    fetchKnownTechnologies();
+    fetchKnownSubjects();
   }, []);
 
-  const fetchKnownTechnologies = async () => {
+  const fetchKnownSubjects = async () => {
     try {
       const { data: studyLogs, error } = await supabase
         .from('study_logs')
@@ -31,46 +36,54 @@ const KnownTechnologies = () => {
 
       if (error) throw error;
 
-      // Group by subject and aggregate topics
+      // Group by subject and aggregate topics with their hours
       const grouped = studyLogs.reduce((acc: Record<string, any>, log) => {
         const subject = log.subject || 'Other';
         const topic = log.topic || 'General';
+        const duration = log.duration || 0;
         
         if (!acc[subject]) {
           acc[subject] = {
-            topics: new Set(),
+            topics: {},
             totalDuration: 0,
+            totalSessions: 0
+          };
+        }
+        
+        if (!acc[subject].topics[topic]) {
+          acc[subject].topics[topic] = {
+            duration: 0,
             sessions: 0
           };
         }
         
-        acc[subject].topics.add(topic);
-        acc[subject].totalDuration += log.duration || 0;
-        acc[subject].sessions += 1;
+        acc[subject].topics[topic].duration += duration;
+        acc[subject].topics[topic].sessions += 1;
+        acc[subject].totalDuration += duration;
+        acc[subject].totalSessions += 1;
         
         return acc;
       }, {});
 
-      // Convert to array and determine levels
+      // Convert to array format with calculated hours
       const processedData: StudyData[] = Object.entries(grouped).map(([subject, data]: [string, any]) => {
-        const totalHours = data.totalDuration / 60;
-        let level: StudyData['level'] = 'Beginner';
-        
-        if (totalHours >= 100) level = 'Expert';
-        else if (totalHours >= 50) level = 'Advanced';
-        else if (totalHours >= 20) level = 'Intermediate';
-        
+        const topics = Object.entries(data.topics).map(([topicName, topicData]: [string, any]) => ({
+          name: topicName,
+          hours: formatHours(topicData.duration),
+          sessions: topicData.sessions
+        }));
+
         return {
           subject,
-          topics: Array.from(data.topics),
-          totalSessions: data.sessions,
-          level
+          topics,
+          totalHours: formatHours(data.totalDuration),
+          totalSessions: data.totalSessions
         };
       });
 
       setStudyData(processedData);
     } catch (error) {
-      console.error('Error fetching known technologies:', error);
+      console.error('Error fetching known subjects:', error);
     } finally {
       setLoading(false);
     }
@@ -84,15 +97,6 @@ const KnownTechnologies = () => {
       newOpenSections.add(subject);
     }
     setOpenSections(newOpenSections);
-  };
-
-  const getLevelColor = (level: StudyData['level']) => {
-    switch (level) {
-      case 'Expert': return 'bg-green-100 text-green-800 border-green-200';
-      case 'Advanced': return 'bg-blue-100 text-blue-800 border-blue-200';
-      case 'Intermediate': return 'bg-orange-100 text-orange-800 border-orange-200';
-      default: return 'bg-gray-100 text-gray-800 border-gray-200';
-    }
   };
 
   const getSubjectIcon = (subject: string) => {
@@ -122,57 +126,74 @@ const KnownTechnologies = () => {
   if (studyData.length === 0) {
     return (
       <div className="text-center py-8 text-muted-foreground">
-        <p>No study history found. Start logging your study sessions to see known technologies here.</p>
+        <p>No study history found. Start logging your study sessions to see known subjects here.</p>
       </div>
     );
   }
+
+  const totalSubjects = studyData.length;
+  const totalTopics = studyData.reduce((sum, item) => sum + item.topics.length, 0);
 
   return (
     <div className="space-y-3">
       <div className="flex items-center justify-between mb-4">
         <Badge variant="secondary" className="text-sm">
-          {studyData.reduce((sum, item) => sum + item.topics.length, 0)} Topics
+          {totalSubjects} Subjects • {totalTopics} Topics
         </Badge>
       </div>
 
-      {studyData.map((item) => (
-        <Collapsible key={item.subject} open={openSections.has(item.subject)}>
-          <CollapsibleTrigger
-            onClick={() => toggleSection(item.subject)}
-            className="w-full p-4 bg-muted/30 hover:bg-muted/50 rounded-lg transition-colors flex items-center justify-between group"
-          >
-            <div className="flex items-center gap-3">
-              <span className="text-lg">{getSubjectIcon(item.subject)}</span>
-              <div className="text-left">
-                <h3 className="font-medium text-foreground">{item.subject}</h3>
-                <p className="text-sm text-muted-foreground">
-                  {item.topics.length} topics
-                </p>
-              </div>
-            </div>
-            <div className="flex items-center gap-2">
-              <Badge className={`text-xs ${getLevelColor(item.level)}`}>
-                {item.level}
-              </Badge>
-              {openSections.has(item.subject) ? (
-                <ChevronDown className="w-4 h-4 text-muted-foreground" />
-              ) : (
-                <ChevronRight className="w-4 h-4 text-muted-foreground" />
-              )}
-            </div>
-          </CollapsibleTrigger>
-          
-          <CollapsibleContent className="px-4 pb-2">
-            <div className="mt-2 space-y-2">
-              {item.topics.map((topic, index) => (
-                <div key={index} className="flex items-center gap-2 py-2 px-3 bg-background rounded border-l-2 border-primary/20">
-                  <span className="text-sm font-medium text-foreground">{topic}</span>
+      {studyData.map((item) => {
+        const subjectExpertise = getExpertiseLevel(item.totalHours);
+        
+        return (
+          <Collapsible key={item.subject} open={openSections.has(item.subject)}>
+            <CollapsibleTrigger
+              onClick={() => toggleSection(item.subject)}
+              className="w-full p-4 bg-muted/30 hover:bg-muted/50 rounded-lg transition-colors flex items-center justify-between group"
+            >
+              <div className="flex items-center gap-3">
+                <span className="text-lg">{getSubjectIcon(item.subject)}</span>
+                <div className="text-left">
+                  <h3 className="font-medium text-foreground">{item.subject}</h3>
+                  <p className="text-sm text-muted-foreground">
+                    {item.topics.length} topics • {item.totalHours}h total
+                  </p>
                 </div>
-              ))}
-            </div>
-          </CollapsibleContent>
-        </Collapsible>
-      ))}
+              </div>
+              <div className="flex items-center gap-2">
+                <Badge className={`text-xs ${subjectExpertise.color}`}>
+                  {subjectExpertise.emoji} {subjectExpertise.label}
+                </Badge>
+                {openSections.has(item.subject) ? (
+                  <ChevronDown className="w-4 h-4 text-muted-foreground" />
+                ) : (
+                  <ChevronRight className="w-4 h-4 text-muted-foreground" />
+                )}
+              </div>
+            </CollapsibleTrigger>
+            
+            <CollapsibleContent className="px-4 pb-2">
+              <div className="mt-2 space-y-2">
+                {item.topics.map((topic, index) => {
+                  const topicExpertise = getExpertiseLevel(topic.hours);
+                  
+                  return (
+                    <div key={index} className="flex items-center justify-between py-2 px-3 bg-background rounded border-l-2 border-primary/20">
+                      <div className="flex items-center gap-2">
+                        <span className="text-sm font-medium text-foreground">{topic.name}</span>
+                        <span className="text-xs text-muted-foreground">({topic.hours}h)</span>
+                      </div>
+                      <Badge className={`text-xs ${topicExpertise.color}`}>
+                        {topicExpertise.emoji} {topicExpertise.label}
+                      </Badge>
+                    </div>
+                  );
+                })}
+              </div>
+            </CollapsibleContent>
+          </Collapsible>
+        );
+      })}
     </div>
   );
 };
