@@ -126,7 +126,7 @@ const RecapSidebar = ({
   };
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-3">
       <RecapFilters
         dateFilter={dateFilter}
         subjectFilter={subjectFilter}
