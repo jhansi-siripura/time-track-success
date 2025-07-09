@@ -101,7 +101,6 @@ const StudySessionGrouper: React.FC<StudySessionGrouperProps> = ({ logs, onUpdat
                     </div>
                     <div>
                       <CardTitle className="text-lg text-gray-800">{formatDate(date)}</CardTitle>
-                      <p className="text-xs text-gray-600">{new Date(date).toLocaleDateString()}</p>
                     </div>
                   </div>
                   
