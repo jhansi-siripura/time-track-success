@@ -1,5 +1,6 @@
 
 import React from 'react';
+import MainLayout from '@/components/Layout/MainLayout';
 import StudyLogForm from '@/components/StudyLog/StudyLogForm';
 import { useNavigate } from 'react-router-dom';
 import { Plus } from 'lucide-react';
@@ -16,7 +17,7 @@ const AddSessionPage = () => {
   };
   
   return (
-    <div className="min-h-screen bg-white">
+    <MainLayout>
       <div className="p-4 sm:p-6">
         <div className="mb-6 sm:mb-8">
           <div className="flex items-center space-x-3 mb-2">
@@ -36,7 +37,7 @@ const AddSessionPage = () => {
           <StudyLogForm onSuccess={handleSuccess} onCancel={handleCancel} />
         </div>
       </div>
-    </div>
+    </MainLayout>
   );
 };
 

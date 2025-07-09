@@ -1,11 +1,12 @@
 
 import React from 'react';
+import MainLayout from '@/components/Layout/MainLayout';
 import StudyLogTable from '@/components/StudyLog/StudyLogTable';
 import { FileText } from 'lucide-react';
 
 const StudyLogsPage = () => {
   return (
-    <div className="min-h-screen bg-white">
+    <MainLayout>
       <div className="p-4 sm:p-6">
         <div className="mb-6 sm:mb-8">
           <div className="flex items-center space-x-3 mb-2">
@@ -25,7 +26,7 @@ const StudyLogsPage = () => {
           <StudyLogTable />
         </div>
       </div>
-    </div>
+    </MainLayout>
   );
 };
 

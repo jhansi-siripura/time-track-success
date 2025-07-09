@@ -7,6 +7,7 @@ import { PomodoroProvider } from '@/contexts/PomodoroContext';
 import { Toaster } from '@/components/ui/toaster';
 import ProtectedRoute from '@/components/Layout/ProtectedRoute';
 import LandingPage from '@/pages/LandingPage';
+import AuthPage from '@/components/Auth/AuthPage';
 import Index from '@/pages/Index';
 import HomePage from '@/pages/HomePage';
 import DashboardPage from '@/pages/DashboardPage';
@@ -30,6 +31,7 @@ function App() {
             <Routes>
               <Route path="/" element={<Index />} />
               <Route path="/landing" element={<LandingPage />} />
+              <Route path="/auth" element={<AuthPage />} />
               <Route path="/home" element={<ProtectedRoute><HomePage /></ProtectedRoute>} />
               <Route path="/dashboard" element={<ProtectedRoute><DashboardPage /></ProtectedRoute>} />
               <Route path="/study-logs" element={<ProtectedRoute><StudyLogsPage /></ProtectedRoute>} />

@@ -1,5 +1,6 @@
 
 import React, { useEffect } from 'react';
+import MainLayout from '@/components/Layout/MainLayout';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -61,63 +62,67 @@ const ChangelogPage = () => {
 
   if (isLoading) {
     return (
+      <MainLayout>
+        <div className="p-6">
+          <div className="mb-6">
+            <h1 className="text-2xl md:text-3xl font-bold text-gray-900">Changelog</h1>
+            <p className="text-gray-600">What's new in Study Tracker</p>
+          </div>
+          <div className="flex justify-center">
+            <div>Loading changelog...</div>
+          </div>
+        </div>
+      </MainLayout>
+    );
+  }
+
+  return (
+    <MainLayout>
       <div className="p-6">
         <div className="mb-6">
           <h1 className="text-2xl md:text-3xl font-bold text-gray-900">Changelog</h1>
           <p className="text-gray-600">What's new in Study Tracker</p>
         </div>
-        <div className="flex justify-center">
-          <div>Loading changelog...</div>
+
+        <div className="max-w-4xl mx-auto space-y-6">
+          {changelog?.map((entry) => (
+            <Card key={entry.id}>
+              <CardHeader>
+                <div className="flex items-center justify-between">
+                  <CardTitle className="text-xl">{entry.title}</CardTitle>
+                  <div className="flex items-center space-x-2">
+                    <Badge variant="outline" className={getChangeTypeColor(entry.change_type)}>
+                      {getChangeTypeIcon(entry.change_type)}
+                      <span className="ml-1 capitalize">{entry.change_type}</span>
+                    </Badge>
+                    <Badge variant="secondary">v{entry.version}</Badge>
+                  </div>
+                </div>
+                <div className="flex items-center text-sm text-gray-500">
+                  <CalendarDays className="w-4 h-4 mr-1" />
+                  {new Date(entry.created_at).toLocaleDateString('en-US', {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric',
+                  })}
+                </div>
+              </CardHeader>
+              <CardContent>
+                <p className="text-gray-700 leading-relaxed">{entry.description}</p>
+              </CardContent>
+            </Card>
+          ))}
+
+          {changelog?.length === 0 && (
+            <Card>
+              <CardContent className="p-8 text-center">
+                <p className="text-gray-500">No changelog entries found.</p>
+              </CardContent>
+            </Card>
+          )}
         </div>
       </div>
-    );
-  }
-
-  return (
-    <div className="p-6">
-      <div className="mb-6">
-        <h1 className="text-2xl md:text-3xl font-bold text-gray-900">Changelog</h1>
-        <p className="text-gray-600">What's new in Study Tracker</p>
-      </div>
-
-      <div className="max-w-4xl mx-auto space-y-6">
-        {changelog?.map((entry) => (
-          <Card key={entry.id}>
-            <CardHeader>
-              <div className="flex items-center justify-between">
-                <CardTitle className="text-xl">{entry.title}</CardTitle>
-                <div className="flex items-center space-x-2">
-                  <Badge variant="outline" className={getChangeTypeColor(entry.change_type)}>
-                    {getChangeTypeIcon(entry.change_type)}
-                    <span className="ml-1 capitalize">{entry.change_type}</span>
-                  </Badge>
-                  <Badge variant="secondary">v{entry.version}</Badge>
-                </div>
-              </div>
-              <div className="flex items-center text-sm text-gray-500">
-                <CalendarDays className="w-4 h-4 mr-1" />
-                {new Date(entry.created_at).toLocaleDateString('en-US', {
-                  year: 'numeric',
-                  month: 'long',
-                  day: 'numeric',
-                })}
-              </div>
-            </CardHeader>
-            <CardContent>
-              <p className="text-gray-700 leading-relaxed">{entry.description}</p>
-            </CardContent>
-          </Card>
-        ))}
-
-        {changelog?.length === 0 && (
-          <Card>
-            <CardContent className="p-8 text-center">
-              <p className="text-gray-500">No changelog entries found.</p>
-            </CardContent>
-          </Card>
-        )}
-      </div>
-    </div>
+    </MainLayout>
   );
 };
 

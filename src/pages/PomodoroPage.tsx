@@ -1,5 +1,6 @@
 
 import React from 'react';
+import MainLayout from '@/components/Layout/MainLayout';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import PomodoroTimer from '@/components/Pomodoro/PomodoroTimer';
 import PomodoroSettings from '@/components/Pomodoro/PomodoroSettings';
@@ -35,7 +36,7 @@ const PomodoroPage = () => {
   }, [timeLeft, isActive, sessionType, currentCycle, getSessionDuration]);
 
   return (
-    <div className="min-h-screen bg-white">
+    <MainLayout>
       <div className="p-4 sm:p-6">
         <div className="mb-6 sm:mb-8">
           <div className="flex items-center space-x-3 mb-2">
@@ -92,7 +93,7 @@ const PomodoroPage = () => {
           />
         )}
       </div>
-    </div>
+    </MainLayout>
   );
 };
 

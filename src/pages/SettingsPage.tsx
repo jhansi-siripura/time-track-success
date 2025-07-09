@@ -1,5 +1,6 @@
 
 import React from 'react';
+import MainLayout from '@/components/Layout/MainLayout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -11,7 +12,7 @@ const SettingsPage = () => {
   const { user } = useAuth();
 
   return (
-    <div className="min-h-screen bg-white">
+    <MainLayout>
       <div className="p-4 sm:p-6">
         <div className="mb-6 sm:mb-8">
           <div className="flex items-center space-x-3 mb-2">
@@ -93,7 +94,7 @@ const SettingsPage = () => {
           </div>
         </div>
       </div>
-    </div>
+    </MainLayout>
   );
 };
 

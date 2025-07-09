@@ -1,5 +1,6 @@
 
 import React, { useState } from 'react';
+import MainLayout from '@/components/Layout/MainLayout';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import KnownTechnologies from '@/components/LearningMatrix/KnownTechnologies';
 import UnknownTechnologies from '@/components/LearningMatrix/UnknownTechnologies';
@@ -8,8 +9,8 @@ import { BookOpen, Target } from 'lucide-react';
 
 const LearningMatrixPage = () => {
   return (
-    <div className="min-h-screen bg-background p-6">
-      <div className="max-w-7xl mx-auto">
+    <MainLayout>
+      <div className="p-6">
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-foreground mb-2">Learning Matrix</h1>
           <p className="text-muted-foreground">
@@ -49,7 +50,7 @@ const LearningMatrixPage = () => {
           </Card>
         </div>
       </div>
-    </div>
+    </MainLayout>
   );
 };
 

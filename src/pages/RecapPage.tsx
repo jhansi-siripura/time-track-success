@@ -1,5 +1,6 @@
 
 import React from 'react';
+import MainLayout from '@/components/Layout/MainLayout';
 import RecapContainer from '@/components/Recap/RecapContainer';
 import RecapSidebar from '@/components/Recap/RecapSidebar';
 import { getTodayDate } from '@/lib/dateUtils';
@@ -9,7 +10,7 @@ const RecapPage = () => {
   const [dateFilter, setDateFilter] = React.useState(getTodayDate());
   
   return (
-    <div className="min-h-screen bg-white">
+    <MainLayout>
       <div className="p-4 sm:p-6">
         <div className="mb-6 sm:mb-8">
           <div className="flex items-center space-x-3 mb-2">
@@ -35,7 +36,7 @@ const RecapPage = () => {
           </div>
         </div>
       </div>
-    </div>
+    </MainLayout>
   );
 };
 
