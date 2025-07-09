@@ -83,9 +83,16 @@ const StudyLogModal: React.FC<StudyLogModalProps> = ({
     });
   };
 
+  // Handle modal close - don't close if lightbox is open
+  const handleModalOpenChange = (open: boolean) => {
+    if (!open && !lightboxOpen) {
+      onClose();
+    }
+  };
+
   return (
     <>
-      <Dialog open={isOpen} onOpenChange={onClose}>
+      <Dialog open={isOpen} onOpenChange={handleModalOpenChange}>
         <DialogContent className="max-w-4xl max-h-[90vh] overflow-auto bg-white/95 backdrop-blur-sm border-0 shadow-2xl">
           {/* Subject Color Bar */}
           <div className={`absolute top-0 left-0 right-0 h-1 bg-gradient-to-r ${getSubjectColor(log.subject)} rounded-t-lg`} />
@@ -215,12 +222,9 @@ const StudyLogModal: React.FC<StudyLogModalProps> = ({
                           <img
                             src={src}
                             alt={`attachment-${index}`}
-                            className="w-full h-full object-cover group-hover:scale-[4] transition-transform duration-300 ease-in-out z-50 relative"
+                            className="w-full h-full object-cover transition-transform duration-200 group-hover:scale-105"
                             onError={(e) => {
                               (e.target as HTMLImageElement).src = 'fallback.png';
-                            }}
-                            style={{
-                              transformOrigin: 'center center'
                             }}
                           />
                           <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-10 transition-all duration-200 pointer-events-none" />
@@ -235,6 +239,7 @@ const StudyLogModal: React.FC<StudyLogModalProps> = ({
         </DialogContent>
       </Dialog>
 
+      {/* Image Lightbox - Appears above the modal */}
       {log.images && log.images.length > 0 && (
         <ImageLightbox
           images={log.images}
