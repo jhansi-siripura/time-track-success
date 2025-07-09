@@ -127,7 +127,7 @@ const StudyLogModal: React.FC<StudyLogModalProps> = ({
           <div className="mt-6 space-y-6 px-0">
             {isEditing ? <RecapCardEditor log={log} onSave={handleSave} onCancel={() => setIsEditing(false)} /> : <>
                 {/* Study Notes */}
-                {log.notes && <div className="bg-gray-50/80 rounded-lg p-4 border border-gray-200/50">
+                {log.notes && <div className="bg-gray-50/80 rounded-lg p-4 border border-gray-200/50 py-[16px]">
                     
                     <SafeHtml html={log.notes} className="text-gray-800 leading-relaxed" />
                   </div>}
