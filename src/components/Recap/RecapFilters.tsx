@@ -38,6 +38,17 @@ const RecapFilters: React.FC<RecapFiltersProps> = ({
     onDateFilterChange('');
   };
 
+  const handleSubjectChange = (subject: string) => {
+    onSubjectFilterChange(subject);
+    // When subject changes, reset topic to "all" to avoid invalid combinations
+    if (subject === 'all') {
+      onTopicFilterChange('all');
+    } else {
+      // If a specific subject is selected, reset topic to allow user to choose
+      onTopicFilterChange('all');
+    }
+  };
+
   return (
     <Card className="bg-white/80 backdrop-blur-sm border-amber-200/50 shadow-sm">
       <CardHeader className="pb-3">
@@ -88,7 +99,7 @@ const RecapFilters: React.FC<RecapFiltersProps> = ({
             <BookOpen className="h-3 w-3 text-blue-600" />
             <span>Subject</span>
           </Label>
-          <Select value={subjectFilter} onValueChange={onSubjectFilterChange}>
+          <Select value={subjectFilter} onValueChange={handleSubjectChange}>
             <SelectTrigger className="h-8 text-xs border-amber-200 focus:border-amber-400 focus:ring-amber-400">
               <SelectValue placeholder="All subjects" />
             </SelectTrigger>

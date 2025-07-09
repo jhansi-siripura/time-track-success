@@ -28,6 +28,7 @@ const RecapSidebar = ({
   const [calendarReloadTrigger, setCalendarReloadTrigger] = useState(0);
   const [subjects, setSubjects] = useState<string[]>([]);
   const [topics, setTopics] = useState<string[]>([]);
+  const [allTopics, setAllTopics] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
   const { user } = useAuth();
   const { toast } = useToast();
@@ -35,6 +36,15 @@ const RecapSidebar = ({
   useEffect(() => {
     fetchFilterData();
   }, [user]);
+
+  // Update topics based on selected subject
+  useEffect(() => {
+    if (subjectFilter === 'all') {
+      setTopics(allTopics);
+    } else {
+      fetchTopicsForSubject(subjectFilter);
+    }
+  }, [subjectFilter, allTopics]);
 
   const fetchFilterData = async () => {
     if (!user) return;
@@ -65,6 +75,7 @@ const RecapSidebar = ({
       )].sort();
 
       setSubjects(uniqueSubjects);
+      setAllTopics(uniqueTopics);
       setTopics(uniqueTopics);
     } catch (error: any) {
       console.error('Error fetching filter data:', error);
@@ -75,6 +86,32 @@ const RecapSidebar = ({
       });
     } finally {
       setLoading(false);
+    }
+  };
+
+  const fetchTopicsForSubject = async (subject: string) => {
+    if (!user || !subject || subject === 'all') return;
+
+    try {
+      const { data, error } = await supabase
+        .from('study_logs')
+        .select('topic')
+        .eq('user_id', user.id)
+        .eq('subject', subject)
+        .not('topic', 'is', null)
+        .not('topic', 'eq', '');
+
+      if (error) throw error;
+
+      const subjectTopics = [...new Set(
+        data
+          .map(log => log.topic)
+          .filter(topic => topic && topic.trim() !== '')
+      )].sort();
+
+      setTopics(subjectTopics);
+    } catch (error: any) {
+      console.error('Error fetching topics for subject:', error);
     }
   };
 

@@ -212,6 +212,24 @@ const RecapContainer = ({ dateFilter, onDateFilterChange, subjectFilter, topicFi
     );
   }
 
+  if (filteredLogs.length === 0) {
+    return (
+      <div className="flex items-center justify-center py-12">
+        <div className="text-center">
+          <div className="mb-4">
+            <BookOpen className="h-16 w-16 text-gray-300 mx-auto mb-4" />
+            <h3 className="text-lg font-medium text-gray-900 mb-2">No study logs found</h3>
+            <p className="text-gray-600">
+              {dateFilter || subjectFilter !== 'all' || topicFilter !== 'all' 
+                ? "Try adjusting your filters to see more results." 
+                : "You haven't logged any study sessions yet."}
+            </p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-6">
       <StudySessionGrouper

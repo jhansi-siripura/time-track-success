@@ -7,7 +7,8 @@ import { getTodayDate } from '@/lib/dateUtils';
 import { BookOpen } from 'lucide-react';
 
 const RecapPage = () => {
-  const [dateFilter, setDateFilter] = React.useState('');
+  // Initialize with today's date as default
+  const [dateFilter, setDateFilter] = React.useState(getTodayDate());
   const [subjectFilter, setSubjectFilter] = React.useState('all');
   const [topicFilter, setTopicFilter] = React.useState('all');
   
