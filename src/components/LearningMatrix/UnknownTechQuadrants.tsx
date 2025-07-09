@@ -63,7 +63,7 @@ const UnknownTechQuadrants: React.FC<UnknownTechQuadrantsProps> = ({ technologie
       id: 'job-critical',
       title: 'Job-Critical',
       icon: AlertTriangle,
-      bgColor: 'bg-red-50 border-red-200',
+      bgColor: 'bg-red-50/80 border-red-200/60 backdrop-blur-sm',
       titleColor: 'text-red-700',
       iconColor: 'text-red-600',
       data: getQuadrantData('job-critical')
@@ -72,7 +72,7 @@ const UnknownTechQuadrants: React.FC<UnknownTechQuadrantsProps> = ({ technologie
       id: 'important-not-urgent',
       title: 'Important but Not Urgent',
       icon: Clock,
-      bgColor: 'bg-orange-50 border-orange-200',
+      bgColor: 'bg-orange-50/80 border-orange-200/60 backdrop-blur-sm',
       titleColor: 'text-orange-700',
       iconColor: 'text-orange-600',
       data: getQuadrantData('important-not-urgent')
@@ -81,7 +81,7 @@ const UnknownTechQuadrants: React.FC<UnknownTechQuadrantsProps> = ({ technologie
       id: 'curious-emerging',
       title: 'Curious & Emerging',
       icon: Lightbulb,
-      bgColor: 'bg-blue-50 border-blue-200',
+      bgColor: 'bg-blue-50/80 border-blue-200/60 backdrop-blur-sm',
       titleColor: 'text-blue-700',
       iconColor: 'text-blue-600',
       data: getQuadrantData('curious-emerging')
@@ -90,7 +90,7 @@ const UnknownTechQuadrants: React.FC<UnknownTechQuadrantsProps> = ({ technologie
       id: 'nice-to-know',
       title: 'Nice to Know',
       icon: Star,
-      bgColor: 'bg-green-50 border-green-200',
+      bgColor: 'bg-green-50/80 border-green-200/60 backdrop-blur-sm',
       titleColor: 'text-green-700',
       iconColor: 'text-green-600',
       data: getQuadrantData('nice-to-know')
@@ -103,16 +103,16 @@ const UnknownTechQuadrants: React.FC<UnknownTechQuadrantsProps> = ({ technologie
         const Icon = quadrant.icon;
         
         return (
-          <Card key={quadrant.id} className={`${quadrant.bgColor} border-2`}>
+          <Card key={quadrant.id} className={`${quadrant.bgColor} border-2 shadow-sm`}>
             <CardHeader className="pb-3">
               <CardTitle className={`flex items-center gap-2 text-sm font-medium ${quadrant.titleColor}`}>
                 <Icon className={`w-4 h-4 ${quadrant.iconColor}`} />
                 {quadrant.title}
               </CardTitle>
             </CardHeader>
-            <CardContent className="space-y-3">
+            <CardContent className="space-y-2.5">
               {quadrant.data.length === 0 ? (
-                <p className="text-xs text-muted-foreground text-center py-4">
+                <p className="text-xs text-muted-foreground text-center py-6">
                   No subjects in this category
                 </p>
               ) : (

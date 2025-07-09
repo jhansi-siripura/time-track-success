@@ -75,57 +75,60 @@ const TechnologyCard: React.FC<TechnologyCardProps> = ({ technology, groupedData
 
   return (
     <>
-      <Card className="bg-white/80 hover:bg-white/90 transition-colors">
-        <CardContent className={compact ? "p-3" : "p-4"}>
-          <div className="flex items-start justify-between">
+      <Card className="bg-white/80 hover:bg-white/90 transition-colors shadow-sm border border-gray-200/50">
+        <CardContent className={compact ? "p-3" : "p-3"}>
+          <div className="flex items-start justify-between mb-2">
             <div className="flex-1 min-w-0">
-              <h4 className={`font-medium text-gray-900 ${compact ? 'text-sm' : 'text-base'}`}>
-                {displayData.subject_name}
-              </h4>
+              <div className="flex items-center justify-between">
+                <h4 className="font-semibold text-gray-900 text-sm leading-tight">
+                  {displayData.subject_name}
+                </h4>
+                <div className="flex items-center gap-1 ml-2">
+                  {displayData.total_hours > 0 && (
+                    <Badge variant="outline" className="text-xs px-2 py-0.5 bg-gray-50 text-gray-700 border-gray-300 font-medium">
+                      {displayData.total_hours}h
+                    </Badge>
+                  )}
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="ghost" size="sm" className="h-6 w-6 p-0 hover:bg-gray-100">
+                        <MoreHorizontal className="w-3 h-3" />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end" className="z-50">
+                      <DropdownMenuItem onClick={() => setShowEditDialog(true)}>
+                        <Edit className="w-4 h-4 mr-2" />
+                        Edit
+                      </DropdownMenuItem>
+                      <DropdownMenuItem onClick={handleDelete} className="text-red-600">
+                        <Trash2 className="w-4 h-4 mr-2" />
+                        Delete
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                </div>
+              </div>
               
               {displayData.topics.length > 0 && (
-                <div className={`mt-1 ${compact ? 'text-xs' : 'text-sm'} text-gray-600`}>
+                <div className="mt-1.5">
                   {displayData.topics.length === 1 ? (
-                    <p>{displayData.topics[0]}</p>
+                    <p className="text-xs text-gray-600 leading-relaxed">{displayData.topics[0]}</p>
                   ) : (
-                    <div>
-                      <p className="font-medium mb-1">Topics:</p>
-                      <ul className="list-disc list-inside space-y-0.5 ml-2">
-                        {displayData.topics.map((topic, index) => (
-                          <li key={index}>{topic}</li>
-                        ))}
-                      </ul>
+                    <div className="flex flex-wrap gap-1">
+                      {displayData.topics.map((topic, index) => (
+                        <Badge 
+                          key={index} 
+                          variant="secondary" 
+                          className="text-xs px-2 py-0.5 bg-blue-50 text-blue-700 border-blue-200 hover:bg-blue-100"
+                        >
+                          {topic}
+                        </Badge>
+                      ))}
                     </div>
                   )}
                 </div>
               )}
-              
-              <div className={`flex flex-wrap gap-1 ${compact ? 'mt-2' : 'mt-3'}`}>
-                {displayData.total_hours > 0 && (
-                  <Badge variant="outline" className={compact ? 'text-xs px-2 py-0' : 'text-xs'}>
-                    {displayData.total_hours}h
-                  </Badge>
-                )}
-              </div>
             </div>
-            
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="sm" className="ml-2">
-                  <MoreHorizontal className="w-4 h-4" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                <DropdownMenuItem onClick={() => setShowEditDialog(true)}>
-                  <Edit className="w-4 h-4 mr-2" />
-                  Edit
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={handleDelete} className="text-red-600">
-                  <Trash2 className="w-4 h-4 mr-2" />
-                  Delete
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
           </div>
         </CardContent>
       </Card>
