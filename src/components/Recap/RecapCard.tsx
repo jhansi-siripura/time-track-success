@@ -177,7 +177,6 @@ const RecapCard: React.FC<RecapCardProps> = ({ log, onUpdate, onDelete }) => {
           <CardContent className="pt-0 px-3 pb-3 space-y-3">
             {log.notes && (
               <div className="bg-gray-50/50 rounded-md p-3">
-                <h4 className="text-xs font-medium text-gray-700 mb-2">Study Notes</h4>
                 <SafeHtml 
                   html={log.notes}
                   className="text-gray-800"
