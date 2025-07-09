@@ -6,6 +6,7 @@ import { getTodayDate } from '@/lib/dateUtils';
 import StudySessionGrouper from './StudySessionGrouper';
 import { validateAuthState, rateLimiter } from '@/lib/security';
 import { useNavigate } from 'react-router-dom';
+import { BookOpen } from 'lucide-react';
 
 interface StudyLog {
   id: number;
