@@ -1,6 +1,5 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { X, ChevronLeft, ChevronRight } from 'lucide-react';
-import { cn } from '@/lib/utils';
 
 interface ImageLightboxProps {
   images: string[];
@@ -16,59 +15,34 @@ export const ImageLightbox: React.FC<ImageLightboxProps> = ({
   onClose,
 }) => {
   const [currentIndex, setCurrentIndex] = useState(initialIndex);
-  const [isZoomed, setIsZoomed] = useState(false);
 
-  // Reset image index and zoom state on open
   useEffect(() => {
     if (isOpen) {
       setCurrentIndex(initialIndex);
-      setIsZoomed(false);
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
     }
-  }, [isOpen, initialIndex]);
-
-  // Prevent body scroll
-  useEffect(() => {
-    if (isOpen) document.body.style.overflow = 'hidden';
-    else document.body.style.overflow = 'unset';
     return () => {
       document.body.style.overflow = 'unset';
     };
-  }, [isOpen]);
+  }, [isOpen, initialIndex]);
 
-  // Keyboard navigation
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (!isOpen) return;
-
       if (e.key === 'Escape') onClose();
-      else if (e.key === 'ArrowRight' && images.length > 1)
-        setCurrentIndex((prev) => (prev + 1) % images.length);
-      else if (e.key === 'ArrowLeft' && images.length > 1)
-        setCurrentIndex((prev) => (prev === 0 ? images.length - 1 : prev - 1));
+      if (e.key === 'ArrowRight') setCurrentIndex((prev) => (prev + 1) % images.length);
+      if (e.key === 'ArrowLeft') setCurrentIndex((prev) => (prev - 1 + images.length) % images.length);
     };
-
     document.addEventListener('keydown', handleKeyDown);
     return () => document.removeEventListener('keydown', handleKeyDown);
   }, [isOpen, images.length, onClose]);
 
-  const handleClose = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    onClose();
-  };
-
   const handleOverlayClick = (e: React.MouseEvent) => {
-    // Close only if clicked outside image
-    if (e.target === e.currentTarget) onClose();
-  };
-
-  const handlePrevious = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    setCurrentIndex((prev) => (prev === 0 ? images.length - 1 : prev - 1));
-  };
-
-  const handleNext = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    setCurrentIndex((prev) => (prev + 1) % images.length);
+    if (e.target === e.currentTarget) {
+      onClose();
+    }
   };
 
   if (!isOpen) return null;
@@ -78,46 +52,55 @@ export const ImageLightbox: React.FC<ImageLightboxProps> = ({
       className="fixed inset-0 z-[99999] bg-black/90 flex items-center justify-center p-4"
       onClick={handleOverlayClick}
     >
-      {/* Arrows */}
+      {/* Prev / Next */}
       {images.length > 1 && (
         <>
           <button
-            onClick={handlePrevious}
-            className="absolute left-4 top-1/2 -translate-y-1/2 z-10 p-2 bg-black/60 text-white rounded-full hover:bg-black/80"
+            onClick={(e) => {
+              e.stopPropagation();
+              setCurrentIndex((prev) => (prev - 1 + images.length) % images.length);
+            }}
+            className="absolute left-4 top-1/2 -translate-y-1/2 z-20 p-2 bg-black/50 text-white rounded-full hover:bg-black/80"
           >
-            <ChevronLeft className="h-6 w-6" />
+            <ChevronLeft />
           </button>
           <button
-            onClick={handleNext}
-            className="absolute right-4 top-1/2 -translate-y-1/2 z-10 p-2 bg-black/60 text-white rounded-full hover:bg-black/80"
+            onClick={(e) => {
+              e.stopPropagation();
+              setCurrentIndex((prev) => (prev + 1) % images.length);
+            }}
+            className="absolute right-4 top-1/2 -translate-y-1/2 z-20 p-2 bg-black/50 text-white rounded-full hover:bg-black/80"
           >
-            <ChevronRight className="h-6 w-6" />
+            <ChevronRight />
           </button>
         </>
       )}
 
-      {/* Image + Close inside */}
-      <div className="relative max-w-[95%] sm:max-w-[80%] max-h-[90vh] sm:max-h-[80vh]">
+      {/* Image Box */}
+      <div className="relative max-w-[90%] max-h-[85vh]">
         <img
           src={images[currentIndex]}
-          alt={`Image ${currentIndex + 1}`}
-          className="rounded-lg object-contain w-full h-full"
+          className="object-contain w-full h-full rounded"
+          alt={`Slide ${currentIndex + 1}`}
           draggable={false}
         />
 
-        {/* Close inside image */}
+        {/* Close button inside */}
         <button
-          onClick={handleClose}
-          className="absolute top-2 right-2 z-20 p-1 bg-black/60 text-white rounded-full hover:bg-black/80"
-          aria-label="Close lightbox"
+          onClick={(e) => {
+            e.stopPropagation();
+            onClose();
+          }}
+          className="absolute top-2 right-2 z-30 p-2 bg-black/70 text-white rounded-full hover:bg-black/90"
+          aria-label="Close"
         >
-          <X className="h-5 w-5" />
+          <X />
         </button>
       </div>
 
-      {/* Counter */}
+      {/* Image Counter */}
       {images.length > 1 && (
-        <div className="absolute bottom-4 left-1/2 -translate-x-1/2 px-3 py-1 bg-black/50 text-white text-sm rounded-full">
+        <div className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-black/60 text-white text-sm px-3 py-1 rounded-full">
           {currentIndex + 1} / {images.length}
         </div>
       )}
