@@ -104,11 +104,11 @@ const StudyLogModal: React.FC<StudyLogModalProps> = ({
                       <span>{formatDate(log.date)} at {log.time}</span>
                     </div>
                     <div className="flex items-center space-x-1">
-                      <Clock className="h-3.5 w-3.5" />
+                      
                       
                     </div>
                     {log.source && <div className="flex items-center space-x-1">
-                        <Target className="h-3.5 w-3.5" />
+                        
                         
                       </div>}
                   </div>
