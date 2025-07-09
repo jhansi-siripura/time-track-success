@@ -177,6 +177,7 @@ const RecapCard: React.FC<RecapCardProps> = ({ log, onUpdate, onDelete }) => {
           <CardContent className="pt-0 px-3 pb-3 space-y-3">
             {log.notes && (
               <div className="bg-gray-50/50 rounded-md p-3">
+                <h4 className="text-xs font-medium text-gray-700 mb-2">Study Notes</h4>
                 <SafeHtml 
                   html={log.notes}
                   className="text-gray-800"
@@ -194,7 +195,8 @@ const RecapCard: React.FC<RecapCardProps> = ({ log, onUpdate, onDelete }) => {
             {log.images && log.images.length > 0 && (
               <div className="bg-blue-50/50 rounded-md p-3">
                 <h4 className="text-xs font-medium text-blue-700 mb-2">Attachments ({log.images.length})</h4>
-                <div className="grid grid-cols-4 gap-2">
+               
+                <div className="mt-2 flex space-x-1.5">
                   {log.images.map((src, i) => (
                     <div
                       key={i}
