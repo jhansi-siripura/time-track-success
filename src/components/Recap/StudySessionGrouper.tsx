@@ -1,8 +1,9 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import RecapCard from './RecapCard';
+import CompactRecapCard from './CompactRecapCard';
+import StudyLogModal from './StudyLogModal';
 import { BookOpen, Clock, Calendar, Target } from 'lucide-react';
 
 interface StudyLog {
@@ -25,6 +26,9 @@ interface StudySessionGrouperProps {
 }
 
 const StudySessionGrouper: React.FC<StudySessionGrouperProps> = ({ logs, onUpdate, onDelete }) => {
+  const [selectedLog, setSelectedLog] = useState<StudyLog | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
   // Group logs by date
   const groupedLogs = logs.reduce((groups, log) => {
     const date = log.date;
@@ -71,6 +75,63 @@ const StudySessionGrouper: React.FC<StudySessionGrouperProps> = ({ logs, onUpdat
     };
   };
 
+  const handleViewDetails = (log: StudyLog) => {
+    setSelectedLog(log);
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setSelectedLog(null);
+  };
+
+  const handleNext = () => {
+    if (!selectedLog) return;
+    
+    // Find current log and get next one in the same day or across days
+    const allLogs = logs.sort((a, b) => {
+      const dateCompare = new Date(b.date).getTime() - new Date(a.date).getTime();
+      if (dateCompare !== 0) return dateCompare;
+      return a.time.localeCompare(b.time);
+    });
+    
+    const currentIndex = allLogs.findIndex(log => log.id === selectedLog.id);
+    if (currentIndex < allLogs.length - 1) {
+      setSelectedLog(allLogs[currentIndex + 1]);
+    }
+  };
+
+  const handlePrevious = () => {
+    if (!selectedLog) return;
+    
+    const allLogs = logs.sort((a, b) => {
+      const dateCompare = new Date(b.date).getTime() - new Date(a.date).getTime();
+      if (dateCompare !== 0) return dateCompare;
+      return a.time.localeCompare(b.time);
+    });
+    
+    const currentIndex = allLogs.findIndex(log => log.id === selectedLog.id);
+    if (currentIndex > 0) {
+      setSelectedLog(allLogs[currentIndex - 1]);
+    }
+  };
+
+  const getNavigationInfo = () => {
+    if (!selectedLog) return { hasNext: false, hasPrevious: false };
+    
+    const allLogs = logs.sort((a, b) => {
+      const dateCompare = new Date(b.date).getTime() - new Date(a.date).getTime();
+      if (dateCompare !== 0) return dateCompare;
+      return a.time.localeCompare(b.time);
+    });
+    
+    const currentIndex = allLogs.findIndex(log => log.id === selectedLog.id);
+    return {
+      hasNext: currentIndex < allLogs.length - 1,
+      hasPrevious: currentIndex > 0
+    };
+  };
+
   if (sortedDates.length === 0) {
     return (
       <div className="text-center py-12">
@@ -83,72 +144,87 @@ const StudySessionGrouper: React.FC<StudySessionGrouperProps> = ({ logs, onUpdat
     );
   }
 
+  const navInfo = getNavigationInfo();
+
   return (
-    <div className="space-y-6">
-      {sortedDates.map((date) => {
-        const dayLogs = groupedLogs[date];
-        const stats = getDateStats(dayLogs);
-        
-        return (
-          <div key={date} className="space-y-3">
-            {/* Compressed Date Header with Stats */}
-            <Card className="bg-gradient-to-r from-amber-50 to-yellow-50 border-amber-200 shadow-sm">
-              <CardHeader className="pb-2 pt-3">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center space-x-2.5">
-                    <div className="w-8 h-8 rounded-full bg-gradient-to-br from-amber-400 to-yellow-500 flex items-center justify-center shadow-sm">
-                      <Calendar className="h-4 w-4 text-white" />
+    <>
+      <div className="space-y-6">
+        {sortedDates.map((date) => {
+          const dayLogs = groupedLogs[date];
+          const stats = getDateStats(dayLogs);
+          
+          return (
+            <div key={date} className="space-y-4">
+              {/* Date Header with Stats */}
+              <Card className="bg-gradient-to-r from-amber-50 to-yellow-50 border-amber-200 shadow-sm">
+                <CardHeader className="pb-2 pt-3">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-2.5">
+                      <div className="w-8 h-8 rounded-full bg-gradient-to-br from-amber-400 to-yellow-500 flex items-center justify-center shadow-sm">
+                        <Calendar className="h-4 w-4 text-white" />
+                      </div>
+                      <div>
+                        <CardTitle className="text-lg text-gray-800">{formatDate(date)}</CardTitle>
+                      </div>
                     </div>
-                    <div>
-                      <CardTitle className="text-lg text-gray-800">{formatDate(date)}</CardTitle>
+                    
+                    <div className="flex items-center space-x-3 text-sm">
+                      <div className="flex items-center space-x-1 text-blue-600">
+                        <Clock className="h-3.5 w-3.5" />
+                        <span className="font-medium text-xs">{Math.floor(stats.totalDuration / 60)}h {stats.totalDuration % 60}m</span>
+                      </div>
+                      <div className="flex items-center space-x-1 text-green-600">
+                        <Target className="h-3.5 w-3.5" />
+                        <span className="font-medium text-xs">{stats.sessionCount} sessions</span>
+                      </div>
                     </div>
                   </div>
                   
-                  <div className="flex items-center space-x-3 text-sm">
-                    <div className="flex items-center space-x-1 text-blue-600">
-                      <Clock className="h-3.5 w-3.5" />
-                      <span className="font-medium text-xs">{Math.floor(stats.totalDuration / 60)}h {stats.totalDuration % 60}m</span>
-                    </div>
-                    <div className="flex items-center space-x-1 text-green-600">
-                      <Target className="h-3.5 w-3.5" />
-                      <span className="font-medium text-xs">{stats.sessionCount} sessions</span>
-                    </div>
+                  {/* Compact Subject Overview */}
+                  <div className="flex flex-wrap gap-1.5 mt-2">
+                    {stats.subjects.map((subject, index) => (
+                      <Badge 
+                        key={subject} 
+                        variant="secondary" 
+                        className="bg-white/70 text-gray-700 hover:bg-white/90 transition-colors text-xs px-2 py-0.5"
+                      >
+                        <BookOpen className="h-2.5 w-2.5 mr-1" />
+                        {subject}
+                      </Badge>
+                    ))}
                   </div>
-                </div>
-                
-                {/* Compact Subject Overview */}
-                <div className="flex flex-wrap gap-1.5 mt-2">
-                  {stats.subjects.map((subject, index) => (
-                    <Badge 
-                      key={subject} 
-                      variant="secondary" 
-                      className="bg-white/70 text-gray-700 hover:bg-white/90 transition-colors text-xs px-2 py-0.5"
-                    >
-                      <BookOpen className="h-2.5 w-2.5 mr-1" />
-                      {subject}
-                    </Badge>
+                </CardHeader>
+              </Card>
+              
+              {/* Compact Grid of Study Session Cards */}
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                {dayLogs
+                  .sort((a, b) => a.time.localeCompare(b.time))
+                  .map((log) => (
+                    <CompactRecapCard
+                      key={log.id}
+                      log={log}
+                      onViewDetails={() => handleViewDetails(log)}
+                    />
                   ))}
-                </div>
-              </CardHeader>
-            </Card>
-            
-            {/* Study Session Cards */}
-            <div className="grid gap-2.5">
-              {dayLogs
-                .sort((a, b) => a.time.localeCompare(b.time))
-                .map((log) => (
-                  <RecapCard
-                    key={log.id}
-                    log={log}
-                    onUpdate={onUpdate}
-                    onDelete={onDelete}
-                  />
-                ))}
+              </div>
             </div>
-          </div>
-        );
-      })}
-    </div>
+          );
+        })}
+      </div>
+
+      <StudyLogModal
+        log={selectedLog}
+        isOpen={isModalOpen}
+        onClose={handleCloseModal}
+        onUpdate={onUpdate}
+        onDelete={onDelete}
+        onNext={handleNext}
+        onPrevious={handlePrevious}
+        hasNext={navInfo.hasNext}
+        hasPrevious={navInfo.hasPrevious}
+      />
+    </>
   );
 };
 
