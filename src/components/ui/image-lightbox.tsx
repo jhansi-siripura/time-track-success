@@ -20,6 +20,7 @@ export const ImageLightbox: React.FC<ImageLightboxProps> = ({
   const [touchStart, setTouchStart] = useState<{ x: number; y: number } | null>(null);
   const [touchEnd, setTouchEnd] = useState<{ x: number; y: number } | null>(null);
 
+  // Reset index & zoom when opened
   useEffect(() => {
     if (isOpen) {
       setCurrentIndex(initialIndex);
@@ -27,19 +28,22 @@ export const ImageLightbox: React.FC<ImageLightboxProps> = ({
     }
   }, [isOpen, initialIndex]);
 
+  // Prevent background scroll
   useEffect(() => {
-    if (isOpen) {
-      document.body.style.overflow = 'hidden';
-    }
+    document.body.style.overflow = isOpen ? 'hidden' : 'unset';
     return () => {
       document.body.style.overflow = 'unset';
     };
   }, [isOpen]);
 
+  // Keyboard navigation
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (!isOpen) return;
-      if (e.key === 'Escape') onClose();
+      if (e.key === 'Escape') {
+        e.preventDefault();
+        onClose();
+      }
       if (e.key === 'ArrowLeft') {
         setCurrentIndex((prev) => (prev === 0 ? images.length - 1 : prev - 1));
       }
@@ -47,11 +51,11 @@ export const ImageLightbox: React.FC<ImageLightboxProps> = ({
         setCurrentIndex((prev) => (prev === images.length - 1 ? 0 : prev + 1));
       }
     };
-
     document.addEventListener('keydown', handleKeyDown);
     return () => document.removeEventListener('keydown', handleKeyDown);
   }, [isOpen, images.length, onClose]);
 
+  // Touch swipe logic
   const handleTouchStart = useCallback((e: React.TouchEvent) => {
     setTouchEnd(null);
     setTouchStart({
@@ -72,30 +76,26 @@ export const ImageLightbox: React.FC<ImageLightboxProps> = ({
 
     const dx = touchStart.x - touchEnd.x;
     const dy = touchStart.y - touchEnd.y;
-    const isLeftSwipe = dx > 50;
-    const isRightSwipe = dx < -50;
-    const isVertical = Math.abs(dy) > Math.abs(dx);
+    const isHorizontal = Math.abs(dx) > Math.abs(dy);
 
-    if (!isZoomed && !isVertical) {
-      if (isLeftSwipe) {
+    if (!isZoomed && isHorizontal) {
+      if (dx > 50) {
         setCurrentIndex((prev) => (prev === images.length - 1 ? 0 : prev + 1));
-      } else if (isRightSwipe) {
+      } else if (dx < -50) {
         setCurrentIndex((prev) => (prev === 0 ? images.length - 1 : prev - 1));
       }
     }
   }, [touchStart, touchEnd, isZoomed, images.length]);
 
-  const handleClose = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    console.log('❌ Clicked — closing lightbox');
-    onClose();
-  };
-
   const handleOverlayClick = (e: React.MouseEvent) => {
     if (e.target === e.currentTarget) {
-      console.log('Overlay click — closing lightbox');
       onClose();
     }
+  };
+
+  const handleClose = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    onClose();
   };
 
   const handleImageClick = (e: React.MouseEvent) => {
@@ -110,34 +110,35 @@ export const ImageLightbox: React.FC<ImageLightboxProps> = ({
       className="fixed inset-0 z-[99999] bg-black/90 flex items-center justify-center p-4"
       onClick={handleOverlayClick}
     >
-      {/* Navigation Arrows */}
+      {/* Previous Button */}
       {images.length > 1 && (
-        <>
-          <button
-            onClick={(e) => {
-              e.stopPropagation();
-              setCurrentIndex((prev) => (prev === 0 ? images.length - 1 : prev - 1));
-            }}
-            className="absolute left-4 top-1/2 -translate-y-1/2 z-10 bg-black/60 text-white p-2 rounded-full"
-            aria-label="Previous"
-          >
-            <ChevronLeft className="h-6 w-6" />
-          </button>
-
-          <button
-            onClick={(e) => {
-              e.stopPropagation();
-              setCurrentIndex((prev) => (prev === images.length - 1 ? 0 : prev + 1));
-            }}
-            className="absolute right-4 top-1/2 -translate-y-1/2 z-10 bg-black/60 text-white p-2 rounded-full"
-            aria-label="Next"
-          >
-            <ChevronRight className="h-6 w-6" />
-          </button>
-        </>
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            setCurrentIndex((prev) => (prev === 0 ? images.length - 1 : prev - 1));
+          }}
+          className="pointer-events-auto absolute left-4 top-1/2 -translate-y-1/2 z-20 bg-black/60 text-white p-2 rounded-full hover:bg-black"
+          aria-label="Previous"
+        >
+          <ChevronLeft className="h-6 w-6" />
+        </button>
       )}
 
-      {/* Image container */}
+      {/* Next Button */}
+      {images.length > 1 && (
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            setCurrentIndex((prev) => (prev === images.length - 1 ? 0 : prev + 1));
+          }}
+          className="pointer-events-auto absolute right-4 top-1/2 -translate-y-1/2 z-20 bg-black/60 text-white p-2 rounded-full hover:bg-black"
+          aria-label="Next"
+        >
+          <ChevronRight className="h-6 w-6" />
+        </button>
+      )}
+
+      {/* Image + Close Button inside */}
       <div className="relative pointer-events-none">
         <img
           src={images[currentIndex]}
@@ -154,17 +155,17 @@ export const ImageLightbox: React.FC<ImageLightboxProps> = ({
           draggable={false}
         />
 
-        {/* ❌ Close button INSIDE the image */}
+        {/* Close button INSIDE image */}
         <button
           onClick={handleClose}
-          className="absolute top-2 right-2 z-20 pointer-events-auto bg-black/70 p-1 rounded-full text-white hover:bg-black"
+          className="pointer-events-auto absolute top-2 right-2 z-30 bg-black/70 text-white p-1 rounded-full hover:bg-black"
           aria-label="Close"
         >
           <X className="h-5 w-5" />
         </button>
       </div>
 
-      {/* Image Counter */}
+      {/* Counter */}
       {images.length > 1 && (
         <div className="absolute bottom-4 left-1/2 -translate-x-1/2 px-3 py-1 bg-black/60 text-white text-sm rounded-full z-20">
           {currentIndex + 1} / {images.length}
