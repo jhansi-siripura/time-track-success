@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -71,6 +70,20 @@ const RecapCard: React.FC<RecapCardProps> = ({ log, onUpdate, onDelete }) => {
     return Target;
   };
 
+  // Create a safe preview of notes for collapsed view
+  const getNotesPreview = (notes: string, maxLength: number = 150) => {
+    if (!notes) return '';
+    
+    // Strip HTML tags for preview but keep basic structure
+    const tempDiv = document.createElement('div');
+    tempDiv.innerHTML = notes;
+    const textContent = tempDiv.textContent || tempDiv.innerText || '';
+    
+    return textContent.length > maxLength 
+      ? textContent.substring(0, maxLength) + '...'
+      : textContent;
+  };
+
   if (isEditing) {
     return (
       <div className="space-y-4">
@@ -108,7 +121,21 @@ const RecapCard: React.FC<RecapCardProps> = ({ log, onUpdate, onDelete }) => {
                 </div>
               </div>
               
-            
+              {/* Compact Pills Row */}
+              <div className="flex items-center space-x-2 mb-2">
+                {log.duration && (
+                  <Badge variant="secondary" className="bg-blue-50 text-blue-700 border-blue-200 text-xs px-2 py-0.5">
+                    <Clock className="h-2.5 w-2.5 mr-1" />
+                    {log.duration}m
+                  </Badge>
+                )}
+                {log.source && (
+                  <Badge variant="secondary" className="bg-green-50 text-green-700 border-green-200 text-xs px-2 py-0.5">
+                    {React.createElement(getSourceIcon(log.source), { className: "h-2.5 w-2.5 mr-1" })}
+                    {log.source}
+                  </Badge>
+                )}
+              </div>
             </div>
             
             {/* Action Buttons */}
@@ -138,10 +165,9 @@ const RecapCard: React.FC<RecapCardProps> = ({ log, onUpdate, onDelete }) => {
           {/* Preview Content */}
           {!isExpanded && log.notes && (
             <div className="mt-2">
-              <SafeHtml 
-                html={log.notes.substring(0, 100) + (log.notes.length > 100 ? '...' : '')}
-                className="text-xs text-gray-600 line-clamp-2 prose prose-sm max-w-none"
-              />
+              <p className="text-xs text-gray-600 line-clamp-2">
+                {getNotesPreview(log.notes)}
+              </p>
             </div>
           )}
           
@@ -181,7 +207,7 @@ const RecapCard: React.FC<RecapCardProps> = ({ log, onUpdate, onDelete }) => {
                 <h4 className="text-xs font-medium text-gray-700 mb-2">Study Notes</h4>
                 <SafeHtml 
                   html={log.notes}
-                  className="prose prose-sm max-w-none text-gray-800"
+                  className="prose prose-sm max-w-none text-gray-800 [&_ul]:list-disc [&_ol]:list-decimal [&_li]:ml-4 [&_p]:mb-2 [&_strong]:font-semibold [&_em]:italic"
                 />
               </div>
             )}
