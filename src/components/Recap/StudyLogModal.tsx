@@ -105,11 +105,11 @@ const StudyLogModal: React.FC<StudyLogModalProps> = ({
                     </div>
                     <div className="flex items-center space-x-1">
                       <Clock className="h-3.5 w-3.5" />
-                      <span>{Math.floor(log.duration / 60)}h {log.duration % 60}m</span>
+                      
                     </div>
                     {log.source && <div className="flex items-center space-x-1">
                         <Target className="h-3.5 w-3.5" />
-                        <span>{log.source}</span>
+                        
                       </div>}
                   </div>
                 </div>
@@ -119,10 +119,7 @@ const StudyLogModal: React.FC<StudyLogModalProps> = ({
               <div className="flex items-center space-x-2">
                 
                 
-                <Button variant="destructive" size="sm" onClick={handleDelete} className="h-8">
-                  <Trash2 className="h-3.5 w-3.5 mr-1" />
-                  Delete
-                </Button>
+                
               </div>
             </div>
           </DialogHeader>
