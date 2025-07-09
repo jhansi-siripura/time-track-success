@@ -20,42 +20,42 @@ const LandingPage = () => {
       title: 'Smart Analytics Dashboard',
       description: 'Comprehensive analytics showing study patterns, time distribution across subjects, and progress trends over weeks and months.',
       highlight: 'Real-time insights with 12-month trend analysis',
-      image: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=500&h=300&fit=crop&crop=center'
+      image: '/lovable-uploads/6c52fde8-95d4-4721-9e52-91722cfa3c83.png'
     },
     {
       icon: Target,
       title: 'Intelligent Goal Tracking',
       description: 'Set daily study targets with AI-powered recommendations based on your historical performance and learning patterns.',
       highlight: 'Adaptive goals that evolve with your progress',
-      image: 'https://images.unsplash.com/photo-1484480974693-6ca0a78fb36b?w=500&h=300&fit=crop&crop=center'
+      image: '/lovable-uploads/6c52fde8-95d4-4721-9e52-91722cfa3c83.png'
     },
     {
       icon: FileText,
       title: 'Rich Session Logging',
       description: 'Capture detailed study sessions with subject categorization, duration tracking, achievements, and multimedia note attachments.',
       highlight: 'Support for images, notes, and structured topics',
-      image: 'https://images.unsplash.com/photo-1456324504439-367cee3b3c32?w=500&h=300&fit=crop&crop=center'
+      image: '/lovable-uploads/6c52fde8-95d4-4721-9e52-91722cfa3c83.png'
     },
     {
       icon: Brain,
       title: 'Learning Matrix System',
       description: 'Organize technologies and concepts by expertise level - from unknown to expert - with priority-based learning paths.',
       highlight: 'Visual knowledge mapping for career growth',
-      image: 'https://images.unsplash.com/photo-1559757148-5c350d0d3c56?w=500&h=300&fit=crop&crop=center'
+      image: '/lovable-uploads/6c52fde8-95d4-4721-9e52-91722cfa3c83.png'
     },
     {
       icon: Calendar,
       title: 'Spaced Repetition & Recap',
       description: 'Built-in revision system with calendar-based review scheduling to combat forgetting curve and ensure long-term retention.',
       highlight: 'Smart reminders for optimal memory retention',
-      image: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=500&h=300&fit=crop&crop=center'
+      image: '/lovable-uploads/6c52fde8-95d4-4721-9e52-91722cfa3c83.png'
     },
     {
       icon: Clock,
       title: 'Pomodoro Timer Integration',
       description: 'Built-in focus timer with customizable work/break intervals, automatic session logging, and productivity tracking.',
       highlight: 'Seamlessly logs study time to your analytics',
-      image: 'https://images.unsplash.com/photo-1506784983877-45594efa4cbe?w=500&h=300&fit=crop&crop=center'
+      image: '/lovable-uploads/6c52fde8-95d4-4721-9e52-91722cfa3c83.png'
     },
     {
       icon: Mic,
@@ -76,7 +76,7 @@ const LandingPage = () => {
       title: 'Progress Visualization',
       description: 'Beautiful charts showing weekly consistency, subject distribution, and learning velocity over time.',
       highlight: 'Gamified progress tracking with achievement badges',
-      image: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=500&h=300&fit=crop&crop=center'
+      image: '/lovable-uploads/6c52fde8-95d4-4721-9e52-91722cfa3c83.png'
     }
   ];
 
@@ -93,28 +93,28 @@ const LandingPage = () => {
       title: 'Capture Your Learning',
       description: 'Log study sessions with subject, topic, duration, and rich notes. Attach images, voice memos, or video timestamps.',
       details: 'Supports multiple subjects simultaneously - perfect for professionals learning AWS, React, and Python in parallel',
-      image: 'https://images.unsplash.com/photo-1456324504439-367cee3b3c32?w=400&h=250&fit=crop&crop=center'
+      image: '/lovable-uploads/6c52fde8-95d4-4721-9e52-91722cfa3c83.png'
     },
     {
       number: '02',
       title: 'Organize & Prioritize',
       description: 'Use the Learning Matrix to categorize technologies by expertise level and priority for your career goals.',
       details: 'Visual knowledge mapping helps you focus on high-impact skills first',
-      image: 'https://images.unsplash.com/photo-1559757148-5c350d0d3c56?w=400&h=250&fit=crop&crop=center'
+      image: '/lovable-uploads/6c52fde8-95d4-4721-9e52-91722cfa3c83.png'
     },
     {
       number: '03',
       title: 'Analyze Your Patterns',
       description: 'View detailed analytics showing your most productive times, subject distribution, and consistency trends.',
       details: 'Data-driven insights help optimize your learning schedule and identify knowledge gaps',
-      image: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=400&h=250&fit=crop&crop=center'
+      image: '/lovable-uploads/6c52fde8-95d4-4721-9e52-91722cfa3c83.png'
     },
     {
       number: '04',
       title: 'Review & Retain',
       description: 'Use spaced repetition calendar to review notes at optimal intervals, ensuring long-term retention.',
       details: 'Combat the forgetting curve with smart revision scheduling',
-      image: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&h=250&fit=crop&crop=center'
+      image: '/lovable-uploads/6c52fde8-95d4-4721-9e52-91722cfa3c83.png'
     }
   ];
 
