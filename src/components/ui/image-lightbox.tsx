@@ -103,16 +103,23 @@ export const ImageLightbox: React.FC<ImageLightboxProps> = ({
     }
   }, [touchStart, touchEnd, isZoomed, images.length]);
 
-  const handlePrevious = () => {
+  const handlePrevious = (e: React.MouseEvent) => {
+    e.stopPropagation();
     if (images.length > 1) {
       setCurrentIndex((prev) => (prev === 0 ? images.length - 1 : prev - 1));
     }
   };
 
-  const handleNext = () => {
+  const handleNext = (e: React.MouseEvent) => {
+    e.stopPropagation();
     if (images.length > 1) {
       setCurrentIndex((prev) => (prev === images.length - 1 ? 0 : prev + 1));
     }
+  };
+
+  const handleClose = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    onClose();
   };
 
   const handleImageClick = (e: React.MouseEvent) => {
@@ -135,7 +142,7 @@ export const ImageLightbox: React.FC<ImageLightboxProps> = ({
     >
       {/* Close button */}
       <button
-        onClick={onClose}
+        onClick={handleClose}
         className="absolute top-4 right-4 z-10 p-2 bg-black/50 text-white rounded-full hover:bg-black/70 transition-colors"
         aria-label="Close lightbox"
       >
