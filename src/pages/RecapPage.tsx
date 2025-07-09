@@ -7,7 +7,9 @@ import { getTodayDate } from '@/lib/dateUtils';
 import { BookOpen } from 'lucide-react';
 
 const RecapPage = () => {
-  const [dateFilter, setDateFilter] = React.useState(getTodayDate());
+  const [dateFilter, setDateFilter] = React.useState('');
+  const [subjectFilter, setSubjectFilter] = React.useState('all');
+  const [topicFilter, setTopicFilter] = React.useState('all');
   
   return (
     <MainLayout>
@@ -28,11 +30,23 @@ const RecapPage = () => {
         
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-4 sm:gap-6">
           <div className="lg:col-span-1">
-            <RecapSidebar dateFilter={dateFilter} onDateFilterChange={setDateFilter} />
+            <RecapSidebar 
+              dateFilter={dateFilter} 
+              onDateFilterChange={setDateFilter}
+              subjectFilter={subjectFilter}
+              onSubjectFilterChange={setSubjectFilter}
+              topicFilter={topicFilter}
+              onTopicFilterChange={setTopicFilter}
+            />
           </div>
           
           <div className="lg:col-span-3">
-            <RecapContainer dateFilter={dateFilter} onDateFilterChange={setDateFilter} />
+            <RecapContainer 
+              dateFilter={dateFilter} 
+              onDateFilterChange={setDateFilter}
+              subjectFilter={subjectFilter}
+              topicFilter={topicFilter}
+            />
           </div>
         </div>
       </div>

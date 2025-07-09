@@ -4,8 +4,9 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
 import { getTodayDate } from '@/lib/dateUtils';
-import { Calendar, Filter, BookOpen } from 'lucide-react';
+import { Calendar, Filter, BookOpen, X } from 'lucide-react';
 
 interface RecapFiltersProps {
   dateFilter: string;
@@ -16,6 +17,7 @@ interface RecapFiltersProps {
   onDateFilterChange: (date: string) => void;
   onSubjectFilterChange: (subject: string) => void;
   onTopicFilterChange: (topic: string) => void;
+  onClearAllFilters: () => void;
 }
 
 const RecapFilters: React.FC<RecapFiltersProps> = ({
@@ -26,18 +28,32 @@ const RecapFilters: React.FC<RecapFiltersProps> = ({
   topics,
   onDateFilterChange,
   onSubjectFilterChange,
-  onTopicFilterChange
+  onTopicFilterChange,
+  onClearAllFilters
 }) => {
   const validSubjects = subjects.filter(subject => subject && subject.trim() !== '');
   const validTopics = topics.filter(topic => topic && topic.trim() !== '');
-  const displayDate = dateFilter || getTodayDate();
+
+  const handleDateClear = () => {
+    onDateFilterChange('');
+  };
 
   return (
     <Card className="bg-white/80 backdrop-blur-sm border-amber-200/50 shadow-sm">
       <CardHeader className="pb-3">
-        <div className="flex items-center space-x-2">
-          <Filter className="h-4 w-4 text-amber-600" />
-          <h3 className="text-sm font-semibold text-gray-800">Filters</h3>
+        <div className="flex items-center justify-between">
+          <div className="flex items-center space-x-2">
+            <Filter className="h-4 w-4 text-amber-600" />
+            <h3 className="text-sm font-semibold text-gray-800">Filters</h3>
+          </div>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={onClearAllFilters}
+            className="h-6 px-2 text-xs text-gray-600 hover:text-gray-800"
+          >
+            Clear All
+          </Button>
         </div>
       </CardHeader>
       <CardContent className="pt-0 space-y-3">
@@ -46,13 +62,25 @@ const RecapFilters: React.FC<RecapFiltersProps> = ({
             <Calendar className="h-3 w-3 text-amber-600" />
             <span>Date</span>
           </Label>
-          <Input 
-            id="date-filter" 
-            type="date" 
-            value={displayDate} 
-            onChange={e => onDateFilterChange(e.target.value)}
-            className="h-8 text-xs border-amber-200 focus:border-amber-400 focus:ring-amber-400"
-          />
+          <div className="flex space-x-1">
+            <Input 
+              id="date-filter" 
+              type="date" 
+              value={dateFilter || ''} 
+              onChange={e => onDateFilterChange(e.target.value)}
+              className="h-8 text-xs border-amber-200 focus:border-amber-400 focus:ring-amber-400 flex-1"
+            />
+            {dateFilter && (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={handleDateClear}
+                className="h-8 w-8 p-0 text-gray-400 hover:text-gray-600"
+              >
+                <X className="h-3 w-3" />
+              </Button>
+            )}
+          </div>
         </div>
 
         <div className="space-y-1">

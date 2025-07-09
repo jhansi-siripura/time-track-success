@@ -47,53 +47,6 @@ export type Database = {
         }
         Relationships: []
       }
-      courses: {
-        Row: {
-          created_at: string
-          duration_hours: number | null
-          id: string
-          link: string | null
-          notes: string | null
-          resource_name: string
-          source_type: string
-          subject_id: string
-          trainer: string | null
-          watched: boolean | null
-        }
-        Insert: {
-          created_at?: string
-          duration_hours?: number | null
-          id?: string
-          link?: string | null
-          notes?: string | null
-          resource_name: string
-          source_type: string
-          subject_id: string
-          trainer?: string | null
-          watched?: boolean | null
-        }
-        Update: {
-          created_at?: string
-          duration_hours?: number | null
-          id?: string
-          link?: string | null
-          notes?: string | null
-          resource_name?: string
-          source_type?: string
-          subject_id?: string
-          trainer?: string | null
-          watched?: boolean | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "courses_subject_id_fkey"
-            columns: ["subject_id"]
-            isOneToOne: false
-            referencedRelation: "subjects"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
       learning_matrix_unknown: {
         Row: {
           created_at: string
@@ -202,27 +155,6 @@ export type Database = {
         }
         Relationships: []
       }
-      study_goals: {
-        Row: {
-          created_at: string
-          goal_name: string
-          id: string
-          user_id: string
-        }
-        Insert: {
-          created_at?: string
-          goal_name: string
-          id?: string
-          user_id: string
-        }
-        Update: {
-          created_at?: string
-          goal_name?: string
-          id?: string
-          user_id?: string
-        }
-        Relationships: []
-      }
       study_logs: {
         Row: {
           achievements: string | null
@@ -274,95 +206,6 @@ export type Database = {
         }
         Relationships: []
       }
-      subjects: {
-        Row: {
-          created_at: string
-          goal_id: string
-          id: string
-          subject_name: string
-        }
-        Insert: {
-          created_at?: string
-          goal_id: string
-          id?: string
-          subject_name: string
-        }
-        Update: {
-          created_at?: string
-          goal_id?: string
-          id?: string
-          subject_name?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "subjects_goal_id_fkey"
-            columns: ["goal_id"]
-            isOneToOne: false
-            referencedRelation: "study_goals"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      todos: {
-        Row: {
-          actual_duration: number | null
-          assigned_date: string
-          completed: boolean | null
-          course_id: string
-          created_at: string
-          id: string
-          notes: string | null
-          parent_todo_id: string | null
-          revision_round: number | null
-          task_type: string
-          title: string | null
-          user_id: string
-        }
-        Insert: {
-          actual_duration?: number | null
-          assigned_date: string
-          completed?: boolean | null
-          course_id: string
-          created_at?: string
-          id?: string
-          notes?: string | null
-          parent_todo_id?: string | null
-          revision_round?: number | null
-          task_type: string
-          title?: string | null
-          user_id: string
-        }
-        Update: {
-          actual_duration?: number | null
-          assigned_date?: string
-          completed?: boolean | null
-          course_id?: string
-          created_at?: string
-          id?: string
-          notes?: string | null
-          parent_todo_id?: string | null
-          revision_round?: number | null
-          task_type?: string
-          title?: string | null
-          user_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "todos_course_id_fkey"
-            columns: ["course_id"]
-            isOneToOne: false
-            referencedRelation: "courses"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "todos_parent_todo_id_fkey"
-            columns: ["parent_todo_id"]
-            isOneToOne: false
-            referencedRelation: "todos"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
       user_changelog_views: {
         Row: {
           changelog_id: string
@@ -394,32 +237,9 @@ export type Database = {
       }
     }
     Views: {
-      subject_stats: {
-        Row: {
-          actual_hours: number | null
-          created_at: string | null
-          expertise_level: string | null
-          goal_id: string | null
-          id: string | null
-          planned_hours: number | null
-          subject_name: string | null
-        }
-        Relationships: []
-      }
+      [_ in never]: never
     }
     Functions: {
-      get_user_subject_stats: {
-        Args: { requesting_user_id?: string }
-        Returns: {
-          id: string
-          subject_name: string
-          goal_id: string
-          created_at: string
-          planned_hours: number
-          actual_hours: number
-          expertise_level: string
-        }[]
-      }
       mark_changelog_viewed: {
         Args: { changelog_entry_id: string }
         Returns: undefined

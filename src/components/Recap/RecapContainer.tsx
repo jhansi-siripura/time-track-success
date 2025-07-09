@@ -23,16 +23,16 @@ interface StudyLog {
 interface RecapContainerProps {
   dateFilter: string;
   onDateFilterChange: (date: string) => void;
+  subjectFilter: string;
+  topicFilter: string;
 }
 
-const RecapContainer = ({ dateFilter, onDateFilterChange }: RecapContainerProps) => {
+const RecapContainer = ({ dateFilter, onDateFilterChange, subjectFilter, topicFilter }: RecapContainerProps) => {
   const [studyLogs, setStudyLogs] = useState<StudyLog[]>([]);
   const [loading, setLoading] = useState(true);
   const { user } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
-
-  const currentDateFilter = dateFilter || getTodayDate();
 
   const fetchStudyLogs = async () => {
     if (!user) return;
@@ -78,10 +78,18 @@ const RecapContainer = ({ dateFilter, onDateFilterChange }: RecapContainerProps)
     if (!studyLogs) return [];
 
     return studyLogs.filter(log => {
-      const isDateMatch = currentDateFilter === '' || log.date === currentDateFilter;
-      return isDateMatch;
+      // Date filter - if empty, show all dates
+      const isDateMatch = !dateFilter || dateFilter === '' || log.date === dateFilter;
+      
+      // Subject filter
+      const isSubjectMatch = subjectFilter === 'all' || log.subject === subjectFilter;
+      
+      // Topic filter
+      const isTopicMatch = topicFilter === 'all' || log.topic === topicFilter;
+      
+      return isDateMatch && isSubjectMatch && isTopicMatch;
     });
-  }, [studyLogs, currentDateFilter]);
+  }, [studyLogs, dateFilter, subjectFilter, topicFilter]);
 
   const handleLogUpdate = async (logId: number, updatedData: Partial<StudyLog>) => {
     if (!user) {
