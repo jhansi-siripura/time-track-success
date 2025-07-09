@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -58,6 +59,11 @@ const UnknownTechQuadrants: React.FC<UnknownTechQuadrantsProps> = ({ technologie
     return Object.values(groupedBySubject);
   };
 
+  const getQuadrantTotalHours = (priority: string): number => {
+    const quadrantTechs = technologies.filter(tech => tech.priority_category === priority);
+    return quadrantTechs.reduce((total, tech) => total + (tech.estimated_hours || 0), 0);
+  };
+
   const quadrants = [
     {
       id: 'job-critical',
@@ -66,7 +72,9 @@ const UnknownTechQuadrants: React.FC<UnknownTechQuadrantsProps> = ({ technologie
       bgColor: 'bg-red-50/80 border-red-200/60 backdrop-blur-sm',
       titleColor: 'text-red-700',
       iconColor: 'text-red-600',
-      data: getQuadrantData('job-critical')
+      badgeColor: 'bg-red-100 text-red-700 border-red-200',
+      data: getQuadrantData('job-critical'),
+      totalHours: getQuadrantTotalHours('job-critical')
     },
     {
       id: 'important-not-urgent',
@@ -75,7 +83,9 @@ const UnknownTechQuadrants: React.FC<UnknownTechQuadrantsProps> = ({ technologie
       bgColor: 'bg-orange-50/80 border-orange-200/60 backdrop-blur-sm',
       titleColor: 'text-orange-700',
       iconColor: 'text-orange-600',
-      data: getQuadrantData('important-not-urgent')
+      badgeColor: 'bg-orange-100 text-orange-700 border-orange-200',
+      data: getQuadrantData('important-not-urgent'),
+      totalHours: getQuadrantTotalHours('important-not-urgent')
     },
     {
       id: 'curious-emerging',
@@ -84,7 +94,9 @@ const UnknownTechQuadrants: React.FC<UnknownTechQuadrantsProps> = ({ technologie
       bgColor: 'bg-blue-50/80 border-blue-200/60 backdrop-blur-sm',
       titleColor: 'text-blue-700',
       iconColor: 'text-blue-600',
-      data: getQuadrantData('curious-emerging')
+      badgeColor: 'bg-blue-100 text-blue-700 border-blue-200',
+      data: getQuadrantData('curious-emerging'),
+      totalHours: getQuadrantTotalHours('curious-emerging')
     },
     {
       id: 'nice-to-know',
@@ -93,7 +105,9 @@ const UnknownTechQuadrants: React.FC<UnknownTechQuadrantsProps> = ({ technologie
       bgColor: 'bg-green-50/80 border-green-200/60 backdrop-blur-sm',
       titleColor: 'text-green-700',
       iconColor: 'text-green-600',
-      data: getQuadrantData('nice-to-know')
+      badgeColor: 'bg-green-100 text-green-700 border-green-200',
+      data: getQuadrantData('nice-to-know'),
+      totalHours: getQuadrantTotalHours('nice-to-know')
     }
   ];
 
@@ -105,9 +119,19 @@ const UnknownTechQuadrants: React.FC<UnknownTechQuadrantsProps> = ({ technologie
         return (
           <Card key={quadrant.id} className={`${quadrant.bgColor} border-2 shadow-sm`}>
             <CardHeader className="pb-3">
-              <CardTitle className={`flex items-center gap-2 text-sm font-medium ${quadrant.titleColor}`}>
-                <Icon className={`w-4 h-4 ${quadrant.iconColor}`} />
-                {quadrant.title}
+              <CardTitle className={`flex items-center justify-between text-sm font-medium ${quadrant.titleColor}`}>
+                <div className="flex items-center gap-2">
+                  <Icon className={`w-4 h-4 ${quadrant.iconColor}`} />
+                  {quadrant.title}
+                </div>
+                {quadrant.totalHours > 0 && (
+                  <Badge 
+                    variant="outline" 
+                    className={`${quadrant.badgeColor} text-xs px-2 py-1 rounded-full font-medium border`}
+                  >
+                    {quadrant.totalHours}h
+                  </Badge>
+                )}
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-2.5">
