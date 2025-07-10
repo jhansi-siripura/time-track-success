@@ -12,6 +12,7 @@ import StudyLogForm from './StudyLogForm';
 import { Input } from '@/components/ui/input';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { validateAuthState, sanitizeInput, rateLimiter } from '@/lib/security';
+
 const StudyLogTable = () => {
   const [studyLogs, setStudyLogs] = useState<any[]>([]);
   const [filteredLogs, setFilteredLogs] = useState<any[]>([]);
@@ -39,13 +40,11 @@ const StudyLogTable = () => {
   const [openPopovers, setOpenPopovers] = useState<{
     [key: string]: boolean;
   }>({});
-  const {
-    user
-  } = useAuth();
+  const { user } = useAuth();
+
   const fetchStudyLogs = async () => {
     if (!user) return;
 
-    // Validate authentication before fetching data
     const authValidation = await validateAuthState();
     if (!authValidation.isValid) {
       toast({
@@ -56,10 +55,10 @@ const StudyLogTable = () => {
       return;
     }
     try {
-      const {
-        data,
-        error
-      } = await supabase.from('study_logs').select('*').eq('user_id', user.id);
+      const { data, error } = await supabase
+        .from('study_logs')
+        .select('*')
+        .eq('user_id', user.id);
       if (error) throw error;
       setStudyLogs(data || []);
     } catch (error: any) {
@@ -73,20 +72,24 @@ const StudyLogTable = () => {
       setLoading(false);
     }
   };
+
   useEffect(() => {
     fetchStudyLogs();
   }, [user]);
+
   useEffect(() => {
     let filtered = studyLogs.filter(log => {
-      return (!columnFilters.subject || log.subject?.toLowerCase().includes(columnFilters.subject.toLowerCase())) && (!columnFilters.topic || log.topic?.toLowerCase().includes(columnFilters.topic.toLowerCase())) && (!columnFilters.source || log.source?.toLowerCase().includes(columnFilters.source.toLowerCase())) && (!columnFilters.achievements || log.achievements?.toLowerCase().includes(columnFilters.achievements.toLowerCase())) && (!columnFilters.date || log.date?.includes(columnFilters.date));
+      return (!columnFilters.subject || log.subject?.toLowerCase().includes(columnFilters.subject.toLowerCase())) && 
+             (!columnFilters.topic || log.topic?.toLowerCase().includes(columnFilters.topic.toLowerCase())) && 
+             (!columnFilters.source || log.source?.toLowerCase().includes(columnFilters.source.toLowerCase())) && 
+             (!columnFilters.achievements || log.achievements?.toLowerCase().includes(columnFilters.achievements.toLowerCase())) && 
+             (!columnFilters.date || log.date?.includes(columnFilters.date));
     });
 
-    // Sort the filtered data
     filtered.sort((a, b) => {
       let aValue = a[sortField] || '';
       let bValue = b[sortField] || '';
 
-      // Handle date and time sorting
       if (sortField === 'date') {
         aValue = new Date(a.date + ' ' + a.time).getTime();
         bValue = new Date(b.date + ' ' + b.time).getTime();
@@ -97,15 +100,18 @@ const StudyLogTable = () => {
         aValue = String(aValue).toLowerCase();
         bValue = String(bValue).toLowerCase();
       }
+      
       if (sortDirection === 'asc') {
         return aValue > bValue ? 1 : -1;
       } else {
         return aValue < bValue ? 1 : -1;
       }
     });
+    
     setFilteredLogs(filtered);
-    setCurrentPage(1); // Reset to first page when filters change
+    setCurrentPage(1);
   }, [studyLogs, columnFilters, sortField, sortDirection]);
+
   const handleDelete = async (id: number) => {
     if (!user) {
       toast({
@@ -117,7 +123,6 @@ const StudyLogTable = () => {
     }
     if (!confirm('Are you sure you want to delete this study log?')) return;
 
-    // Rate limiting check
     if (!rateLimiter.canMakeRequest(user.id + '_delete')) {
       toast({
         title: "Too Many Requests",
@@ -127,7 +132,6 @@ const StudyLogTable = () => {
       return;
     }
 
-    // Validate authentication
     const authValidation = await validateAuthState();
     if (!authValidation.isValid) {
       toast({
@@ -137,10 +141,13 @@ const StudyLogTable = () => {
       });
       return;
     }
+    
     try {
-      const {
-        error
-      } = await supabase.from('study_logs').delete().eq('id', id).eq('user_id', user.id); // Additional security check
+      const { error } = await supabase
+        .from('study_logs')
+        .delete()
+        .eq('id', id)
+        .eq('user_id', user.id);
 
       if (error) throw error;
       toast({
@@ -157,19 +164,23 @@ const StudyLogTable = () => {
       });
     }
   };
+
   const handleEdit = (log: any) => {
     setEditingLog(log);
     setShowForm(true);
   };
+
   const handleFormSuccess = () => {
     setShowForm(false);
     setEditingLog(null);
     fetchStudyLogs();
   };
+
   const handleFormCancel = () => {
     setShowForm(false);
     setEditingLog(null);
   };
+
   const handleSort = (field: string) => {
     if (sortField === field) {
       setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc');
@@ -178,14 +189,15 @@ const StudyLogTable = () => {
       setSortDirection('asc');
     }
   };
+
   const handleFilterChange = (field: string, value: string) => {
-    // Sanitize filter input
     const sanitizedValue = sanitizeInput(value);
     setTempFilters(prev => ({
       ...prev,
       [field]: sanitizedValue
     }));
   };
+
   const applyFilter = (field: string) => {
     setColumnFilters(prev => ({
       ...prev,
@@ -196,11 +208,13 @@ const StudyLogTable = () => {
       [field]: false
     }));
   };
+
   const handleFilterKeyPress = (e: React.KeyboardEvent, field: string) => {
     if (e.key === 'Enter') {
       applyFilter(field);
     }
   };
+
   const clearColumnFilter = (field: string) => {
     setColumnFilters(prev => ({
       ...prev,
@@ -215,30 +229,31 @@ const StudyLogTable = () => {
       [field]: false
     }));
   };
+
   const handlePopoverOpenChange = (field: string, open: boolean) => {
     setOpenPopovers(prev => ({
       ...prev,
       [field]: open
     }));
 
-    // If closing and there's a temp filter value, apply it
     if (!open && tempFilters[field as keyof typeof tempFilters]) {
       applyFilter(field);
     }
   };
+
   const getSortIcon = (field: string) => {
     if (sortField !== field) return <ArrowUpDown className="h-4 w-4" />;
     return sortDirection === 'asc' ? <ArrowUp className="h-4 w-4" /> : <ArrowDown className="h-4 w-4" />;
   };
+
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
     const day = date.getDate().toString().padStart(2, '0');
-    const month = date.toLocaleString('en-US', {
-      month: 'short'
-    });
+    const month = date.toLocaleString('en-US', { month: 'short' });
     const year = date.getFullYear();
     return `${day}-${month}-${year}`;
   };
+
   const formatTime = (timeString: string) => {
     const [hours, minutes] = timeString.split(':');
     const hour24 = parseInt(hours);
@@ -246,6 +261,7 @@ const StudyLogTable = () => {
     const ampm = hour24 >= 12 ? 'PM' : 'AM';
     return `${hour12}:${minutes} ${ampm}`;
   };
+
   const formatDuration = (minutes: number) => {
     const hours = Math.floor(minutes / 60);
     const mins = minutes % 60;
@@ -254,74 +270,102 @@ const StudyLogTable = () => {
     }
     return `${mins}m`;
   };
-  const FilterPopover = ({
-    field,
-    placeholder
-  }: {
-    field: string;
-    placeholder: string;
-  }) => {
+
+  const FilterPopover = ({ field, placeholder }: { field: string; placeholder: string }) => {
     const hasFilter = columnFilters[field as keyof typeof columnFilters];
     const isOpen = openPopovers[field] || false;
-    return <Popover open={isOpen} onOpenChange={open => handlePopoverOpenChange(field, open)}>
+    
+    return (
+      <Popover open={isOpen} onOpenChange={(open) => handlePopoverOpenChange(field, open)}>
         <PopoverTrigger asChild>
-          <Button variant="ghost" size="sm" className={`h-6 w-6 p-0 ${hasFilter ? 'text-blue-600' : 'text-gray-400'}`}>
+          <Button 
+            variant="ghost" 
+            size="sm" 
+            className={`h-6 w-6 p-0 ${hasFilter ? 'text-primary' : 'text-muted-foreground hover:text-foreground'}`}
+          >
             <Filter className="h-3 w-3" />
           </Button>
         </PopoverTrigger>
-        <PopoverContent className="w-64 p-2" onOpenAutoFocus={e => e.preventDefault()}>
+        <PopoverContent className="w-64 p-2" onOpenAutoFocus={(e) => e.preventDefault()}>
           <div className="flex items-center gap-2">
-            <Input placeholder={placeholder} value={tempFilters[field as keyof typeof tempFilters]} onChange={e => handleFilterChange(field, e.target.value)} onKeyPress={e => handleFilterKeyPress(e, field)} className="text-sm" autoFocus />
-            {hasFilter && <Button variant="ghost" size="sm" onClick={() => clearColumnFilter(field)} className="h-8 w-8 p-0">
+            <Input
+              placeholder={placeholder}
+              value={tempFilters[field as keyof typeof tempFilters]}
+              onChange={(e) => handleFilterChange(field, e.target.value)}
+              onKeyPress={(e) => handleFilterKeyPress(e, field)}
+              className="text-sm"
+              autoFocus
+            />
+            {hasFilter && (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => clearColumnFilter(field)}
+                className="h-8 w-8 p-0"
+              >
                 <X className="h-3 w-3" />
-              </Button>}
+              </Button>
+            )}
           </div>
         </PopoverContent>
-      </Popover>;
+      </Popover>
+    );
   };
 
-  // Pagination calculations
   const totalItems = filteredLogs.length;
   const totalPages = Math.ceil(totalItems / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
   const currentItems = filteredLogs.slice(startIndex, endIndex);
+
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
   };
+
   const handleItemsPerPageChange = (value: string) => {
     setItemsPerPage(Number(value));
     setCurrentPage(1);
   };
+
   if (showForm) {
     return <StudyLogForm editingLog={editingLog} onSuccess={handleFormSuccess} onCancel={handleFormCancel} />;
   }
-  return <Card className="bg-card border-border shadow-sm">
-      <CardHeader className="flex flex-row items-center justify-between border-b border-border">
+
+  return (
+    <Card className="bg-background border shadow-lg">
+      <CardHeader className="flex flex-row items-center justify-between border-b bg-card/50">
         <CardTitle className="text-lg font-semibold text-foreground">Study Logs</CardTitle>
-        <Button onClick={() => setShowForm(true)} className="h-10">
+        <Button onClick={() => setShowForm(true)} className="h-10 bg-primary hover:bg-primary/90">
           <Plus className="h-4 w-4 mr-2" />
           Add Session
         </Button>
       </CardHeader>
       <CardContent className="p-0">
-        {loading ? <div className="text-center py-8"><div className="text-muted-foreground">Loading study logs...</div></div> : <>
-            {filteredLogs.length === 0 ? <div className="text-center py-12 text-muted-foreground">
+        {loading ? (
+          <div className="text-center py-8">
+            <div className="text-muted-foreground">Loading study logs...</div>
+          </div>
+        ) : (
+          <>
+            {filteredLogs.length === 0 ? (
+              <div className="text-center py-12 text-muted-foreground">
                 <p className="mb-4">No study logs found.</p>
                 <Button onClick={() => setShowForm(true)} className="h-10">
                   Add Your First Study Session
                 </Button>
-              </div> : <>
+              </div>
+            ) : (
+              <>
                 {/* Results summary */}
-                <div className="px-6 py-4 border-b border-border text-sm text-muted-foreground bg-muted/30">
+                <div className="px-6 py-3 border-b bg-muted/20 text-sm text-muted-foreground">
                   Showing {startIndex + 1}-{Math.min(endIndex, totalItems)} of {totalItems} results
                 </div>
 
                 <div className="overflow-x-auto">
                   <Table>
                     <TableHeader>
-                      <TableRow>
-                        <TableHead className="w-36">
+                      <TableRow className="bg-muted/30 hover:bg-muted/40 border-b">
+                        <TableHead className="w-36 font-semibold">
                           <div className="flex items-center justify-between">
                             <div className="flex items-center gap-1 cursor-pointer" onClick={() => handleSort('date')}>
                               Date {getSortIcon('date')}
@@ -329,17 +373,17 @@ const StudyLogTable = () => {
                             <FilterPopover field="date" placeholder="Filter date..." />
                           </div>
                         </TableHead>
-                        <TableHead className="w-32">
+                        <TableHead className="w-32 font-semibold">
                           <div className="flex items-center gap-1 cursor-pointer" onClick={() => handleSort('time')}>
                             Time {getSortIcon('time')}
                           </div>
                         </TableHead>
-                        <TableHead className="w-24">
+                        <TableHead className="w-24 font-semibold">
                           <div className="flex items-center gap-1 cursor-pointer" onClick={() => handleSort('duration')}>
                             Duration {getSortIcon('duration')}
                           </div>
                         </TableHead>
-                        <TableHead className="w-32">
+                        <TableHead className="w-32 font-semibold">
                           <div className="flex items-center justify-between">
                             <div className="flex items-center gap-1 cursor-pointer" onClick={() => handleSort('subject')}>
                               Subject {getSortIcon('subject')}
@@ -347,7 +391,7 @@ const StudyLogTable = () => {
                             <FilterPopover field="subject" placeholder="Filter subject..." />
                           </div>
                         </TableHead>
-                        <TableHead className="w-32">
+                        <TableHead className="w-32 font-semibold">
                           <div className="flex items-center justify-between">
                             <div className="flex items-center gap-1 cursor-pointer" onClick={() => handleSort('topic')}>
                               Topic {getSortIcon('topic')}
@@ -355,7 +399,7 @@ const StudyLogTable = () => {
                             <FilterPopover field="topic" placeholder="Filter topic..." />
                           </div>
                         </TableHead>
-                        <TableHead className="w-32">
+                        <TableHead className="w-32 font-semibold">
                           <div className="flex items-center justify-between">
                             <div className="flex items-center gap-1 cursor-pointer" onClick={() => handleSort('source')}>
                               Source {getSortIcon('source')}
@@ -363,7 +407,7 @@ const StudyLogTable = () => {
                             <FilterPopover field="source" placeholder="Filter source..." />
                           </div>
                         </TableHead>
-                        <TableHead>
+                        <TableHead className="font-semibold">
                           <div className="flex items-center justify-between">
                             <div className="flex items-center gap-1 cursor-pointer" onClick={() => handleSort('achievements')}>
                               Achievements {getSortIcon('achievements')}
@@ -371,42 +415,71 @@ const StudyLogTable = () => {
                             <FilterPopover field="achievements" placeholder="Filter achievements..." />
                           </div>
                         </TableHead>
-                        <TableHead className="w-20">Actions</TableHead>
+                        <TableHead className="w-20 font-semibold">Actions</TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
-                      {currentItems.map(log => <TableRow key={log.id}>
-                          <TableCell className="w-36 whitespace-nowrap">{formatDate(log.date)}</TableCell>
-                          <TableCell className="w-32 whitespace-nowrap">{formatTime(log.time)}</TableCell>
-                          <TableCell className="w-24">{formatDuration(log.duration)}</TableCell>
-                          <TableCell className="w-32">{log.subject}</TableCell>
-                          <TableCell className="w-32">{log.topic || '-'}</TableCell>
-                          <TableCell className="w-32">{log.source || '-'}</TableCell>
-                          <TableCell className="break-words">{log.achievements}</TableCell>
+                      {currentItems.map((log, index) => (
+                        <TableRow 
+                          key={log.id} 
+                          className={`
+                            border-b transition-colors
+                            ${index % 2 === 0 
+                              ? 'bg-background hover:bg-muted/30' 
+                              : 'bg-muted/10 hover:bg-muted/40'
+                            }
+                          `}
+                        >
+                          <TableCell className="w-36 whitespace-nowrap font-medium">
+                            {formatDate(log.date)}
+                          </TableCell>
+                          <TableCell className="w-32 whitespace-nowrap text-muted-foreground">
+                            {formatTime(log.time)}
+                          </TableCell>
+                          <TableCell className="w-24 font-medium">
+                            <span className="inline-flex items-center px-2 py-1 rounded-full text-xs bg-primary/10 text-primary">
+                              {formatDuration(log.duration)}
+                            </span>
+                          </TableCell>
+                          <TableCell className="w-32 font-medium">{log.subject}</TableCell>
+                          <TableCell className="w-32 text-muted-foreground">{log.topic || '-'}</TableCell>
+                          <TableCell className="w-32 text-muted-foreground">{log.source || '-'}</TableCell>
+                          <TableCell className="break-words text-sm">{log.achievements}</TableCell>
                           <TableCell className="w-20">
                             <div className="flex gap-1">
-                              <Button variant="outline" size="sm" onClick={() => handleEdit(log)} className="h-7 w-7 p-0">
+                              <Button 
+                                variant="outline" 
+                                size="sm" 
+                                onClick={() => handleEdit(log)} 
+                                className="h-8 w-8 p-0 hover:bg-primary/10 hover:text-primary hover:border-primary/30"
+                              >
                                 <Pencil className="h-3 w-3" />
                               </Button>
-                              <Button variant="outline" size="sm" onClick={() => handleDelete(log.id)} className="h-7 w-7 p-0 text-red-600 hover:bg-red-50 hover:text-red-700 hover:border-red-300">
+                              <Button 
+                                variant="outline" 
+                                size="sm" 
+                                onClick={() => handleDelete(log.id)} 
+                                className="h-8 w-8 p-0 hover:bg-destructive/10 hover:text-destructive hover:border-destructive/30"
+                              >
                                 <Trash2 className="h-3 w-3" />
                               </Button>
                             </div>
                           </TableCell>
-                        </TableRow>)}
+                        </TableRow>
+                      ))}
                     </TableBody>
                   </Table>
                 </div>
 
                 {/* Pagination */}
-                <div className="px-6 py-4 border-t border-border bg-muted/30 flex items-center justify-between">
+                <div className="px-6 py-4 border-t bg-muted/20 flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <span className="text-sm text-muted-foreground">Items per page:</span>
                     <Select value={itemsPerPage.toString()} onValueChange={handleItemsPerPageChange}>
-                      <SelectTrigger className="w-20 h-9 border-border">
+                      <SelectTrigger className="w-20 h-9">
                         <SelectValue />
                       </SelectTrigger>
-                      <SelectContent className="bg-popover border-border">
+                      <SelectContent>
                         <SelectItem value="5">5</SelectItem>
                         <SelectItem value="10">10</SelectItem>
                         <SelectItem value="20">20</SelectItem>
@@ -416,41 +489,58 @@ const StudyLogTable = () => {
                     </Select>
                   </div>
                   
-                  {totalPages > 1 && <Pagination>
+                  {totalPages > 1 && (
+                    <Pagination>
                       <PaginationContent>
                         <PaginationItem>
-                          <PaginationPrevious onClick={() => handlePageChange(Math.max(1, currentPage - 1))} className={currentPage === 1 ? 'pointer-events-none opacity-50' : 'cursor-pointer'} />
+                          <PaginationPrevious 
+                            onClick={() => handlePageChange(Math.max(1, currentPage - 1))}
+                            className={currentPage === 1 ? 'pointer-events-none opacity-50' : 'cursor-pointer hover:bg-muted'}
+                          />
                         </PaginationItem>
                         
-                        {Array.from({
-                  length: Math.min(5, totalPages)
-                }, (_, i) => {
-                  let pageNumber;
-                  if (totalPages <= 5) {
-                    pageNumber = i + 1;
-                  } else if (currentPage <= 3) {
-                    pageNumber = i + 1;
-                  } else if (currentPage >= totalPages - 2) {
-                    pageNumber = totalPages - 4 + i;
-                  } else {
-                    pageNumber = currentPage - 2 + i;
-                  }
-                  return <PaginationItem key={pageNumber}>
-                              <PaginationLink onClick={() => handlePageChange(pageNumber)} isActive={currentPage === pageNumber} className="cursor-pointer">
+                        {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+                          let pageNumber;
+                          if (totalPages <= 5) {
+                            pageNumber = i + 1;
+                          } else if (currentPage <= 3) {
+                            pageNumber = i + 1;
+                          } else if (currentPage >= totalPages - 2) {
+                            pageNumber = totalPages - 4 + i;
+                          } else {
+                            pageNumber = currentPage - 2 + i;
+                          }
+                          
+                          return (
+                            <PaginationItem key={pageNumber}>
+                              <PaginationLink 
+                                onClick={() => handlePageChange(pageNumber)}
+                                isActive={currentPage === pageNumber}
+                                className="cursor-pointer hover:bg-muted"
+                              >
                                 {pageNumber}
                               </PaginationLink>
-                            </PaginationItem>;
-                })}
+                            </PaginationItem>
+                          );
+                        })}
                         
                         <PaginationItem>
-                          <PaginationNext onClick={() => handlePageChange(Math.min(totalPages, currentPage + 1))} className={currentPage === totalPages ? 'pointer-events-none opacity-50' : 'cursor-pointer'} />
+                          <PaginationNext 
+                            onClick={() => handlePageChange(Math.min(totalPages, currentPage + 1))}
+                            className={currentPage === totalPages ? 'pointer-events-none opacity-50' : 'cursor-pointer hover:bg-muted'}
+                          />
                         </PaginationItem>
                       </PaginationContent>
-                    </Pagination>}
+                    </Pagination>
+                  )}
                 </div>
-              </>}
-          </>}
+              </>
+            )}
+          </>
+        )}
       </CardContent>
-    </Card>;
+    </Card>
+  );
 };
+
 export default StudyLogTable;
