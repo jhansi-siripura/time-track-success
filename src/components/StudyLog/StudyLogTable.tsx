@@ -332,40 +332,40 @@ const StudyLogTable = () => {
   }
 
   return (
-    <Card className="bg-background border shadow-lg">
-      <CardHeader className="flex flex-row items-center justify-between border-b bg-card/50">
-        <CardTitle className="text-lg font-semibold text-foreground">Study Logs</CardTitle>
-        <Button onClick={() => setShowForm(true)} className="h-10 bg-primary hover:bg-primary/90">
+    <Card className="bg-white border border-gray-200 shadow-lg">
+      <CardHeader className="flex flex-row items-center justify-between border-b bg-white">
+        <CardTitle className="text-lg font-semibold text-gray-900">Study Logs</CardTitle>
+        <Button onClick={() => setShowForm(true)} className="h-10 bg-blue-600 hover:bg-blue-700 text-white">
           <Plus className="h-4 w-4 mr-2" />
           Add Session
         </Button>
       </CardHeader>
-      <CardContent className="p-0">
+      <CardContent className="p-0 bg-white">
         {loading ? (
-          <div className="text-center py-8">
-            <div className="text-muted-foreground">Loading study logs...</div>
+          <div className="text-center py-8 bg-white">
+            <div className="text-gray-600">Loading study logs...</div>
           </div>
         ) : (
           <>
             {filteredLogs.length === 0 ? (
-              <div className="text-center py-12 text-muted-foreground">
+              <div className="text-center py-12 text-gray-600 bg-white">
                 <p className="mb-4">No study logs found.</p>
-                <Button onClick={() => setShowForm(true)} className="h-10">
+                <Button onClick={() => setShowForm(true)} className="h-10 bg-blue-600 hover:bg-blue-700 text-white">
                   Add Your First Study Session
                 </Button>
               </div>
             ) : (
               <>
                 {/* Results summary */}
-                <div className="px-6 py-3 border-b bg-muted/20 text-sm text-muted-foreground">
+                <div className="px-6 py-3 border-b bg-gray-50 text-sm text-gray-600">
                   Showing {startIndex + 1}-{Math.min(endIndex, totalItems)} of {totalItems} results
                 </div>
 
-                <div className="overflow-x-auto">
+                <div className="overflow-x-auto bg-white">
                   <Table>
                     <TableHeader>
-                      <TableRow className="bg-muted/30 hover:bg-muted/40 border-b">
-                        <TableHead className="w-36 font-semibold">
+                      <TableRow className="bg-gray-100 hover:bg-gray-100 border-b border-gray-200">
+                        <TableHead className="w-36 font-semibold text-gray-700">
                           <div className="flex items-center justify-between">
                             <div className="flex items-center gap-1 cursor-pointer" onClick={() => handleSort('date')}>
                               Date {getSortIcon('date')}
@@ -373,17 +373,17 @@ const StudyLogTable = () => {
                             <FilterPopover field="date" placeholder="Filter date..." />
                           </div>
                         </TableHead>
-                        <TableHead className="w-32 font-semibold">
+                        <TableHead className="w-32 font-semibold text-gray-700">
                           <div className="flex items-center gap-1 cursor-pointer" onClick={() => handleSort('time')}>
                             Time {getSortIcon('time')}
                           </div>
                         </TableHead>
-                        <TableHead className="w-24 font-semibold">
+                        <TableHead className="w-24 font-semibold text-gray-700">
                           <div className="flex items-center gap-1 cursor-pointer" onClick={() => handleSort('duration')}>
                             Duration {getSortIcon('duration')}
                           </div>
                         </TableHead>
-                        <TableHead className="w-32 font-semibold">
+                        <TableHead className="w-32 font-semibold text-gray-700">
                           <div className="flex items-center justify-between">
                             <div className="flex items-center gap-1 cursor-pointer" onClick={() => handleSort('subject')}>
                               Subject {getSortIcon('subject')}
@@ -391,7 +391,7 @@ const StudyLogTable = () => {
                             <FilterPopover field="subject" placeholder="Filter subject..." />
                           </div>
                         </TableHead>
-                        <TableHead className="w-32 font-semibold">
+                        <TableHead className="w-32 font-semibold text-gray-700">
                           <div className="flex items-center justify-between">
                             <div className="flex items-center gap-1 cursor-pointer" onClick={() => handleSort('topic')}>
                               Topic {getSortIcon('topic')}
@@ -399,7 +399,7 @@ const StudyLogTable = () => {
                             <FilterPopover field="topic" placeholder="Filter topic..." />
                           </div>
                         </TableHead>
-                        <TableHead className="w-32 font-semibold">
+                        <TableHead className="w-32 font-semibold text-gray-700">
                           <div className="flex items-center justify-between">
                             <div className="flex items-center gap-1 cursor-pointer" onClick={() => handleSort('source')}>
                               Source {getSortIcon('source')}
@@ -407,7 +407,7 @@ const StudyLogTable = () => {
                             <FilterPopover field="source" placeholder="Filter source..." />
                           </div>
                         </TableHead>
-                        <TableHead className="font-semibold">
+                        <TableHead className="font-semibold text-gray-700">
                           <div className="flex items-center justify-between">
                             <div className="flex items-center gap-1 cursor-pointer" onClick={() => handleSort('achievements')}>
                               Achievements {getSortIcon('achievements')}
@@ -415,7 +415,7 @@ const StudyLogTable = () => {
                             <FilterPopover field="achievements" placeholder="Filter achievements..." />
                           </div>
                         </TableHead>
-                        <TableHead className="w-20 font-semibold">Actions</TableHead>
+                        <TableHead className="w-20 font-semibold text-gray-700">Actions</TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -423,35 +423,35 @@ const StudyLogTable = () => {
                         <TableRow 
                           key={log.id} 
                           className={`
-                            border-b transition-colors
+                            border-b border-gray-200 transition-colors
                             ${index % 2 === 0 
-                              ? 'bg-background hover:bg-muted/30' 
-                              : 'bg-muted/10 hover:bg-muted/40'
+                              ? 'bg-white hover:bg-gray-50' 
+                              : 'bg-gray-50 hover:bg-gray-100'
                             }
                           `}
                         >
-                          <TableCell className="w-36 whitespace-nowrap font-medium">
+                          <TableCell className="w-36 whitespace-nowrap font-medium text-gray-900">
                             {formatDate(log.date)}
                           </TableCell>
-                          <TableCell className="w-32 whitespace-nowrap text-muted-foreground">
+                          <TableCell className="w-32 whitespace-nowrap text-gray-600">
                             {formatTime(log.time)}
                           </TableCell>
                           <TableCell className="w-24 font-medium">
-                            <span className="inline-flex items-center px-2 py-1 rounded-full text-xs bg-primary/10 text-primary">
+                            <span className="inline-flex items-center px-2 py-1 rounded-full text-xs bg-blue-100 text-blue-800">
                               {formatDuration(log.duration)}
                             </span>
                           </TableCell>
-                          <TableCell className="w-32 font-medium">{log.subject}</TableCell>
-                          <TableCell className="w-32 text-muted-foreground">{log.topic || '-'}</TableCell>
-                          <TableCell className="w-32 text-muted-foreground">{log.source || '-'}</TableCell>
-                          <TableCell className="break-words text-sm">{log.achievements}</TableCell>
+                          <TableCell className="w-32 font-medium text-gray-900">{log.subject}</TableCell>
+                          <TableCell className="w-32 text-gray-600">{log.topic || '-'}</TableCell>
+                          <TableCell className="w-32 text-gray-600">{log.source || '-'}</TableCell>
+                          <TableCell className="break-words text-sm text-gray-700">{log.achievements}</TableCell>
                           <TableCell className="w-20">
                             <div className="flex gap-1">
                               <Button 
                                 variant="outline" 
                                 size="sm" 
                                 onClick={() => handleEdit(log)} 
-                                className="h-8 w-8 p-0 hover:bg-primary/10 hover:text-primary hover:border-primary/30"
+                                className="h-8 w-8 p-0 hover:bg-blue-50 hover:text-blue-600 hover:border-blue-300 border-gray-300"
                               >
                                 <Pencil className="h-3 w-3" />
                               </Button>
@@ -459,7 +459,7 @@ const StudyLogTable = () => {
                                 variant="outline" 
                                 size="sm" 
                                 onClick={() => handleDelete(log.id)} 
-                                className="h-8 w-8 p-0 hover:bg-destructive/10 hover:text-destructive hover:border-destructive/30"
+                                className="h-8 w-8 p-0 hover:bg-red-50 hover:text-red-600 hover:border-red-300 border-gray-300"
                               >
                                 <Trash2 className="h-3 w-3" />
                               </Button>
@@ -472,14 +472,14 @@ const StudyLogTable = () => {
                 </div>
 
                 {/* Pagination */}
-                <div className="px-6 py-4 border-t bg-muted/20 flex items-center justify-between">
+                <div className="px-6 py-4 border-t border-gray-200 bg-gray-50 flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <span className="text-sm text-muted-foreground">Items per page:</span>
+                    <span className="text-sm text-gray-600">Items per page:</span>
                     <Select value={itemsPerPage.toString()} onValueChange={handleItemsPerPageChange}>
-                      <SelectTrigger className="w-20 h-9">
+                      <SelectTrigger className="w-20 h-9 bg-white border-gray-300">
                         <SelectValue />
                       </SelectTrigger>
-                      <SelectContent>
+                      <SelectContent className="bg-white">
                         <SelectItem value="5">5</SelectItem>
                         <SelectItem value="10">10</SelectItem>
                         <SelectItem value="20">20</SelectItem>
@@ -495,7 +495,7 @@ const StudyLogTable = () => {
                         <PaginationItem>
                           <PaginationPrevious 
                             onClick={() => handlePageChange(Math.max(1, currentPage - 1))}
-                            className={currentPage === 1 ? 'pointer-events-none opacity-50' : 'cursor-pointer hover:bg-muted'}
+                            className={currentPage === 1 ? 'pointer-events-none opacity-50' : 'cursor-pointer hover:bg-gray-100'}
                           />
                         </PaginationItem>
                         
@@ -516,7 +516,7 @@ const StudyLogTable = () => {
                               <PaginationLink 
                                 onClick={() => handlePageChange(pageNumber)}
                                 isActive={currentPage === pageNumber}
-                                className="cursor-pointer hover:bg-muted"
+                                className="cursor-pointer hover:bg-gray-100"
                               >
                                 {pageNumber}
                               </PaginationLink>
@@ -527,7 +527,7 @@ const StudyLogTable = () => {
                         <PaginationItem>
                           <PaginationNext 
                             onClick={() => handlePageChange(Math.min(totalPages, currentPage + 1))}
-                            className={currentPage === totalPages ? 'pointer-events-none opacity-50' : 'cursor-pointer hover:bg-muted'}
+                            className={currentPage === totalPages ? 'pointer-events-none opacity-50' : 'cursor-pointer hover:bg-gray-100'}
                           />
                         </PaginationItem>
                       </PaginationContent>
