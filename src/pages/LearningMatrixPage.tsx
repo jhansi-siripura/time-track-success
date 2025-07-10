@@ -10,41 +10,41 @@ import { BookOpen, Target } from 'lucide-react';
 const LearningMatrixPage = () => {
   return (
     <MainLayout>
-      <div className="p-6">
+      <div className="p-6 bg-gray-50 min-h-screen">
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-foreground mb-2">Learning Matrix</h1>
-          <p className="text-muted-foreground">
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">Learning Matrix</h1>
+          <p className="text-gray-600">
             Organize and prioritize your learning journey with known and unknown subjects
           </p>
         </div>
 
         <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
           {/* Known Subjects Section */}
-          <Card className="h-fit">
-            <CardHeader className="pb-4">
-              <CardTitle className="flex items-center gap-2 text-xl">
-                <div className="w-6 h-6 rounded-full bg-green-500 flex items-center justify-center">
-                  <BookOpen className="w-4 h-4 text-white" />
+          <Card className="bg-white border-2 border-gray-100 shadow-lg hover:shadow-xl transition-shadow duration-200 h-fit">
+            <CardHeader className="pb-4 bg-white border-b border-gray-50 rounded-t-lg">
+              <CardTitle className="flex items-center gap-3 text-xl font-semibold text-gray-900">
+                <div className="p-2 bg-gradient-to-br from-green-50 to-green-100 rounded-lg border border-green-200">
+                  <BookOpen className="w-5 w-5 text-green-600" />
                 </div>
                 Known Subjects
               </CardTitle>
             </CardHeader>
-            <CardContent>
+            <CardContent className="bg-white p-6">
               <KnownTechnologies />
             </CardContent>
           </Card>
 
           {/* Unknown Subjects Section */}
-          <Card className="h-fit">
-            <CardHeader className="pb-4">
-              <CardTitle className="flex items-center gap-2 text-xl">
-                <div className="w-6 h-6 rounded-full bg-orange-500 flex items-center justify-center">
-                  <Target className="w-4 h-4 text-white" />
+          <Card className="bg-white border-2 border-gray-100 shadow-lg hover:shadow-xl transition-shadow duration-200 h-fit">
+            <CardHeader className="pb-4 bg-white border-b border-gray-50 rounded-t-lg">
+              <CardTitle className="flex items-center gap-3 text-xl font-semibold text-gray-900">
+                <div className="p-2 bg-gradient-to-br from-orange-50 to-orange-100 rounded-lg border border-orange-200">
+                  <Target className="w-5 h-5 text-orange-600" />
                 </div>
                 Learning Priorities
               </CardTitle>
             </CardHeader>
-            <CardContent>
+            <CardContent className="bg-white p-6">
               <UnknownTechnologies />
             </CardContent>
           </Card>

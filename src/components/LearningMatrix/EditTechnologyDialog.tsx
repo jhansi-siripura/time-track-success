@@ -86,43 +86,45 @@ const EditSubjectDialog: React.FC<EditSubjectDialogProps> = ({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[500px]">
-        <DialogHeader>
-          <DialogTitle>Edit Subject</DialogTitle>
+      <DialogContent className="sm:max-w-[500px] bg-white border-2 border-gray-100 shadow-xl">
+        <DialogHeader className="border-b border-gray-100 pb-4">
+          <DialogTitle className="text-xl font-semibold text-gray-900">Edit Subject</DialogTitle>
         </DialogHeader>
         
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-4 pt-4">
           <div className="space-y-2">
-            <Label htmlFor="subject_name">Subject</Label>
+            <Label htmlFor="subject_name" className="text-gray-700 font-medium">Subject</Label>
             <Input
               id="subject_name"
               value={formData.subject_name}
               onChange={(e) => handleInputChange('subject_name', e.target.value)}
               placeholder="e.g., React, Python, Machine Learning"
               required
+              className="bg-white border-gray-300 focus:border-blue-500 focus:ring-blue-500"
             />
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="topic_name">Topic (Optional)</Label>
+            <Label htmlFor="topic_name" className="text-gray-700 font-medium">Topic (Optional)</Label>
             <Input
               id="topic_name"
               value={formData.topic_name}
               onChange={(e) => handleInputChange('topic_name', e.target.value)}
               placeholder="e.g., Hooks, Data Structures, Neural Networks"
+              className="bg-white border-gray-300 focus:border-blue-500 focus:ring-blue-500"
             />
           </div>
 
           <div className="space-y-2">
-            <Label>Priority Category</Label>
+            <Label className="text-gray-700 font-medium">Priority Category</Label>
             <Select
               value={formData.priority_category}
               onValueChange={(value) => handleInputChange('priority_category', value)}
             >
-              <SelectTrigger>
+              <SelectTrigger className="bg-white border-gray-300 focus:border-blue-500 focus:ring-blue-500">
                 <SelectValue />
               </SelectTrigger>
-              <SelectContent>
+              <SelectContent className="bg-white border-gray-200 shadow-lg">
                 <SelectItem value="job-critical">Job-Critical</SelectItem>
                 <SelectItem value="important-not-urgent">Important but Not Urgent</SelectItem>
                 <SelectItem value="curious-emerging">Curious & Emerging</SelectItem>
@@ -132,7 +134,7 @@ const EditSubjectDialog: React.FC<EditSubjectDialogProps> = ({
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="estimated_hours">Estimated Hours</Label>
+            <Label htmlFor="estimated_hours" className="text-gray-700 font-medium">Estimated Hours</Label>
             <Input
               id="estimated_hours"
               type="number"
@@ -140,19 +142,21 @@ const EditSubjectDialog: React.FC<EditSubjectDialogProps> = ({
               onChange={(e) => handleInputChange('estimated_hours', e.target.value)}
               placeholder="e.g., 40"
               min="0"
+              className="bg-white border-gray-300 focus:border-blue-500 focus:ring-blue-500"
             />
           </div>
 
-          <div className="flex justify-end gap-2 pt-4">
+          <div className="flex justify-end gap-2 pt-6 border-t border-gray-100">
             <Button
               type="button"
               variant="outline"
               onClick={() => onOpenChange(false)}
               disabled={loading}
+              className="border-gray-300 text-gray-700 hover:bg-gray-50"
             >
               Cancel
             </Button>
-            <Button type="submit" disabled={loading}>
+            <Button type="submit" disabled={loading} className="bg-blue-600 hover:bg-blue-700 text-white">
               {loading ? 'Updating...' : 'Update Subject'}
             </Button>
           </div>

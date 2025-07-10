@@ -44,8 +44,8 @@ const UnknownTechnologies = () => {
   if (loading) {
     return (
       <div className="space-y-4">
-        <div className="h-32 bg-muted/50 rounded-lg animate-pulse" />
-        <div className="h-64 bg-muted/50 rounded-lg animate-pulse" />
+        <div className="h-32 bg-gray-100 rounded-lg animate-pulse" />
+        <div className="h-64 bg-gray-100 rounded-lg animate-pulse" />
       </div>
     );
   }
@@ -53,19 +53,19 @@ const UnknownTechnologies = () => {
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <p className="text-sm text-muted-foreground">
+        <p className="text-sm text-gray-600">
           Prioritize and organize subjects you want to learn
         </p>
-        <Button onClick={() => setShowAddDialog(true)} size="sm">
+        <Button onClick={() => setShowAddDialog(true)} size="sm" className="bg-blue-600 hover:bg-blue-700 text-white border border-blue-200 shadow-sm">
           <Plus className="w-4 h-4 mr-2" />
           Add Subject
         </Button>
       </div>
 
       <Tabs defaultValue="quadrants" className="w-full">
-        <TabsList className="grid w-full grid-cols-2">
-          <TabsTrigger value="quadrants">Quadrant View</TabsTrigger>
-          <TabsTrigger value="table">Table View</TabsTrigger>
+        <TabsList className="grid w-full grid-cols-2 bg-white border border-gray-200 shadow-sm">
+          <TabsTrigger value="quadrants" className="data-[state=active]:bg-gray-100 data-[state=active]:text-gray-900">Quadrant View</TabsTrigger>
+          <TabsTrigger value="table" className="data-[state=active]:bg-gray-100 data-[state=active]:text-gray-900">Table View</TabsTrigger>
         </TabsList>
         
         <TabsContent value="quadrants" className="mt-4">
