@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -16,13 +15,11 @@ import { RichTextEditor } from '@/components/ui/rich-text-editor';
 import { ImageUpload } from '@/components/ui/image-upload';
 import { PreviewModal } from './PreviewModal';
 import { getTodayDate } from '@/lib/dateUtils';
-
 interface StudyLogFormProps {
   editingLog?: any;
   onSuccess: () => void;
   onCancel: () => void;
 }
-
 const StudyLogForm: React.FC<StudyLogFormProps> = ({
   editingLog,
   onSuccess,
@@ -42,10 +39,11 @@ const StudyLogForm: React.FC<StudyLogFormProps> = ({
     achievements: '',
     images: [] as string[]
   });
-  
   const [loading, setLoading] = useState(false);
   const [showPreview, setShowPreview] = useState(false);
-  const { user } = useAuth();
+  const {
+    user
+  } = useAuth();
   const {
     subjects,
     topics,
@@ -55,7 +53,6 @@ const StudyLogForm: React.FC<StudyLogFormProps> = ({
     loadingSources,
     fetchTopicsForSubject
   } = useStudyAutocomplete();
-
   useEffect(() => {
     if (editingLog) {
       setFormData({
@@ -69,19 +66,16 @@ const StudyLogForm: React.FC<StudyLogFormProps> = ({
         notes: editingLog.notes || '',
         images: editingLog.images || []
       });
-
       if (editingLog.subject) {
         fetchTopicsForSubject(editingLog.subject);
       }
     }
   }, [editingLog]);
-
   useEffect(() => {
     if (formData.subject && !editingLog) {
       fetchTopicsForSubject(formData.subject);
     }
   }, [formData.subject, fetchTopicsForSubject, editingLog]);
-
   const handleInputChange = (field: string, value: string | number | string[]) => {
     if (field === 'duration') {
       const numValue = value.toString().replace(/[^0-9]/g, '');
@@ -108,7 +102,6 @@ const StudyLogForm: React.FC<StudyLogFormProps> = ({
       }));
     }
   };
-
   const handleSubjectChange = (value: string) => {
     const sanitizedValue = sanitizeInput(value);
     setFormData(prev => ({
@@ -116,12 +109,10 @@ const StudyLogForm: React.FC<StudyLogFormProps> = ({
       subject: sanitizedValue,
       topic: ''
     }));
-
     if (sanitizedValue) {
       fetchTopicsForSubject(sanitizedValue);
     }
   };
-
   const validateRequiredFields = () => {
     const errors: string[] = [];
     if (!formData.subject.trim()) errors.push('Subject is required');
@@ -130,13 +121,11 @@ const StudyLogForm: React.FC<StudyLogFormProps> = ({
     if (!formData.duration || parseInt(formData.duration) <= 0) errors.push('Duration is required and must be greater than 0');
     return errors;
   };
-
   const shouldShowPreview = () => {
     const hasNotes = formData.notes && formData.notes.trim() !== '';
     const hasImages = formData.images && formData.images.length > 0;
     return hasNotes || hasImages;
   };
-
   const performSave = async () => {
     if (!user) {
       toast({
@@ -190,35 +179,27 @@ const StudyLogForm: React.FC<StudyLogFormProps> = ({
       });
       return;
     }
-
     setLoading(true);
     try {
       if (editingLog) {
-        const { error } = await supabase
-          .from('study_logs')
-          .update(dataToSubmit)
-          .eq('id', editingLog.id)
-          .eq('user_id', user.id);
-          
+        const {
+          error
+        } = await supabase.from('study_logs').update(dataToSubmit).eq('id', editingLog.id).eq('user_id', user.id);
         if (error) throw error;
-        
         toast({
           title: "Success",
           description: "Study log updated successfully!"
         });
       } else {
-        const { error } = await supabase
-          .from('study_logs')
-          .insert([dataToSubmit]);
-          
+        const {
+          error
+        } = await supabase.from('study_logs').insert([dataToSubmit]);
         if (error) throw error;
-        
         toast({
           title: "Success",
           description: "Study log created successfully!"
         });
       }
-      
       onSuccess();
     } catch (error: any) {
       console.error('Study log submission error:', error);
@@ -231,10 +212,8 @@ const StudyLogForm: React.FC<StudyLogFormProps> = ({
       setLoading(false);
     }
   };
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
     const validationErrors = validateRequiredFields();
     if (validationErrors.length > 0) {
       toast({
@@ -244,27 +223,22 @@ const StudyLogForm: React.FC<StudyLogFormProps> = ({
       });
       return;
     }
-
     if (shouldShowPreview()) {
       setShowPreview(true);
     } else {
       await performSave();
     }
   };
-
   const handlePreviewConfirm = async () => {
     setShowPreview(false);
     await performSave();
   };
-
   const handlePreviewCancel = () => {
     setShowPreview(false);
   };
-
-  return (
-    <>
-      <Card className="border-border shadow-sm bg-card">
-        <CardHeader className="border-b border-border bg-card">
+  return <>
+      <Card className="border-border shadow-sm bg-transparent">
+        <CardHeader className="border-b border-border bg-white">
           <div className="flex items-center gap-3">
             <Button variant="ghost" size="sm" onClick={onCancel} className="h-8 w-8 p-0 hover:bg-muted">
               <ArrowLeft className="h-4 w-4" />
@@ -274,95 +248,41 @@ const StudyLogForm: React.FC<StudyLogFormProps> = ({
             </CardTitle>
           </div>
         </CardHeader>
-        <CardContent className="p-6 bg-card">
+        <CardContent className="p-6 bg-white">
           <form onSubmit={handleSubmit} className="space-y-6">
             {/* Subject, Topic, Source Row */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <CreatableCombobox
-                value={formData.subject}
-                onValueChange={handleSubjectChange}
-                options={subjects}
-                placeholder="Select or type a subject... *"
-                emptyMessage="No subjects found."
-                loading={loadingSubjects}
-              />
+              <CreatableCombobox value={formData.subject} onValueChange={handleSubjectChange} options={subjects} placeholder="Select or type a subject... *" emptyMessage="No subjects found." loading={loadingSubjects} />
               
-              <CreatableCombobox
-                value={formData.topic}
-                onValueChange={(value) => handleInputChange('topic', value)}
-                options={topics}
-                placeholder={formData.subject ? "Select or type a topic..." : "Select a subject first"}
-                emptyMessage={formData.subject ? "No topics found for this subject." : "Select a subject first."}
-                loading={loadingTopics}
-                disabled={!formData.subject}
-              />
+              <CreatableCombobox value={formData.topic} onValueChange={value => handleInputChange('topic', value)} options={topics} placeholder={formData.subject ? "Select or type a topic..." : "Select a subject first"} emptyMessage={formData.subject ? "No topics found for this subject." : "Select a subject first."} loading={loadingTopics} disabled={!formData.subject} />
 
-              <CreatableCombobox
-                value={formData.source}
-                onValueChange={(value) => handleInputChange('source', value)}
-                options={sources}
-                placeholder="Select or type a source..."
-                emptyMessage="No sources found."
-                loading={loadingSources}
-              />
+              <CreatableCombobox value={formData.source} onValueChange={value => handleInputChange('source', value)} options={sources} placeholder="Select or type a source..." emptyMessage="No sources found." loading={loadingSources} />
             </div>
 
             {/* Date, Time, Duration Row */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <Input
-                type="date"
-                value={formData.date}
-                onChange={(e) => handleInputChange('date', e.target.value)}
-                required
-              />
+              <Input type="date" value={formData.date} onChange={e => handleInputChange('date', e.target.value)} required />
               
-              <Input
-                type="time"
-                value={formData.time}
-                onChange={(e) => handleInputChange('time', e.target.value)}
-                required
-              />
+              <Input type="time" value={formData.time} onChange={e => handleInputChange('time', e.target.value)} required />
               
-              <Input
-                type="text"
-                value={formData.duration}
-                onChange={(e) => handleInputChange('duration', e.target.value)}
-                placeholder="Duration (minutes) *"
-                required
-              />
+              <Input type="text" value={formData.duration} onChange={e => handleInputChange('duration', e.target.value)} placeholder="Duration (minutes) *" required />
             </div>
 
             <div className="space-y-2">
               <Label htmlFor="notes">Notes</Label>
-              <RichTextEditor
-                value={formData.notes}
-                onChange={(value) => handleInputChange('notes', value)}
-                placeholder="Add your study notes, observations, or reflections..."
-                maxLength={1000}
-              />
+              <RichTextEditor value={formData.notes} onChange={value => handleInputChange('notes', value)} placeholder="Add your study notes, observations, or reflections..." maxLength={1000} />
             </div>
 
             {/* Achievements and Images side by side */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               <div className="space-y-2">
                 <Label htmlFor="achievements">Achievements</Label>
-                <Textarea
-                  id="achievements"
-                  value={formData.achievements}
-                  onChange={(e) => handleInputChange('achievements', e.target.value)}
-                  placeholder="What did you accomplish in this session?"
-                  rows={6}
-                  maxLength={500}
-                />
+                <Textarea id="achievements" value={formData.achievements} onChange={e => handleInputChange('achievements', e.target.value)} placeholder="What did you accomplish in this session?" rows={6} maxLength={500} />
               </div>
 
               <div className="space-y-2">
                 <Label>Images</Label>
-                <ImageUpload
-                  images={formData.images}
-                  onImagesChange={(images) => handleInputChange('images', images)}
-                  maxImages={3}
-                />
+                <ImageUpload images={formData.images} onImagesChange={images => handleInputChange('images', images)} maxImages={3} />
               </div>
             </div>
 
@@ -378,14 +298,7 @@ const StudyLogForm: React.FC<StudyLogFormProps> = ({
         </CardContent>
       </Card>
 
-      <PreviewModal
-        isOpen={showPreview}
-        onClose={handlePreviewCancel}
-        onConfirm={handlePreviewConfirm}
-        formData={formData}
-      />
-    </>
-  );
+      <PreviewModal isOpen={showPreview} onClose={handlePreviewCancel} onConfirm={handlePreviewConfirm} formData={formData} />
+    </>;
 };
-
 export default StudyLogForm;
