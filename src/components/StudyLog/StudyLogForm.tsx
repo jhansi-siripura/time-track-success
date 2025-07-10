@@ -238,7 +238,7 @@ const StudyLogForm: React.FC<StudyLogFormProps> = ({
   };
   return <>
       <Card className="border-border shadow-sm bg-transparent">
-        <CardHeader className="border-b border-border bg-white">
+        <CardHeader className="border-b border-border bg-white rounded-none">
           <div className="flex items-center gap-3">
             <Button variant="ghost" size="sm" onClick={onCancel} className="h-8 w-8 p-0 hover:bg-muted">
               <ArrowLeft className="h-4 w-4" />
