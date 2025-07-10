@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
@@ -34,7 +35,7 @@ const FourWeekConsistencyWidget = ({ data, getSubjectColor }: FourWeekConsistenc
 
       if (subjectData.length === 0) {
         return (
-          <div className="bg-white p-3 border border-gray-200 rounded-lg shadow-lg">
+          <div className="bg-white p-3 border-2 border-gray-200 rounded-lg shadow-xl">
             <p className="font-semibold text-gray-900">
               {label} — Total: {totalHours.toFixed(1)} hrs
             </p>
@@ -43,7 +44,7 @@ const FourWeekConsistencyWidget = ({ data, getSubjectColor }: FourWeekConsistenc
       }
 
       return (
-        <div className="bg-white p-3 border border-gray-200 rounded-lg shadow-lg">
+        <div className="bg-white p-3 border-2 border-gray-200 rounded-lg shadow-xl">
           <p className="font-semibold text-gray-900 mb-2">
             {label} — Total: {totalHours.toFixed(1)} hrs
           </p>
@@ -51,7 +52,7 @@ const FourWeekConsistencyWidget = ({ data, getSubjectColor }: FourWeekConsistenc
             {subjectData.map((item, index) => (
               <div key={index} className="flex items-center gap-2 text-sm">
                 <div 
-                  className="w-3 h-3 rounded-sm" 
+                  className="w-3 h-3 rounded-sm border border-gray-300" 
                   style={{ backgroundColor: item.color }}
                 />
                 <span className="text-gray-700">
@@ -67,11 +68,11 @@ const FourWeekConsistencyWidget = ({ data, getSubjectColor }: FourWeekConsistenc
   };
 
   return (
-    <Card className="bg-white shadow-sm border border-gray-200">
-      <CardHeader className="pb-3 bg-white">
-        <CardTitle className="text-lg">Last 4 Weeks Overview</CardTitle>
+    <Card className="bg-white border-2 border-gray-100 shadow-lg hover:shadow-xl transition-shadow duration-200">
+      <CardHeader className="pb-3 bg-white border-b border-gray-50">
+        <CardTitle className="text-lg font-semibold text-gray-900">Last 4 Weeks Overview</CardTitle>
       </CardHeader>
-      <CardContent className="bg-white">
+      <CardContent className="bg-white p-6">
         {data.length === 0 ? (
           <div className="text-center py-8 text-gray-500">
             <p>No weekly data available yet.</p>
@@ -80,14 +81,23 @@ const FourWeekConsistencyWidget = ({ data, getSubjectColor }: FourWeekConsistenc
           <div className="h-64">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={data} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
-                <CartesianGrid strokeDasharray="3 3" />
+                <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
                 <XAxis 
                   dataKey="week"
                   fontSize={12}
+                  tick={{ fill: '#374151' }}
                 />
-                <YAxis fontSize={12} />
+                <YAxis 
+                  fontSize={12}
+                  tick={{ fill: '#374151' }}
+                />
                 <Tooltip content={<CustomTooltip />} />
-                <Bar dataKey="hours" fill="#8884d8" />
+                <Bar 
+                  dataKey="hours" 
+                  fill="#8884d8" 
+                  stroke="#ffffff"
+                  strokeWidth={1}
+                />
               </BarChart>
             </ResponsiveContainer>
           </div>
