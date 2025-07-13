@@ -38,6 +38,7 @@ const YouTubeNoteTakerPage = () => {
     if (savedConfig) {
       try {
         const parsedConfig = JSON.parse(savedConfig);
+        console.log('Loaded AI config from localStorage:', parsedConfig);
         setAiConfig(parsedConfig);
       } catch (error) {
         console.error('Failed to parse saved AI config:', error);
@@ -48,6 +49,7 @@ const YouTubeNoteTakerPage = () => {
   // Save AI config to localStorage whenever it changes
   useEffect(() => {
     if (aiConfig.apiKey) {
+      console.log('Saving AI config to localStorage:', aiConfig);
       localStorage.setItem('youtubeNoteTaker_aiConfig', JSON.stringify(aiConfig));
     }
   }, [aiConfig]);
@@ -126,6 +128,7 @@ const YouTubeNoteTakerPage = () => {
       return;
     }
 
+    console.log('Starting summary generation with config:', aiConfig);
     setIsGeneratingSummary(true);
     try {
       const aiService = new AIService(aiConfig);
@@ -139,6 +142,7 @@ const YouTubeNoteTakerPage = () => {
         description: "AI summary created successfully!",
       });
     } catch (error) {
+      console.error('Summary generation error:', error);
       toast({
         title: "Error",
         description: error.message || "Failed to generate summary",
@@ -158,6 +162,7 @@ const YouTubeNoteTakerPage = () => {
       return;
     }
 
+    console.log('Saving AI config:', aiConfig);
     setShowAiConfig(false);
     toast({
       title: "Configuration Saved",
@@ -248,7 +253,13 @@ const YouTubeNoteTakerPage = () => {
                       <div className="space-y-4">
                         <div>
                           <Label htmlFor="provider">AI Provider</Label>
-                          <Select value={aiConfig.provider} onValueChange={(value: 'openai' | 'anthropic' | 'perplexity') => setAiConfig(prev => ({...prev, provider: value}))}>
+                          <Select 
+                            value={aiConfig.provider} 
+                            onValueChange={(value: 'openai' | 'anthropic' | 'perplexity') => {
+                              console.log('Provider changed to:', value);
+                              setAiConfig(prev => ({...prev, provider: value}));
+                            }}
+                          >
                             <SelectTrigger>
                               <SelectValue />
                             </SelectTrigger>
@@ -266,7 +277,10 @@ const YouTubeNoteTakerPage = () => {
                             type="password"
                             placeholder="Enter your API key"
                             value={aiConfig.apiKey}
-                            onChange={(e) => setAiConfig(prev => ({...prev, apiKey: e.target.value}))}
+                            onChange={(e) => {
+                              console.log('API key changed');
+                              setAiConfig(prev => ({...prev, apiKey: e.target.value}));
+                            }}
                           />
                         </div>
                         <div>

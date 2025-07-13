@@ -58,7 +58,12 @@ Output only a JSON array with one object like this:
   private async callAI(prompt: string): Promise<string> {
     const { provider, apiKey, model } = this.config;
     
-    switch (provider) {
+    console.log('AI Config:', { provider, hasApiKey: !!apiKey, model });
+    
+    // Normalize provider to lowercase to avoid case sensitivity issues
+    const normalizedProvider = provider?.toLowerCase().trim();
+    
+    switch (normalizedProvider) {
       case 'openai':
         return this.callOpenAI(prompt, apiKey, model);
       case 'anthropic':
@@ -66,11 +71,14 @@ Output only a JSON array with one object like this:
       case 'perplexity':
         return this.callPerplexity(prompt, apiKey, model);
       default:
-        throw new Error('Unsupported AI provider');
+        console.error('Unsupported AI provider:', provider, 'normalized:', normalizedProvider);
+        throw new Error(`Unsupported AI provider: ${provider}`);
     }
   }
 
   private async callOpenAI(prompt: string, apiKey: string, model: string): Promise<string> {
+    console.log('Calling OpenAI with model:', model || 'gpt-4o-mini');
+    
     const response = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
       headers: {
@@ -86,6 +94,8 @@ Output only a JSON array with one object like this:
     });
 
     if (!response.ok) {
+      const errorText = await response.text();
+      console.error('OpenAI API error:', response.status, errorText);
       throw new Error(`OpenAI API error: ${response.statusText}`);
     }
 
