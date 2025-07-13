@@ -1,6 +1,7 @@
+
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { ArrowRight, BookOpen, TrendingUp, Target, BarChart3, CheckCircle, Star, Clock, Trophy, Users, FileText, Brain, Mic, Video, Zap, Shield, Calendar, MessageSquare } from 'lucide-react';
+import { ArrowRight, BookOpen, TrendingUp, Target, BarChart3, CheckCircle, Star, Clock, Trophy, Users, FileText, Brain, Mic, Video, Zap, Shield, Calendar, MessageSquare, Briefcase, GraduationCap, Lightbulb, ArrowUpRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 const LandingPage = () => {
@@ -174,28 +175,44 @@ const LandingPage = () => {
 
   const targetAudience = [
     {
-      icon: Users,
+      icon: Briefcase,
       title: 'Working Professionals',
-      description: 'Reskilling in new technologies while managing a full-time job',
-      image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face'
+      tagline: 'Reskill on your schedule',
+      description: 'Busy professionals learning new technologies while managing full-time jobs and personal commitments.',
+      quote: '"Finally, a way to track my evening coding sessions!"',
+      bgGradient: 'from-blue-50 to-indigo-50',
+      iconBg: 'bg-blue-500',
+      iconColor: 'text-white'
     },
     {
-      icon: BookOpen,
+      icon: GraduationCap,
       title: 'Students & Freshers',
-      description: 'Managing multiple subjects and preparing for interviews',
-      image: 'https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?w=150&h=150&fit=crop&crop=face'
+      tagline: 'Master multiple subjects with ease',
+      description: 'Students juggling coursework, interview prep, and skill development across various technologies.',
+      quote: '"Perfect for organizing my CS studies and side projects!"',
+      bgGradient: 'from-green-50 to-emerald-50',
+      iconBg: 'bg-green-500',
+      iconColor: 'text-white'
     },
     {
       icon: Brain,
       title: 'Lifelong Learners',
-      description: 'Anyone from age 16 to 65+ committed to continuous learning',
-      image: 'https://images.unsplash.com/photo-1582750433449-6ca0a78fb36b?w=150&h=150&fit=crop&crop=face'
+      tagline: 'Never stop growing',
+      description: 'Curious minds from 16 to 65+ who believe learning never stops, whether it\'s new tech or creative skills.',
+      quote: '"Love seeing my learning patterns visualized!"',
+      bgGradient: 'from-purple-50 to-violet-50',
+      iconBg: 'bg-purple-500',
+      iconColor: 'text-white'
     },
     {
       icon: Zap,
       title: 'Career Switchers',
-      description: 'Transitioning careers and need structured learning approach',
-      image: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?w=150&h=150&fit=crop&crop=face'
+      tagline: 'Transform your future',
+      description: 'Professionals transitioning careers who need structured learning paths and progress tracking.',
+      quote: '"Helped me land my first tech job in 8 months!"',
+      bgGradient: 'from-orange-50 to-amber-50',
+      iconBg: 'bg-orange-500',
+      iconColor: 'text-white'
     }
   ];
 
@@ -239,32 +256,68 @@ const LandingPage = () => {
                 })}
               </div>
 
-              {/* Target Audience Section */}
+              {/* Enhanced Target Audience Section */}
               <div className="bg-gradient-to-br from-gray-50 to-[#E7BA40]/5 rounded-3xl p-8 mb-8">
-                <h3 className="text-3xl font-bold text-gray-900 mb-6 text-center">Who This App Is For</h3>
-                <p className="text-gray-600 text-center mb-8 max-w-4xl mx-auto text-lg leading-relaxed">
-                  Though we use the word "student," this isn't just for school kids. We are ALL students today — whether you're a CEO understanding your team's tech stack or a retiree learning digital tools. From age 16 to 65+, learning is part of everyone's life.
-                </p>
-                <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+                <div className="text-center mb-12">
+                  <h3 className="text-3xl font-bold text-gray-900 mb-4">
+                    👥 Made for Every Kind of Learner
+                  </h3>
+                  <p className="text-gray-600 max-w-4xl mx-auto text-lg leading-relaxed">
+                    Though we use the word "student," this isn't just for school kids. We are ALL students today — whether you're a CEO understanding your team's tech stack or a retiree learning digital tools. From age 16 to 65+, learning is part of everyone's life.
+                  </p>
+                </div>
+                
+                <div className="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto">
                   {targetAudience.map((audience, index) => {
                     const Icon = audience.icon;
                     return (
-                      <div key={index} className="text-center p-6 bg-white rounded-2xl shadow-sm hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1">
-                        <div className="relative mb-4">
-                          <img 
-                            src={audience.image} 
-                            alt={audience.title}
-                            className="w-20 h-20 rounded-full mx-auto object-cover border-4 border-[#E7BA40]/20"
-                          />
-                          <div className="absolute -bottom-2 -right-2 w-8 h-8 rounded-full bg-[#E7BA40] flex items-center justify-center">
-                            <Icon className="h-4 w-4 text-[#6B3F1D]" />
+                      <div 
+                        key={index} 
+                        className={`group relative p-8 bg-gradient-to-br ${audience.bgGradient} rounded-2xl border border-white/50 shadow-sm hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 cursor-pointer overflow-hidden`}
+                      >
+                        {/* Background decoration */}
+                        <div className="absolute top-0 right-0 w-32 h-32 opacity-5">
+                          <Icon className="w-full h-full" />
+                        </div>
+                        
+                        <div className="relative z-10">
+                          <div className="flex items-start gap-4 mb-6">
+                            <div className={`${audience.iconBg} w-16 h-16 rounded-2xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300`}>
+                              <Icon className={`h-8 w-8 ${audience.iconColor}`} />
+                            </div>
+                            <div className="flex-1">
+                              <h4 className="text-xl font-bold text-gray-900 mb-1">{audience.title}</h4>
+                              <p className="text-sm font-semibold text-gray-700 bg-white/70 px-3 py-1 rounded-full inline-block">
+                                {audience.tagline}
+                              </p>
+                            </div>
+                          </div>
+                          
+                          <p className="text-gray-700 mb-4 leading-relaxed">{audience.description}</p>
+                          
+                          <div className="bg-white/80 backdrop-blur-sm rounded-lg p-3 border border-white/50">
+                            <p className="text-sm italic text-gray-600">{audience.quote}</p>
+                          </div>
+                          
+                          {/* Hover arrow */}
+                          <div className="absolute bottom-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                            <ArrowUpRight className="w-5 h-5 text-gray-400" />
                           </div>
                         </div>
-                        <h4 className="font-semibold text-gray-900 mb-2">{audience.title}</h4>
-                        <p className="text-sm text-gray-600">{audience.description}</p>
                       </div>
                     );
                   })}
+                </div>
+                
+                {/* Footer message */}
+                <div className="text-center mt-12 p-6 bg-white/70 backdrop-blur-sm rounded-2xl border border-white/50">
+                  <div className="flex items-center justify-center gap-2 mb-2">
+                    <Lightbulb className="w-5 h-5 text-[#E7BA40]" />
+                    <span className="text-lg font-semibold text-gray-800">Not sure where you fit in?</span>
+                  </div>
+                  <p className="text-gray-600">
+                    Just start learning — the app adapts to your pace and learning style.
+                  </p>
                 </div>
               </div>
             </div>
