@@ -1,4 +1,3 @@
-
 import { AIConfig, TranscriptSegment } from '../types/youtube';
 
 export class AIService {
@@ -70,6 +69,10 @@ Output only a JSON array with one object like this:
         return this.callAnthropic(prompt, apiKey, model);
       case 'perplexity':
         return this.callPerplexity(prompt, apiKey, model);
+      case 'cohere':
+        return this.callCohere(prompt, apiKey, model);
+      case 'gemini':
+        return this.callGemini(prompt, apiKey, model);
       default:
         console.error('Unsupported AI provider:', provider, 'normalized:', normalizedProvider);
         throw new Error(`Unsupported AI provider: ${provider}`);
@@ -147,6 +150,56 @@ Output only a JSON array with one object like this:
 
     const data = await response.json();
     return data.choices[0].message.content;
+  }
+
+  private async callCohere(prompt: string, apiKey: string, model: string): Promise<string> {
+    const response = await fetch('https://api.cohere.ai/v1/generate', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${apiKey}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        model: model || 'command',
+        prompt: prompt,
+        max_tokens: 2000,
+        temperature: 0.3,
+      }),
+    });
+
+    if (!response.ok) {
+      throw new Error(`Cohere API error: ${response.statusText}`);
+    }
+
+    const data = await response.json();
+    return data.generations[0].text;
+  }
+
+  private async callGemini(prompt: string, apiKey: string, model: string): Promise<string> {
+    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model || 'gemini-pro'}:generateContent?key=${apiKey}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        contents: [{
+          parts: [{
+            text: prompt
+          }]
+        }],
+        generationConfig: {
+          temperature: 0.3,
+          maxOutputTokens: 2000,
+        }
+      }),
+    });
+
+    if (!response.ok) {
+      throw new Error(`Gemini API error: ${response.statusText}`);
+    }
+
+    const data = await response.json();
+    return data.candidates[0].content.parts[0].text;
   }
 
   private parseAIResponse(response: string, segments: TranscriptSegment[]) {

@@ -36,6 +36,35 @@ const YouTubeNoteTakerPage = () => {
   });
   const [showAiConfig, setShowAiConfig] = useState(false);
 
+  // Model options for each provider
+  const modelOptions = {
+    openai: [
+      { value: 'gpt-4o-mini', label: 'GPT-4o Mini (Recommended)' },
+      { value: 'gpt-4o', label: 'GPT-4o' },
+      { value: 'gpt-4', label: 'GPT-4' },
+      { value: 'gpt-3.5-turbo', label: 'GPT-3.5 Turbo' }
+    ],
+    anthropic: [
+      { value: 'claude-3-haiku-20240307', label: 'Claude 3 Haiku (Recommended)' },
+      { value: 'claude-3-sonnet-20240229', label: 'Claude 3 Sonnet' },
+      { value: 'claude-3-opus-20240229', label: 'Claude 3 Opus' }
+    ],
+    perplexity: [
+      { value: 'llama-3.1-sonar-small-128k-online', label: 'Llama 3.1 Sonar Small (Recommended)' },
+      { value: 'llama-3.1-sonar-large-128k-online', label: 'Llama 3.1 Sonar Large' },
+      { value: 'llama-3.1-sonar-huge-128k-online', label: 'Llama 3.1 Sonar Huge' }
+    ],
+    cohere: [
+      { value: 'command', label: 'Command (Recommended)' },
+      { value: 'command-light', label: 'Command Light' },
+      { value: 'command-nightly', label: 'Command Nightly' }
+    ],
+    gemini: [
+      { value: 'gemini-pro', label: 'Gemini Pro (Recommended)' },
+      { value: 'gemini-pro-vision', label: 'Gemini Pro Vision' }
+    ]
+  };
+
   // Load AI config from localStorage on component mount
   useEffect(() => {
     const savedConfig = localStorage.getItem('youtubeNoteTaker_aiConfig');
@@ -246,6 +275,22 @@ const YouTubeNoteTakerPage = () => {
     });
   };
 
+  const handleProviderChange = (newProvider: 'openai' | 'anthropic' | 'perplexity' | 'cohere' | 'gemini') => {
+    const defaultModels = {
+      openai: 'gpt-4o-mini',
+      anthropic: 'claude-3-haiku-20240307',
+      perplexity: 'llama-3.1-sonar-small-128k-online',
+      cohere: 'command',
+      gemini: 'gemini-pro'
+    };
+
+    setAiConfig(prev => ({
+      ...prev,
+      provider: newProvider,
+      model: defaultModels[newProvider]
+    }));
+  };
+
   const copyCard = (card: SummaryCard) => {
     navigator.clipboard.writeText(card.content);
     toast({
@@ -352,7 +397,7 @@ const YouTubeNoteTakerPage = () => {
                             <Settings className="h-4 w-4" />
                           </Button>
                         </DialogTrigger>
-                        <DialogContent className="bg-white">
+                        <DialogContent className="bg-white max-w-md">
                           <DialogHeader>
                             <DialogTitle className="flex items-center gap-2">
                               <Settings className="h-5 w-5" />
@@ -364,10 +409,7 @@ const YouTubeNoteTakerPage = () => {
                               <Label htmlFor="provider">AI Provider</Label>
                               <Select 
                                 value={aiConfig.provider} 
-                                onValueChange={(value: 'openai' | 'anthropic' | 'perplexity') => {
-                                  console.log('Provider changed to:', value);
-                                  setAiConfig(prev => ({...prev, provider: value}));
-                                }}
+                                onValueChange={handleProviderChange}
                               >
                                 <SelectTrigger>
                                   <SelectValue />
@@ -376,6 +418,26 @@ const YouTubeNoteTakerPage = () => {
                                   <SelectItem value="openai">OpenAI</SelectItem>
                                   <SelectItem value="anthropic">Anthropic</SelectItem>
                                   <SelectItem value="perplexity">Perplexity</SelectItem>
+                                  <SelectItem value="cohere">Cohere</SelectItem>
+                                  <SelectItem value="gemini">Google Gemini</SelectItem>
+                                </SelectContent>
+                              </Select>
+                            </div>
+                            <div>
+                              <Label htmlFor="model">Model</Label>
+                              <Select 
+                                value={aiConfig.model} 
+                                onValueChange={(value) => setAiConfig(prev => ({...prev, model: value}))}
+                              >
+                                <SelectTrigger>
+                                  <SelectValue />
+                                </SelectTrigger>
+                                <SelectContent>
+                                  {modelOptions[aiConfig.provider]?.map((option) => (
+                                    <SelectItem key={option.value} value={option.value}>
+                                      {option.label}
+                                    </SelectItem>
+                                  ))}
                                 </SelectContent>
                               </Select>
                             </div>
@@ -390,15 +452,6 @@ const YouTubeNoteTakerPage = () => {
                                   console.log('API key changed');
                                   setAiConfig(prev => ({...prev, apiKey: e.target.value}));
                                 }}
-                              />
-                            </div>
-                            <div>
-                              <Label htmlFor="model">Model (optional)</Label>
-                              <Input
-                                id="model"
-                                placeholder={aiConfig.provider === 'openai' ? 'gpt-4o-mini' : aiConfig.provider === 'anthropic' ? 'claude-3-haiku-20240307' : 'llama-3.1-sonar-small-128k-online'}
-                                value={aiConfig.model}
-                                onChange={(e) => setAiConfig(prev => ({...prev, model: e.target.value}))}
                               />
                             </div>
                             <div className="flex gap-2 pt-4">

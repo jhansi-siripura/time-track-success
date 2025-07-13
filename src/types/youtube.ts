@@ -1,6 +1,7 @@
 
+
 export interface AIConfig {
-  provider: 'openai' | 'anthropic' | 'perplexity';
+  provider: 'openai' | 'anthropic' | 'perplexity' | 'cohere' | 'gemini';
   apiKey: string;
   model: string;
 }
@@ -28,3 +29,4 @@ export interface SummaryCard {
   startTime: number;
   endTime: number;
 }
+
