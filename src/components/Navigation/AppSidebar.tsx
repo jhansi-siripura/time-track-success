@@ -11,16 +11,17 @@ const AppSidebar = () => {
   const mainNavItems = [
     { path: '/home', label: 'Home', icon: Home },
     { path: '/dashboard', label: 'Dashboard', icon: BarChart3 },
-    { path: '/learning-matrix', label: 'Learning Matrix', icon: Target },
-    { path: '/youtube-notetaker', label: 'YouTube NoteTaker', icon: Youtube },
     { path: '/pomodoro', label: 'Pomodoro', icon: Timer },
     { path: '/add-session', label: 'Add Study Log', icon: Plus },
-    { path: '/study-logs', label: 'View Logs', icon: FileText },
     { path: '/recap', label: 'Recap', icon: BookOpen },
+    { path: '/learning-matrix', label: 'Learning Matrix', icon: Target },
+    { path: '/youtube-notetaker', label: 'YouTube NoteTaker', icon: Youtube },
+        
   ];
 
   const secondaryNavItems = [
     { path: '/settings', label: 'Settings', icon: Settings },
+    { path: '/study-logs', label: 'View Logs', icon: FileText },
   ];
 
   const isActive = (path: string) => location.pathname === path;
