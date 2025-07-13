@@ -1,247 +1,203 @@
-
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { ArrowRight, BookOpen, TrendingUp, Target, BarChart3, CheckCircle, Star, Clock, Trophy, Users, FileText, Brain, Mic, Video, Zap, Shield, Calendar, MessageSquare, Briefcase, GraduationCap, Lightbulb, ArrowUpRight } from 'lucide-react';
+import { ArrowRight, BookOpen, TrendingUp, Target, BarChart3, CheckCircle, Star, Clock, Trophy, Users, FileText, Brain, Mic, Video, Zap, Shield, Calendar, MessageSquare } from 'lucide-react';
 import { Link } from 'react-router-dom';
-
 const LandingPage = () => {
   const [activeTab, setActiveTab] = useState('home');
-  
-  const navItems = [
-    { id: 'home', label: 'Home' },
-    { id: 'features', label: 'Features' },
-    { id: 'how-it-works', label: 'How It Works' },
-    { id: 'pricing', label: 'Pricing' },
-    { id: 'testimonials', label: 'Reviews' }
-  ];
-
-  const features = [
-    {
-      icon: BarChart3,
-      title: 'Smart Analytics Dashboard',
-      description: 'Real-time study analytics with weekly distribution, 4-week consistency tracking, and 12-month trend analysis to visualize your learning journey.',
-      highlight: 'Live charts showing 121+ study hours across 10 subjects',
-      image: '/lovable-uploads/5b7e15fd-5267-4c33-b1e7-9aab71172f81.png'
-    },
-    {
-      icon: Target,
-      title: 'Daily Goal Tracking',
-      description: 'Set and monitor daily study targets with 21-day and 7-day averages. Track your consistency and build sustainable study habits.',
-      highlight: 'Visual progress tracking with goal completion metrics',
-      image: '/lovable-uploads/1693bcca-b7cd-4596-833a-9acb310ff88c.png'
-    },
-    {
-      icon: Clock,
-      title: 'Pomodoro Timer Integration',
-      description: 'Built-in focus timer with customizable work/break intervals. Seamlessly logs study time and tracks productivity cycles.',
-      highlight: 'Professional timer with Focus, Short Break, and Long Break modes',
-      image: '/lovable-uploads/20fd0469-4333-4e23-868a-bad45683b374.png'
-    },
-    {
-      icon: FileText,
-      title: 'Detailed Study Session Logging',
-      description: 'Comprehensive session tracking with subjects, topics, duration, and rich notes. View your learning timeline with powerful filtering.',
-      highlight: 'Timeline view with 167+ logged sessions and detailed notes',
-      image: '/lovable-uploads/562463fc-c2ff-4990-9a33-12371214a9b6.png'
-    },
-    {
-      icon: Brain,
-      title: 'Learning Matrix System',
-      description: 'Organize technologies by expertise level and priority. Visual quadrant system helps you focus on job-critical skills first.',
-      highlight: 'Smart categorization: Job-Critical, Important, Curious, Nice-to-Know',
-      image: '/lovable-uploads/66fe05e3-4b0c-4085-8f0b-cf1661cf385d.png'
-    },
-    {
-      icon: Video,
-      title: 'YouTube AI NoteTaker',
-      description: 'Transform YouTube videos into AI-powered summary cards. Extract key insights, timestamps, and structured notes automatically.',
-      highlight: 'AI-generated summaries with transcript analysis and key points',
-      image: '/lovable-uploads/67c18096-be05-46d3-b5c3-fe824e8e8fe6.png'
-    }
-  ];
-
-  const benefits = [
-    { icon: Clock, stat: '3+ Hours', label: 'Saved Weekly' },
-    { icon: Trophy, stat: '40%', label: 'Better Results' },
-    { icon: Users, stat: '10K+', label: 'Happy Learners' },
-    { icon: Star, stat: '4.9/5', label: 'User Rating' }
-  ];
-
-  const steps = [
-    {
-      number: '01',
-      title: 'Capture Your Learning',
-      description: 'Log study sessions with subject, topic, duration, and rich notes. Attach images, voice memos, or video timestamps.',
-      details: 'Supports multiple subjects simultaneously - perfect for professionals learning AWS, React, and Python in parallel',
-      image: 'https://images.unsplash.com/photo-1456324504439-367cee3b3c32?w=400&h=250&fit=crop&crop=center'
-    },
-    {
-      number: '02',
-      title: 'Organize & Prioritize',
-      description: 'Use the Learning Matrix to categorize technologies by expertise level and priority for your career goals.',
-      details: 'Visual knowledge mapping helps you focus on high-impact skills first',
-      image: 'https://images.unsplash.com/photo-1559757148-5c350d0d3c56?w=400&h=250&fit=crop&crop=center'
-    },
-    {
-      number: '03',
-      title: 'Analyze Your Patterns',
-      description: 'View detailed analytics showing your most productive times, subject distribution, and consistency trends.',
-      details: 'Data-driven insights help optimize your learning schedule and identify knowledge gaps',
-      image: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=400&h=250&fit=crop&crop=center'
-    },
-    {
-      number: '04',
-      title: 'Review & Retain',
-      description: 'Use spaced repetition calendar to review notes at optimal intervals, ensuring long-term retention.',
-      details: 'Combat the forgetting curve with smart revision scheduling',
-      image: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&h=250&fit=crop&crop=center'
-    }
-  ];
-
-  const testimonials = [
-    {
-      name: 'Sarah Chen',
-      role: 'Software Engineer (Career Switcher)',
-      content: 'This app helped me transition from marketing to tech. The Learning Matrix kept me focused on job-critical skills while the analytics showed my progress.',
-      rating: 5,
-      image: 'https://images.unsplash.com/photo-1494790108755-2616b332c1cd?w=100&h=100&fit=crop&crop=face'
-    },
-    {
-      name: 'Marcus Rodriguez',
-      role: 'Medical Student',
-      content: 'Managing multiple subjects was overwhelming until I found this. The spaced repetition feature is a game-changer for retaining complex information.',
-      rating: 5,
-      image: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&h=100&fit=crop&crop=face'
-    },
-    {
-      name: 'Emily Watson',
-      role: 'Working Professional',
-      content: 'As a busy parent learning cloud computing, the Pomodoro integration and session logging help me make the most of my limited study time.',
-      rating: 5,
-      image: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=100&h=100&fit=crop&crop=face'
-    }
-  ];
-
-  const pricingPlans = [
-    {
-      name: 'Free Forever',
-      price: '$0',
-      period: 'Always Free',
-      description: 'Perfect for getting started with essential learning tools',
-      features: [
-        'Unlimited study session logging',
-        'Basic analytics dashboard',
-        'Pomodoro timer with session tracking',
-        'Learning Matrix (up to 20 technologies)',
-        'Simple note-taking and image attachments',
-        'Basic spaced repetition calendar',
-        '500MB storage for notes and images',
-        'Export data as CSV'
-      ],
-      limitations: [
-        'No voice note-taking',
-        'No AI-powered features',
-        'No video integration',
-        'Basic analytics only'
-      ],
-      buttonText: 'Start Free',
-      popular: false
-    },
-    {
-      name: 'Premium',
-      price: '$8',
-      period: 'per month',
-      yearlyPrice: '$79',
-      yearlyPeriod: 'per year (2 months free)',
-      description: 'For serious learners who want advanced features and unlimited growth',
-      features: [
-        'Everything in Free, plus:',
-        'AI-powered voice note-taking and transcription',
-        'YouTube & video note integration with timestamps',
-        'AI note summarization and organization',
-        'Advanced analytics with 24-month history',
-        'Unlimited Learning Matrix technologies',
-        'Smart goal recommendations based on progress',
-        '10GB storage per month',
-        'Priority customer support',
-        'Advanced export options (PDF, Notion, etc.)',
-        'Team collaboration features (coming soon)'
-      ],
-      buttonText: 'Start 60-Day Free Trial',
-      popular: true,
-      highlight: 'Most Popular'
-    }
-  ];
-
-  const targetAudience = [
-    {
-      icon: Briefcase,
-      title: 'Working Professionals',
-      tagline: 'Reskill on your schedule',
-      description: 'Busy professionals learning new technologies while managing full-time jobs and personal commitments.',
-      quote: '"Finally, a way to track my evening coding sessions!"',
-      bgGradient: 'from-blue-50 to-indigo-50',
-      iconBg: 'bg-blue-500',
-      iconColor: 'text-white'
-    },
-    {
-      icon: GraduationCap,
-      title: 'Students & Freshers',
-      tagline: 'Master multiple subjects with ease',
-      description: 'Students juggling coursework, interview prep, and skill development across various technologies.',
-      quote: '"Perfect for organizing my CS studies and side projects!"',
-      bgGradient: 'from-green-50 to-emerald-50',
-      iconBg: 'bg-green-500',
-      iconColor: 'text-white'
-    },
-    {
-      icon: Brain,
-      title: 'Lifelong Learners',
-      tagline: 'Never stop growing',
-      description: 'Curious minds from 16 to 65+ who believe learning never stops, whether it\'s new tech or creative skills.',
-      quote: '"Love seeing my learning patterns visualized!"',
-      bgGradient: 'from-purple-50 to-violet-50',
-      iconBg: 'bg-purple-500',
-      iconColor: 'text-white'
-    },
-    {
-      icon: Zap,
-      title: 'Career Switchers',
-      tagline: 'Transform your future',
-      description: 'Professionals transitioning careers who need structured learning paths and progress tracking.',
-      quote: '"Helped me land my first tech job in 8 months!"',
-      bgGradient: 'from-orange-50 to-amber-50',
-      iconBg: 'bg-orange-500',
-      iconColor: 'text-white'
-    }
-  ];
-
+  const navItems = [{
+    id: 'home',
+    label: 'Home'
+  }, {
+    id: 'features',
+    label: 'Features'
+  }, {
+    id: 'how-it-works',
+    label: 'How It Works'
+  }, {
+    id: 'pricing',
+    label: 'Pricing'
+  }, {
+    id: 'testimonials',
+    label: 'Reviews'
+  }];
+  const features = [{
+    icon: BarChart3,
+    title: 'Smart Analytics Dashboard',
+    description: 'Comprehensive analytics showing study patterns, time distribution across subjects, and progress trends over weeks and months.',
+    highlight: 'Real-time insights with 12-month trend analysis',
+    image: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=500&h=300&fit=crop&crop=center'
+  }, {
+    icon: Target,
+    title: 'Intelligent Goal Tracking',
+    description: 'Set daily study targets with AI-powered recommendations based on your historical performance and learning patterns.',
+    highlight: 'Adaptive goals that evolve with your progress',
+    image: 'https://images.unsplash.com/photo-1484480974693-6ca0a78fb36b?w=500&h=300&fit=crop&crop=center'
+  }, {
+    icon: FileText,
+    title: 'Rich Session Logging',
+    description: 'Capture detailed study sessions with subject categorization, duration tracking, achievements, and multimedia note attachments.',
+    highlight: 'Support for images, notes, and structured topics',
+    image: 'https://images.unsplash.com/photo-1456324504439-367cee3b3c32?w=500&h=300&fit=crop&crop=center'
+  }, {
+    icon: Brain,
+    title: 'Learning Matrix System',
+    description: 'Organize technologies and concepts by expertise level - from unknown to expert - with priority-based learning paths.',
+    highlight: 'Visual knowledge mapping for career growth',
+    image: 'https://images.unsplash.com/photo-1559757148-5c350d0d3c56?w=500&h=300&fit=crop&crop=center'
+  }, {
+    icon: Calendar,
+    title: 'Spaced Repetition & Recap',
+    description: 'Built-in revision system with calendar-based review scheduling to combat forgetting curve and ensure long-term retention.',
+    highlight: 'Smart reminders for optimal memory retention',
+    image: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=500&h=300&fit=crop&crop=center'
+  }, {
+    icon: Clock,
+    title: 'Pomodoro Timer Integration',
+    description: 'Built-in focus timer with customizable work/break intervals, automatic session logging, and productivity tracking.',
+    highlight: 'Seamlessly logs study time to your analytics',
+    image: 'https://images.unsplash.com/photo-1506784983877-45594efa4cbe?w=500&h=300&fit=crop&crop=center'
+  }, {
+    icon: Mic,
+    title: 'Voice & AI Note Taking',
+    description: 'Convert speech to text for quick note capture during lectures or while reviewing concepts on the go.',
+    highlight: 'Premium: AI-powered note organization and summarization',
+    image: 'https://images.unsplash.com/photo-1589903308904-1010c2294adc?w=500&h=300&fit=crop&crop=center'
+  }, {
+    icon: Video,
+    title: 'YouTube & Video Note Integration',
+    description: 'Take timestamped notes while watching educational videos, with direct links back to specific video moments.',
+    highlight: 'Premium: Automatic transcript extraction and key point identification',
+    image: 'https://images.unsplash.com/photo-1611532736597-de2d4265fba3?w=500&h=300&fit=crop&crop=center'
+  }, {
+    icon: TrendingUp,
+    title: 'Progress Visualization',
+    description: 'Beautiful charts showing weekly consistency, subject distribution, and learning velocity over time.',
+    highlight: 'Gamified progress tracking with achievement badges',
+    image: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=500&h=300&fit=crop&crop=center'
+  }];
+  const benefits = [{
+    icon: Clock,
+    stat: '3+ Hours',
+    label: 'Saved Weekly'
+  }, {
+    icon: Trophy,
+    stat: '40%',
+    label: 'Better Results'
+  }, {
+    icon: Users,
+    stat: '10K+',
+    label: 'Happy Learners'
+  }, {
+    icon: Star,
+    stat: '4.9/5',
+    label: 'User Rating'
+  }];
+  const steps = [{
+    number: '01',
+    title: 'Capture Your Learning',
+    description: 'Log study sessions with subject, topic, duration, and rich notes. Attach images, voice memos, or video timestamps.',
+    details: 'Supports multiple subjects simultaneously - perfect for professionals learning AWS, React, and Python in parallel',
+    image: 'https://images.unsplash.com/photo-1456324504439-367cee3b3c32?w=400&h=250&fit=crop&crop=center'
+  }, {
+    number: '02',
+    title: 'Organize & Prioritize',
+    description: 'Use the Learning Matrix to categorize technologies by expertise level and priority for your career goals.',
+    details: 'Visual knowledge mapping helps you focus on high-impact skills first',
+    image: 'https://images.unsplash.com/photo-1559757148-5c350d0d3c56?w=400&h=250&fit=crop&crop=center'
+  }, {
+    number: '03',
+    title: 'Analyze Your Patterns',
+    description: 'View detailed analytics showing your most productive times, subject distribution, and consistency trends.',
+    details: 'Data-driven insights help optimize your learning schedule and identify knowledge gaps',
+    image: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=400&h=250&fit=crop&crop=center'
+  }, {
+    number: '04',
+    title: 'Review & Retain',
+    description: 'Use spaced repetition calendar to review notes at optimal intervals, ensuring long-term retention.',
+    details: 'Combat the forgetting curve with smart revision scheduling',
+    image: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&h=250&fit=crop&crop=center'
+  }];
+  const testimonials = [{
+    name: 'Sarah Chen',
+    role: 'Software Engineer (Career Switcher)',
+    content: 'This app helped me transition from marketing to tech. The Learning Matrix kept me focused on job-critical skills while the analytics showed my progress.',
+    rating: 5,
+    image: 'https://images.unsplash.com/photo-1494790108755-2616b332c1cd?w=100&h=100&fit=crop&crop=face'
+  }, {
+    name: 'Marcus Rodriguez',
+    role: 'Medical Student',
+    content: 'Managing multiple subjects was overwhelming until I found this. The spaced repetition feature is a game-changer for retaining complex information.',
+    rating: 5,
+    image: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&h=100&fit=crop&crop=face'
+  }, {
+    name: 'Emily Watson',
+    role: 'Working Professional',
+    content: 'As a busy parent learning cloud computing, the Pomodoro integration and session logging help me make the most of my limited study time.',
+    rating: 5,
+    image: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=100&h=100&fit=crop&crop=face'
+  }];
+  const pricingPlans = [{
+    name: 'Free Forever',
+    price: '$0',
+    period: 'Always Free',
+    description: 'Perfect for getting started with essential learning tools',
+    features: ['Unlimited study session logging', 'Basic analytics dashboard', 'Pomodoro timer with session tracking', 'Learning Matrix (up to 20 technologies)', 'Simple note-taking and image attachments', 'Basic spaced repetition calendar', '500MB storage for notes and images', 'Export data as CSV'],
+    limitations: ['No voice note-taking', 'No AI-powered features', 'No video integration', 'Basic analytics only'],
+    buttonText: 'Start Free',
+    popular: false
+  }, {
+    name: 'Premium',
+    price: '$8',
+    period: 'per month',
+    yearlyPrice: '$79',
+    yearlyPeriod: 'per year (2 months free)',
+    description: 'For serious learners who want advanced features and unlimited growth',
+    features: ['Everything in Free, plus:', 'AI-powered voice note-taking and transcription', 'YouTube & video note integration with timestamps', 'AI note summarization and organization', 'Advanced analytics with 24-month history', 'Unlimited Learning Matrix technologies', 'Smart goal recommendations based on progress', '10GB storage per month', 'Priority customer support', 'Advanced export options (PDF, Notion, etc.)', 'Team collaboration features (coming soon)'],
+    buttonText: 'Start 60-Day Free Trial',
+    popular: true,
+    highlight: 'Most Popular'
+  }];
+  const targetAudience = [{
+    icon: Users,
+    title: 'Working Professionals',
+    description: 'Reskilling in new technologies while managing a full-time job',
+    image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face'
+  }, {
+    icon: BookOpen,
+    title: 'Students & Freshers',
+    description: 'Managing multiple subjects and preparing for interviews',
+    image: 'https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?w=150&h=150&fit=crop&crop=face'
+  }, {
+    icon: Brain,
+    title: 'Lifelong Learners',
+    description: 'Anyone from age 16 to 65+ committed to continuous learning',
+    image: 'https://images.unsplash.com/photo-1582750433449-6ca0a78fb36b?w=150&h=150&fit=crop&crop=face'
+  }, {
+    icon: Zap,
+    title: 'Career Switchers',
+    description: 'Transitioning careers and need structured learning approach',
+    image: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?w=150&h=150&fit=crop&crop=face'
+  }];
   const renderContent = () => {
     switch (activeTab) {
       case 'features':
-        return (
-          <section className="py-20 px-4">
+        return <section className="py-20 px-4">
             <div className="max-w-6xl mx-auto">
               <div className="text-center mb-16">
                 <h2 className="text-4xl font-bold text-gray-900 mb-4">
-                  See Your Real Study Tracker in Action
+                  Everything You Need to Master Any Subject
                 </h2>
                 <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-                  These are actual screenshots from our app - no mock-ups or placeholders. This is exactly what you'll see when you start tracking your learning journey.
+                  Built for the modern learner juggling multiple technologies, subjects, and career goals
                 </p>
               </div>
 
-              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
+              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16 bg-yellow-300">
                 {features.map((feature, index) => {
-                  const Icon = feature.icon;
-                  return (
-                    <div key={index} className="group p-6 rounded-2xl bg-white border border-gray-100 hover:border-[#E7BA40] hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2">
-                      <div className="relative mb-4 rounded-xl overflow-hidden border border-gray-200">
-                        <img 
-                          src={feature.image} 
-                          alt={feature.title}
-                          className="w-full h-48 object-cover object-top group-hover:scale-105 transition-transform duration-300"
-                        />
+                const Icon = feature.icon;
+                return <div key={index} className="group p-6 rounded-2xl bg-white border border-gray-100 hover:border-[#E7BA40] hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2">
+                      <div className="relative mb-4 rounded-xl overflow-hidden">
+                        <img src={feature.image} alt={feature.title} className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300" />
                         <div className="absolute top-3 left-3 w-12 h-12 rounded-xl bg-[#E7BA40] flex items-center justify-center shadow-lg">
                           <Icon className="h-6 w-6 text-[#6B3F1D]" />
                         </div>
@@ -251,82 +207,36 @@ const LandingPage = () => {
                       <div className="text-sm font-medium text-[#6B3F1D] bg-[#E7BA40]/10 px-3 py-1 rounded-full">
                         {feature.highlight}
                       </div>
-                    </div>
-                  );
-                })}
+                    </div>;
+              })}
               </div>
 
-              {/* Enhanced Target Audience Section */}
+              {/* Target Audience Section */}
               <div className="bg-gradient-to-br from-gray-50 to-[#E7BA40]/5 rounded-3xl p-8 mb-8">
-                <div className="text-center mb-12">
-                  <h3 className="text-3xl font-bold text-gray-900 mb-4">
-                    👥 Made for Every Kind of Learner
-                  </h3>
-                  <p className="text-gray-600 max-w-4xl mx-auto text-lg leading-relaxed">
-                    Though we use the word "student," this isn't just for school kids. We are ALL students today — whether you're a CEO understanding your team's tech stack or a retiree learning digital tools. From age 16 to 65+, learning is part of everyone's life.
-                  </p>
-                </div>
-                
-                <div className="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto">
+                <h3 className="text-3xl font-bold text-gray-900 mb-6 text-center">Who This App Is For</h3>
+                <p className="text-gray-600 text-center mb-8 max-w-4xl mx-auto text-lg leading-relaxed">
+                  Though we use the word "student," this isn't just for school kids. We are ALL students today — whether you're a CEO understanding your team's tech stack or a retiree learning digital tools. From age 16 to 65+, learning is part of everyone's life.
+                </p>
+                <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
                   {targetAudience.map((audience, index) => {
-                    const Icon = audience.icon;
-                    return (
-                      <div 
-                        key={index} 
-                        className={`group relative p-8 bg-gradient-to-br ${audience.bgGradient} rounded-2xl border border-white/50 shadow-sm hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 cursor-pointer overflow-hidden`}
-                      >
-                        {/* Background decoration */}
-                        <div className="absolute top-0 right-0 w-32 h-32 opacity-5">
-                          <Icon className="w-full h-full" />
-                        </div>
-                        
-                        <div className="relative z-10">
-                          <div className="flex items-start gap-4 mb-6">
-                            <div className={`${audience.iconBg} w-16 h-16 rounded-2xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300`}>
-                              <Icon className={`h-8 w-8 ${audience.iconColor}`} />
-                            </div>
-                            <div className="flex-1">
-                              <h4 className="text-xl font-bold text-gray-900 mb-1">{audience.title}</h4>
-                              <p className="text-sm font-semibold text-gray-700 bg-white/70 px-3 py-1 rounded-full inline-block">
-                                {audience.tagline}
-                              </p>
-                            </div>
-                          </div>
-                          
-                          <p className="text-gray-700 mb-4 leading-relaxed">{audience.description}</p>
-                          
-                          <div className="bg-white/80 backdrop-blur-sm rounded-lg p-3 border border-white/50">
-                            <p className="text-sm italic text-gray-600">{audience.quote}</p>
-                          </div>
-                          
-                          {/* Hover arrow */}
-                          <div className="absolute bottom-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                            <ArrowUpRight className="w-5 h-5 text-gray-400" />
+                  const Icon = audience.icon;
+                  return <div key={index} className="text-center p-6 bg-white rounded-2xl shadow-sm hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1">
+                        <div className="relative mb-4">
+                          <img src={audience.image} alt={audience.title} className="w-20 h-20 rounded-full mx-auto object-cover border-4 border-[#E7BA40]/20" />
+                          <div className="absolute -bottom-2 -right-2 w-8 h-8 rounded-full bg-[#E7BA40] flex items-center justify-center">
+                            <Icon className="h-4 w-4 text-[#6B3F1D]" />
                           </div>
                         </div>
-                      </div>
-                    );
-                  })}
-                </div>
-                
-                {/* Footer message */}
-                <div className="text-center mt-12 p-6 bg-white/70 backdrop-blur-sm rounded-2xl border border-white/50">
-                  <div className="flex items-center justify-center gap-2 mb-2">
-                    <Lightbulb className="w-5 h-5 text-[#E7BA40]" />
-                    <span className="text-lg font-semibold text-gray-800">Not sure where you fit in?</span>
-                  </div>
-                  <p className="text-gray-600">
-                    Just start learning — the app adapts to your pace and learning style.
-                  </p>
+                        <h4 className="font-semibold text-gray-900 mb-2">{audience.title}</h4>
+                        <p className="text-sm text-gray-600">{audience.description}</p>
+                      </div>;
+                })}
                 </div>
               </div>
             </div>
-          </section>
-        );
-
+          </section>;
       case 'how-it-works':
-        return (
-          <section className="py-20 px-4">
+        return <section className="py-20 px-4">
             <div className="max-w-6xl mx-auto">
               <div className="text-center mb-16">
                 <h2 className="text-4xl font-bold text-gray-900 mb-4">
@@ -338,8 +248,7 @@ const LandingPage = () => {
               </div>
 
               <div className="grid md:grid-cols-2 gap-12 mb-16">
-                {steps.map((step, index) => (
-                  <div key={index} className="relative group">
+                {steps.map((step, index) => <div key={index} className="relative group">
                     <div className="flex gap-6">
                       <div className="flex-shrink-0">
                         <div className="bg-[#E7BA40] w-16 h-16 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform duration-300 text-2xl font-bold text-[#6B3F1D] shadow-lg">
@@ -353,16 +262,11 @@ const LandingPage = () => {
                           {step.details}
                         </div>
                         <div className="rounded-xl overflow-hidden shadow-lg">
-                          <img 
-                            src={step.image} 
-                            alt={step.title}
-                            className="w-full h-40 object-cover hover:scale-105 transition-transform duration-300"
-                          />
+                          <img src={step.image} alt={step.title} className="w-full h-40 object-cover hover:scale-105 transition-transform duration-300" />
                         </div>
                       </div>
                     </div>
-                  </div>
-                ))}
+                  </div>)}
               </div>
 
               {/* Pain Points Section */}
@@ -404,12 +308,9 @@ const LandingPage = () => {
                 </div>
               </div>
             </div>
-          </section>
-        );
-
+          </section>;
       case 'pricing':
-        return (
-          <section className="py-20 px-4">
+        return <section className="py-20 px-4">
             <div className="max-w-6xl mx-auto">
               <div className="text-center mb-16">
                 <h2 className="text-4xl font-bold text-gray-900 mb-4">
@@ -421,17 +322,10 @@ const LandingPage = () => {
               </div>
 
               <div className="grid lg:grid-cols-2 gap-8 max-w-5xl mx-auto">
-                {pricingPlans.map((plan, index) => (
-                  <div key={index} className={`relative p-8 rounded-3xl border-2 transition-all duration-300 ${
-                    plan.popular 
-                      ? 'border-[#E7BA40] shadow-2xl scale-105 bg-gradient-to-br from-white to-[#E7BA40]/5' 
-                      : 'border-gray-200 hover:border-[#E7BA40]/50 hover:shadow-lg'
-                  }`}>
-                    {plan.popular && (
-                      <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 bg-gradient-to-r from-[#E7BA40] to-[#F4C842] text-[#6B3F1D] px-6 py-2 rounded-full text-sm font-semibold shadow-lg">
+                {pricingPlans.map((plan, index) => <div key={index} className={`relative p-8 rounded-3xl border-2 transition-all duration-300 ${plan.popular ? 'border-[#E7BA40] shadow-2xl scale-105 bg-gradient-to-br from-white to-[#E7BA40]/5' : 'border-gray-200 hover:border-[#E7BA40]/50 hover:shadow-lg'}`}>
+                    {plan.popular && <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 bg-gradient-to-r from-[#E7BA40] to-[#F4C842] text-[#6B3F1D] px-6 py-2 rounded-full text-sm font-semibold shadow-lg">
                         {plan.highlight}
-                      </div>
-                    )}
+                      </div>}
 
                     <div className="text-center mb-8">
                       <h3 className="text-2xl font-bold text-gray-900 mb-2">{plan.name}</h3>
@@ -439,11 +333,9 @@ const LandingPage = () => {
                         <span className="text-5xl font-bold text-[#6B3F1D]">{plan.price}</span>
                         <span className="text-gray-600 ml-2 text-lg">{plan.period}</span>
                       </div>
-                      {plan.yearlyPrice && (
-                        <div className="text-sm text-gray-600 bg-green-50 px-3 py-1 rounded-full inline-block">
+                      {plan.yearlyPrice && <div className="text-sm text-gray-600 bg-green-50 px-3 py-1 rounded-full inline-block">
                           or <span className="font-semibold text-green-700">{plan.yearlyPrice}</span> {plan.yearlyPeriod}
-                        </div>
-                      )}
+                        </div>}
                       <p className="text-gray-600 mt-4 text-lg">{plan.description}</p>
                     </div>
 
@@ -454,53 +346,38 @@ const LandingPage = () => {
                           What's Included
                         </h4>
                         <ul className="space-y-3">
-                          {plan.features.map((feature, featureIndex) => (
-                            <li key={featureIndex} className="flex items-start gap-3 text-gray-600">
+                          {plan.features.map((feature, featureIndex) => <li key={featureIndex} className="flex items-start gap-3 text-gray-600">
                               <CheckCircle className="h-4 w-4 text-green-500 mt-0.5 flex-shrink-0" />
                               <span className="text-sm leading-relaxed">{feature}</span>
-                            </li>
-                          ))}
+                            </li>)}
                         </ul>
                       </div>
 
-                      {plan.limitations && (
-                        <div>
+                      {plan.limitations && <div>
                           <h4 className="font-semibold text-gray-900 mb-3">
                             Limitations
                           </h4>
                           <ul className="space-y-2">
-                            {plan.limitations.map((limitation, limitIndex) => (
-                              <li key={limitIndex} className="flex items-start gap-3 text-gray-500">
+                            {plan.limitations.map((limitation, limitIndex) => <li key={limitIndex} className="flex items-start gap-3 text-gray-500">
                                 <div className="w-4 h-4 border border-gray-300 rounded mt-0.5 flex-shrink-0"></div>
                                 <span className="text-sm">{limitation}</span>
-                              </li>
-                            ))}
+                              </li>)}
                           </ul>
-                        </div>
-                      )}
+                        </div>}
                     </div>
 
                     <Link to="/auth" className="block">
-                      <Button 
-                        className={`w-full py-4 rounded-xl font-semibold text-lg transition-all duration-300 ${
-                          plan.popular
-                            ? 'bg-gradient-to-r from-[#6B3F1D] to-[#8B5A2B] text-white hover:shadow-xl transform hover:-translate-y-1'
-                            : 'bg-white border-2 border-[#6B3F1D] text-[#6B3F1D] hover:bg-[#6B3F1D] hover:text-white'
-                        }`}
-                      >
+                      <Button className={`w-full py-4 rounded-xl font-semibold text-lg transition-all duration-300 ${plan.popular ? 'bg-gradient-to-r from-[#6B3F1D] to-[#8B5A2B] text-white hover:shadow-xl transform hover:-translate-y-1' : 'bg-white border-2 border-[#6B3F1D] text-[#6B3F1D] hover:bg-[#6B3F1D] hover:text-white'}`}>
                         {plan.buttonText}
                         <ArrowRight className="ml-2 h-5 w-5" />
                       </Button>
                     </Link>
 
-                    {plan.popular && (
-                      <div className="text-center mt-4 text-sm text-gray-600">
+                    {plan.popular && <div className="text-center mt-4 text-sm text-gray-600">
                         <Shield className="h-4 w-4 inline mr-1" />
                         60-day money-back guarantee
-                      </div>
-                    )}
-                  </div>
-                ))}
+                      </div>}
+                  </div>)}
               </div>
 
               <div className="text-center mt-12 p-8 bg-gradient-to-r from-gray-50 to-[#E7BA40]/10 rounded-2xl">
@@ -524,12 +401,9 @@ const LandingPage = () => {
                 </div>
               </div>
             </div>
-          </section>
-        );
-
+          </section>;
       case 'testimonials':
-        return (
-          <section className="py-20 px-4">
+        return <section className="py-20 px-4">
             <div className="max-w-6xl mx-auto">
               <div className="text-center mb-16">
                 <h2 className="text-4xl font-bold text-gray-900 mb-4">
@@ -537,51 +411,38 @@ const LandingPage = () => {
                 </h2>
                 <div className="grid grid-cols-2 lg:grid-cols-4 gap-8 mb-16">
                   {benefits.map((benefit, index) => {
-                    const Icon = benefit.icon;
-                    return (
-                      <div key={index} className="text-center group">
+                  const Icon = benefit.icon;
+                  return <div key={index} className="text-center group">
                         <div className="bg-gradient-to-r from-[#E7BA40] to-[#F4C842] w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform duration-300 shadow-lg">
                           <Icon className="h-10 w-10 text-[#6B3F1D]" />
                         </div>
                         <div className="text-4xl font-bold text-[#6B3F1D] mb-2">{benefit.stat}</div>
                         <div className="text-gray-600 font-medium">{benefit.label}</div>
-                      </div>
-                    );
-                  })}
+                      </div>;
+                })}
                 </div>
               </div>
               <div className="grid md:grid-cols-3 gap-8">
-                {testimonials.map((testimonial, index) => (
-                  <div key={index} className="bg-white p-8 rounded-2xl hover:shadow-2xl transition-all duration-300 border border-gray-100 transform hover:-translate-y-1">
+                {testimonials.map((testimonial, index) => <div key={index} className="bg-white p-8 rounded-2xl hover:shadow-2xl transition-all duration-300 border border-gray-100 transform hover:-translate-y-1">
                     <div className="flex items-center mb-4">
-                      {[...Array(testimonial.rating)].map((_, i) => (
-                        <Star key={i} className="h-5 w-5 text-[#E7BA40] fill-current" />
-                      ))}
+                      {[...Array(testimonial.rating)].map((_, i) => <Star key={i} className="h-5 w-5 text-[#E7BA40] fill-current" />)}
                     </div>
                     <p className="text-gray-600 mb-6 italic leading-relaxed text-lg">
                       "{testimonial.content}"
                     </p>
                     <div className="flex items-center gap-4">
-                      <img 
-                        src={testimonial.image} 
-                        alt={testimonial.name}
-                        className="w-12 h-12 rounded-full object-cover border-2 border-[#E7BA40]/30"
-                      />
+                      <img src={testimonial.image} alt={testimonial.name} className="w-12 h-12 rounded-full object-cover border-2 border-[#E7BA40]/30" />
                       <div>
                         <div className="font-semibold text-gray-900">{testimonial.name}</div>
                         <div className="text-gray-600 text-sm">{testimonial.role}</div>
                       </div>
                     </div>
-                  </div>
-                ))}
+                  </div>)}
               </div>
             </div>
-          </section>
-        );
-
+          </section>;
       default:
-        return (
-          <>
+        return <>
             {/* Hero Section */}
             <section className="bg-gradient-to-br from-[#E7BA40] to-[#F4C842] py-20 px-4">
               <div className="max-w-6xl mx-auto grid lg:grid-cols-2 gap-12 items-center">
@@ -599,23 +460,14 @@ const LandingPage = () => {
                         <ArrowRight className="ml-2 h-5 w-5" />
                       </Button>
                     </Link>
-                    <Button 
-                      variant="outline" 
-                      size="lg" 
-                      className="px-8 py-4 rounded-full font-semibold text-lg border-[#6B3F1D] text-[#6B3F1D] hover:bg-[#6B3F1D] hover:text-white"
-                      onClick={() => setActiveTab('features')}
-                    >
+                    <Button variant="outline" size="lg" className="px-8 py-4 rounded-full font-semibold text-lg border-[#6B3F1D] text-[#6B3F1D] hover:bg-[#6B3F1D] hover:text-white" onClick={() => setActiveTab('features')}>
                       Learn More
                     </Button>
                   </div>
                 </div>
                 <div className="relative">
                   <div className="relative overflow-hidden rounded-3xl shadow-2xl">
-                    <img 
-                      src="/lovable-uploads/afe1a72a-7972-44d1-b818-6b69557e3396.png" 
-                      alt="Student focused on studying at desk with books" 
-                      className="w-full h-auto object-cover"
-                    />
+                    <img src="/lovable-uploads/afe1a72a-7972-44d1-b818-6b69557e3396.png" alt="Student focused on studying at desk with books" className="w-full h-auto object-cover" />
                     <div className="absolute inset-0 bg-gradient-to-t from-[#6B3F1D]/20 to-transparent"></div>
                   </div>
                   
@@ -647,17 +499,15 @@ const LandingPage = () => {
               <div className="max-w-6xl mx-auto">
                 <div className="grid md:grid-cols-4 gap-8">
                   {benefits.map((benefit, index) => {
-                    const Icon = benefit.icon;
-                    return (
-                      <div key={index} className="text-center group">
+                  const Icon = benefit.icon;
+                  return <div key={index} className="text-center group">
                         <div className="bg-[#E7BA40] w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform duration-300">
                           <Icon className="h-8 w-8 text-[#6B3F1D]" />
                         </div>
                         <div className="text-3xl font-bold text-[#6B3F1D] mb-2">{benefit.stat}</div>
                         <div className="text-gray-600">{benefit.label}</div>
-                      </div>
-                    );
-                  })}
+                      </div>;
+                })}
                 </div>
               </div>
             </section>
@@ -672,12 +522,10 @@ const LandingPage = () => {
                   Join thousands of learners who have already revolutionized their learning experience
                 </p>
                 <div className="flex flex-wrap justify-center gap-4 mb-8">
-                  {['Free to get started', 'No credit card required', 'Full analytics dashboard'].map((feature, index) => (
-                    <div key={index} className="flex items-center gap-2 bg-white px-4 py-2 rounded-full shadow-sm">
+                  {['Free to get started', 'No credit card required', 'Full analytics dashboard'].map((feature, index) => <div key={index} className="flex items-center gap-2 bg-white px-4 py-2 rounded-full shadow-sm">
                       <CheckCircle className="h-5 w-5 text-green-500" />
                       <span className="text-gray-700">{feature}</span>
-                    </div>
-                  ))}
+                    </div>)}
                 </div>
                 <Link to="/auth">
                   <Button size="lg" className="px-8 py-4 rounded-full font-semibold text-lg shadow-lg hover:shadow-xl transition-all duration-300 bg-[#6B3F1D] text-white hover:bg-[#6B3F1D]/90">
@@ -687,13 +535,10 @@ const LandingPage = () => {
                 </Link>
               </div>
             </section>
-          </>
-        );
+          </>;
     }
   };
-
-  return (
-    <div className="min-h-screen bg-white">
+  return <div className="min-h-screen bg-white">
       {/* Navigation */}
       <nav className="sticky top-0 z-50 bg-white/95 backdrop-blur-sm border-b border-gray-200">
         <div className="max-w-7xl py-[16px] px-[16px] mx-auto">
@@ -711,19 +556,9 @@ const LandingPage = () => {
 
             {/* Navigation Tabs */}
             <div className="hidden md:flex space-x-8">
-              {navItems.map(item => (
-                <button
-                  key={item.id}
-                  onClick={() => setActiveTab(item.id)}
-                  className={`px-4 py-2 rounded-lg font-medium transition-colors ${
-                    activeTab === item.id
-                      ? 'text-[#6B3F1D] bg-[#E7BA40]/20'
-                      : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
-                  }`}
-                >
+              {navItems.map(item => <button key={item.id} onClick={() => setActiveTab(item.id)} className={`px-4 py-2 rounded-lg font-medium transition-colors ${activeTab === item.id ? 'text-[#6B3F1D] bg-[#E7BA40]/20' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'}`}>
                   {item.label}
-                </button>
-              ))}
+                </button>)}
             </div>
 
             {/* Auth Buttons */}
@@ -743,19 +578,9 @@ const LandingPage = () => {
 
           {/* Mobile Navigation */}
           <div className="md:hidden mt-4 flex space-x-1 overflow-x-auto">
-            {navItems.map(item => (
-              <button
-                key={item.id}
-                onClick={() => setActiveTab(item.id)}
-                className={`px-4 py-2 rounded-lg font-medium whitespace-nowrap transition-colors ${
-                  activeTab === item.id
-                    ? 'text-[#6B3F1D] bg-[#E7BA40]/20'
-                    : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
-                }`}
-              >
+            {navItems.map(item => <button key={item.id} onClick={() => setActiveTab(item.id)} className={`px-4 py-2 rounded-lg font-medium whitespace-nowrap transition-colors ${activeTab === item.id ? 'text-[#6B3F1D] bg-[#E7BA40]/20' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'}`}>
                 {item.label}
-              </button>
-            ))}
+              </button>)}
           </div>
         </div>
       </nav>
@@ -764,8 +589,6 @@ const LandingPage = () => {
       <main>
         {renderContent()}
       </main>
-    </div>
-  );
+    </div>;
 };
-
 export default LandingPage;
