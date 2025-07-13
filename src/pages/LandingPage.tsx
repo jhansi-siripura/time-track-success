@@ -18,65 +18,44 @@ const LandingPage = () => {
     {
       icon: BarChart3,
       title: 'Smart Analytics Dashboard',
-      description: 'Comprehensive analytics showing study patterns, time distribution across subjects, and progress trends over weeks and months.',
-      highlight: 'Real-time insights with 12-month trend analysis',
-      image: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=500&h=300&fit=crop&crop=center'
+      description: 'Real-time study analytics with weekly distribution, 4-week consistency tracking, and 12-month trend analysis to visualize your learning journey.',
+      highlight: 'Live charts showing 121+ study hours across 10 subjects',
+      image: '/lovable-uploads/5b7e15fd-5267-4c33-b1e7-9aab71172f81.png'
     },
     {
       icon: Target,
-      title: 'Intelligent Goal Tracking',
-      description: 'Set daily study targets with AI-powered recommendations based on your historical performance and learning patterns.',
-      highlight: 'Adaptive goals that evolve with your progress',
-      image: 'https://images.unsplash.com/photo-1484480974693-6ca0a78fb36b?w=500&h=300&fit=crop&crop=center'
-    },
-    {
-      icon: FileText,
-      title: 'Rich Session Logging',
-      description: 'Capture detailed study sessions with subject categorization, duration tracking, achievements, and multimedia note attachments.',
-      highlight: 'Support for images, notes, and structured topics',
-      image: 'https://images.unsplash.com/photo-1456324504439-367cee3b3c32?w=500&h=300&fit=crop&crop=center'
-    },
-    {
-      icon: Brain,
-      title: 'Learning Matrix System',
-      description: 'Organize technologies and concepts by expertise level - from unknown to expert - with priority-based learning paths.',
-      highlight: 'Visual knowledge mapping for career growth',
-      image: 'https://images.unsplash.com/photo-1559757148-5c350d0d3c56?w=500&h=300&fit=crop&crop=center'
-    },
-    {
-      icon: Calendar,
-      title: 'Spaced Repetition & Recap',
-      description: 'Built-in revision system with calendar-based review scheduling to combat forgetting curve and ensure long-term retention.',
-      highlight: 'Smart reminders for optimal memory retention',
-      image: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=500&h=300&fit=crop&crop=center'
+      title: 'Daily Goal Tracking',
+      description: 'Set and monitor daily study targets with 21-day and 7-day averages. Track your consistency and build sustainable study habits.',
+      highlight: 'Visual progress tracking with goal completion metrics',
+      image: '/lovable-uploads/1693bcca-b7cd-4596-833a-9acb310ff88c.png'
     },
     {
       icon: Clock,
       title: 'Pomodoro Timer Integration',
-      description: 'Built-in focus timer with customizable work/break intervals, automatic session logging, and productivity tracking.',
-      highlight: 'Seamlessly logs study time to your analytics',
-      image: 'https://images.unsplash.com/photo-1506784983877-45594efa4cbe?w=500&h=300&fit=crop&crop=center'
+      description: 'Built-in focus timer with customizable work/break intervals. Seamlessly logs study time and tracks productivity cycles.',
+      highlight: 'Professional timer with Focus, Short Break, and Long Break modes',
+      image: '/lovable-uploads/20fd0469-4333-4e23-868a-bad45683b374.png'
     },
     {
-      icon: Mic,
-      title: 'Voice & AI Note Taking',
-      description: 'Convert speech to text for quick note capture during lectures or while reviewing concepts on the go.',
-      highlight: 'Premium: AI-powered note organization and summarization',
-      image: 'https://images.unsplash.com/photo-1589903308904-1010c2294adc?w=500&h=300&fit=crop&crop=center'
+      icon: FileText,
+      title: 'Detailed Study Session Logging',
+      description: 'Comprehensive session tracking with subjects, topics, duration, and rich notes. View your learning timeline with powerful filtering.',
+      highlight: 'Timeline view with 167+ logged sessions and detailed notes',
+      image: '/lovable-uploads/562463fc-c2ff-4990-9a33-12371214a9b6.png'
+    },
+    {
+      icon: Brain,
+      title: 'Learning Matrix System',
+      description: 'Organize technologies by expertise level and priority. Visual quadrant system helps you focus on job-critical skills first.',
+      highlight: 'Smart categorization: Job-Critical, Important, Curious, Nice-to-Know',
+      image: '/lovable-uploads/66fe05e3-4b0c-4085-8f0b-cf1661cf385d.png'
     },
     {
       icon: Video,
-      title: 'YouTube & Video Note Integration',
-      description: 'Take timestamped notes while watching educational videos, with direct links back to specific video moments.',
-      highlight: 'Premium: Automatic transcript extraction and key point identification',
-      image: 'https://images.unsplash.com/photo-1611532736597-de2d4265fba3?w=500&h=300&fit=crop&crop=center'
-    },
-    {
-      icon: TrendingUp,
-      title: 'Progress Visualization',
-      description: 'Beautiful charts showing weekly consistency, subject distribution, and learning velocity over time.',
-      highlight: 'Gamified progress tracking with achievement badges',
-      image: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=500&h=300&fit=crop&crop=center'
+      title: 'YouTube AI NoteTaker',
+      description: 'Transform YouTube videos into AI-powered summary cards. Extract key insights, timestamps, and structured notes automatically.',
+      highlight: 'AI-generated summaries with transcript analysis and key points',
+      image: '/lovable-uploads/67c18096-be05-46d3-b5c3-fe824e8e8fe6.png'
     }
   ];
 
@@ -228,10 +207,10 @@ const LandingPage = () => {
             <div className="max-w-6xl mx-auto">
               <div className="text-center mb-16">
                 <h2 className="text-4xl font-bold text-gray-900 mb-4">
-                  Everything You Need to Master Any Subject
+                  See Your Real Study Tracker in Action
                 </h2>
                 <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-                  Built for the modern learner juggling multiple technologies, subjects, and career goals
+                  These are actual screenshots from our app - no mock-ups or placeholders. This is exactly what you'll see when you start tracking your learning journey.
                 </p>
               </div>
 
@@ -240,11 +219,11 @@ const LandingPage = () => {
                   const Icon = feature.icon;
                   return (
                     <div key={index} className="group p-6 rounded-2xl bg-white border border-gray-100 hover:border-[#E7BA40] hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2">
-                      <div className="relative mb-4 rounded-xl overflow-hidden">
+                      <div className="relative mb-4 rounded-xl overflow-hidden border border-gray-200">
                         <img 
                           src={feature.image} 
                           alt={feature.title}
-                          className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
+                          className="w-full h-48 object-cover object-top group-hover:scale-105 transition-transform duration-300"
                         />
                         <div className="absolute top-3 left-3 w-12 h-12 rounded-xl bg-[#E7BA40] flex items-center justify-center shadow-lg">
                           <Icon className="h-6 w-6 text-[#6B3F1D]" />
