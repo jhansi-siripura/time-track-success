@@ -26,7 +26,7 @@ const YouTubeNoteTakerPage = () => {
   const [videoMetadata, setVideoMetadata] = useState<VideoMetadata | null>(null);
   const [transcriptSegments, setTranscriptSegments] = useState<TranscriptSegment[]>([]);
   const [summaryCards, setSummaryCards] = useState<SummaryCard[]>([]);
-  const [savedCards, setSavedCards] = useState<any[]>([]);
+  const [savedSummaries, setSavedSummaries] = useState<any[]>([]);
   const [aiConfig, setAiConfig] = useState<AIConfig>({
     provider: 'openai',
     apiKey: '',
@@ -56,30 +56,30 @@ const YouTubeNoteTakerPage = () => {
     }
   }, [aiConfig]);
 
-  // Load saved cards on component mount
+  // Load saved summaries on component mount
   useEffect(() => {
     if (user && activeTab === 'saved-cards') {
-      loadSavedCards();
+      loadSavedSummaries();
     }
   }, [user, activeTab]);
 
-  const loadSavedCards = async () => {
+  const loadSavedSummaries = async () => {
     if (!user) return;
     
     try {
       const { data, error } = await supabase
-        .from('summary_cards')
+        .from('youtube_summaries')
         .select('*')
         .eq('user_id', user.id)
         .order('created_at', { ascending: false });
 
       if (error) throw error;
-      setSavedCards(data || []);
+      setSavedSummaries(data || []);
     } catch (error) {
-      console.error('Error loading saved cards:', error);
+      console.error('Error loading saved summaries:', error);
       toast({
         title: "Error",
-        description: "Failed to load saved cards",
+        description: "Failed to load saved summaries",
         variant: "destructive"
       });
     }
@@ -195,18 +195,19 @@ const YouTubeNoteTakerPage = () => {
     }
 
     try {
+      const transcriptText = NewYouTubeService.formatTranscriptText(transcriptSegments);
+      
       const { error } = await supabase
-        .from('summary_cards')
+        .from('youtube_summaries')
         .insert({
           user_id: user.id,
           video_id: videoMetadata.videoId,
           video_title: videoMetadata.title,
           video_url: videoUrl,
-          card_title: card.title,
-          card_content: card.content,
-          start_time: card.startTime,
-          end_time: card.endTime,
-          timestamp_display: card.timestamp
+          video_thumbnail: videoMetadata.thumbnail,
+          transcript: transcriptText,
+          summary: card.content,
+          tags: [card.title]
         });
 
       if (error) throw error;
@@ -259,25 +260,25 @@ const YouTubeNoteTakerPage = () => {
     });
   };
 
-  const deleteSavedCard = async (cardId: string) => {
+  const deleteSavedSummary = async (summaryId: string) => {
     try {
       const { error } = await supabase
-        .from('summary_cards')
+        .from('youtube_summaries')
         .delete()
-        .eq('id', cardId);
+        .eq('id', summaryId);
 
       if (error) throw error;
 
-      setSavedCards(prev => prev.filter(card => card.id !== cardId));
+      setSavedSummaries(prev => prev.filter(summary => summary.id !== summaryId));
       toast({
         title: "Deleted",
-        description: "Saved card removed successfully",
+        description: "Saved summary removed successfully",
       });
     } catch (error) {
-      console.error('Error deleting saved card:', error);
+      console.error('Error deleting saved summary:', error);
       toast({
         title: "Error",
-        description: "Failed to delete saved card",
+        description: "Failed to delete saved summary",
         variant: "destructive"
       });
     }
@@ -538,36 +539,36 @@ const YouTubeNoteTakerPage = () => {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <Save className="h-5 w-5 text-slate-600" />
-                  Saved Cards ({savedCards.length})
+                  Saved Summaries ({savedSummaries.length})
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                {savedCards.length === 0 ? (
+                {savedSummaries.length === 0 ? (
                   <div className="text-center py-12">
                     <Save className="h-16 w-16 text-slate-300 mx-auto mb-4" />
-                    <h3 className="text-lg font-medium text-slate-600 mb-2">No Saved Cards</h3>
+                    <h3 className="text-lg font-medium text-slate-600 mb-2">No Saved Summaries</h3>
                     <p className="text-slate-500">Generate and save some summaries to see them here.</p>
                   </div>
                 ) : (
                   <div className="space-y-4">
-                    <Input placeholder="Search saved cards..." className="mb-4" />
+                    <Input placeholder="Search saved summaries..." className="mb-4" />
                     <div className="grid gap-4 md:grid-cols-2">
-                      {savedCards.map((card) => (
-                        <Card key={card.id} className="bg-gray-50 border border-gray-200 hover:shadow-sm transition-shadow duration-200">
+                      {savedSummaries.map((summary) => (
+                        <Card key={summary.id} className="bg-gray-50 border border-gray-200 hover:shadow-sm transition-shadow duration-200">
                           <CardHeader className="pb-3">
-                            <CardTitle className="text-lg">{card.card_title}</CardTitle>
-                            <p className="text-sm text-slate-600">{card.timestamp_display}</p>
-                            <p className="text-xs text-slate-500">From: {card.video_title}</p>
+                            <CardTitle className="text-lg">{summary.video_title}</CardTitle>
+                            <p className="text-sm text-slate-600">Video ID: {summary.video_id}</p>
+                            <p className="text-xs text-slate-500">Created: {new Date(summary.created_at).toLocaleDateString()}</p>
                           </CardHeader>
                           <CardContent>
                             <p className="text-sm text-slate-700 line-clamp-3 mb-3">
-                              {card.card_content.substring(0, 150)}...
+                              {summary.summary.substring(0, 150)}...
                             </p>
                             <div className="flex items-center justify-between">
                               <Badge variant="secondary" className="text-xs">
                                 Saved Summary
                               </Badge>
-                              <Button variant="ghost" size="sm" onClick={() => deleteSavedCard(card.id)}>
+                              <Button variant="ghost" size="sm" onClick={() => deleteSavedSummary(summary.id)}>
                                 <Trash2 className="h-4 w-4 text-red-500" />
                               </Button>
                             </div>
