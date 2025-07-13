@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import MainLayout from '@/components/Layout/MainLayout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -8,12 +9,13 @@ import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Label } from '@/components/ui/label';
-import { Youtube, Play, Settings, Copy, Save, Trash2, X, Loader2 } from 'lucide-react';
+import { Youtube, Play, Settings, Copy, Save, Trash2, X, Loader2, BookmarkPlus } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
 import { useAuth } from '@/contexts/AuthContext';
 import { NewYouTubeService } from '@/services/newYoutubeService';
 import { AIService } from '@/services/aiService';
 import { VideoMetadata, TranscriptSegment, SummaryCard, AIConfig } from '@/types/youtube';
+import { supabase } from '@/integrations/supabase/client';
 
 const YouTubeNoteTakerPage = () => {
   const { user } = useAuth();
@@ -24,6 +26,7 @@ const YouTubeNoteTakerPage = () => {
   const [videoMetadata, setVideoMetadata] = useState<VideoMetadata | null>(null);
   const [transcriptSegments, setTranscriptSegments] = useState<TranscriptSegment[]>([]);
   const [summaryCards, setSummaryCards] = useState<SummaryCard[]>([]);
+  const [savedCards, setSavedCards] = useState<any[]>([]);
   const [aiConfig, setAiConfig] = useState<AIConfig>({
     provider: 'openai',
     apiKey: '',
@@ -52,6 +55,35 @@ const YouTubeNoteTakerPage = () => {
       localStorage.setItem('youtubeNoteTaker_aiConfig', JSON.stringify(aiConfig));
     }
   }, [aiConfig]);
+
+  // Load saved cards on component mount
+  useEffect(() => {
+    if (user && activeTab === 'saved-cards') {
+      loadSavedCards();
+    }
+  }, [user, activeTab]);
+
+  const loadSavedCards = async () => {
+    if (!user) return;
+    
+    try {
+      const { data, error } = await supabase
+        .from('summary_cards')
+        .select('*')
+        .eq('user_id', user.id)
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+      setSavedCards(data || []);
+    } catch (error) {
+      console.error('Error loading saved cards:', error);
+      toast({
+        title: "Error",
+        description: "Failed to load saved cards",
+        variant: "destructive"
+      });
+    }
+  };
 
   const loadVideo = async () => {
     if (!videoUrl.trim()) {
@@ -102,6 +134,7 @@ const YouTubeNoteTakerPage = () => {
     setVideoMetadata(null);
     setTranscriptSegments([]);
     setVideoUrl('');
+    setSummaryCards([]);
     toast({
       title: "Video Unloaded",
       description: "Video has been removed successfully.",
@@ -134,7 +167,7 @@ const YouTubeNoteTakerPage = () => {
       const transcriptText = NewYouTubeService.formatTranscriptText(transcriptSegments);
       const summaryCards = await aiService.generateSummaryCards(transcriptText, transcriptSegments);
 
-      setSummaryCards(prev => [...summaryCards, ...prev]);
+      setSummaryCards(summaryCards);
       
       toast({
         title: "Summary Generated",
@@ -149,6 +182,47 @@ const YouTubeNoteTakerPage = () => {
       });
     }
     setIsGeneratingSummary(false);
+  };
+
+  const saveCard = async (card: SummaryCard) => {
+    if (!user || !videoMetadata) {
+      toast({
+        title: "Error",
+        description: "Please log in to save cards",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    try {
+      const { error } = await supabase
+        .from('summary_cards')
+        .insert({
+          user_id: user.id,
+          video_id: videoMetadata.videoId,
+          video_title: videoMetadata.title,
+          video_url: videoUrl,
+          card_title: card.title,
+          card_content: card.content,
+          start_time: card.startTime,
+          end_time: card.endTime,
+          timestamp_display: card.timestamp
+        });
+
+      if (error) throw error;
+
+      toast({
+        title: "Card Saved",
+        description: "Summary card saved successfully!",
+      });
+    } catch (error) {
+      console.error('Error saving card:', error);
+      toast({
+        title: "Error",
+        description: "Failed to save card",
+        variant: "destructive"
+      });
+    }
   };
 
   const saveAiConfig = () => {
@@ -183,6 +257,30 @@ const YouTubeNoteTakerPage = () => {
       title: "Deleted",
       description: "Card removed from your collection",
     });
+  };
+
+  const deleteSavedCard = async (cardId: string) => {
+    try {
+      const { error } = await supabase
+        .from('summary_cards')
+        .delete()
+        .eq('id', cardId);
+
+      if (error) throw error;
+
+      setSavedCards(prev => prev.filter(card => card.id !== cardId));
+      toast({
+        title: "Deleted",
+        description: "Saved card removed successfully",
+      });
+    } catch (error) {
+      console.error('Error deleting saved card:', error);
+      toast({
+        title: "Error",
+        description: "Failed to delete saved card",
+        variant: "destructive"
+      });
+    }
   };
 
   return (
@@ -228,197 +326,210 @@ const YouTubeNoteTakerPage = () => {
 
           {/* Generator Tab */}
           <TabsContent value="generator" className="space-y-8">
-            {/* Side by Side Layout - URL Input and Video Preview */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              {/* Left Side - URL Input Section */}
-              <Card className="bg-white border-2 border-gray-100 shadow-lg hover:shadow-xl transition-shadow duration-200 rounded-lg">
-                <CardHeader className="pb-4">
-                  <div className="flex items-center justify-between">
-                    <CardTitle className="flex items-center gap-2 text-xl font-semibold">
-                      <Play className="h-5 w-5 text-blue-600" />
-                      Enter YouTube Video URL
-                    </CardTitle>
-                    <Dialog open={showAiConfig} onOpenChange={setShowAiConfig}>
-                      <DialogTrigger asChild>
-                        <Button variant="outline" size="sm" className="gap-2">
-                          <Settings className="h-4 w-4" />
-                        </Button>
-                      </DialogTrigger>
-                      <DialogContent className="bg-white">
-                        <DialogHeader>
-                          <DialogTitle className="flex items-center gap-2">
-                            <Settings className="h-5 w-5" />
-                            AI Configuration
-                          </DialogTitle>
-                        </DialogHeader>
-                        <div className="space-y-4">
-                          <div>
-                            <Label htmlFor="provider">AI Provider</Label>
-                            <Select 
-                              value={aiConfig.provider} 
-                              onValueChange={(value: 'openai' | 'anthropic' | 'perplexity') => {
-                                console.log('Provider changed to:', value);
-                                setAiConfig(prev => ({...prev, provider: value}));
-                              }}
-                            >
-                              <SelectTrigger>
-                                <SelectValue />
-                              </SelectTrigger>
-                              <SelectContent>
-                                <SelectItem value="openai">OpenAI</SelectItem>
-                                <SelectItem value="anthropic">Anthropic</SelectItem>
-                                <SelectItem value="perplexity">Perplexity</SelectItem>
-                              </SelectContent>
-                            </Select>
-                          </div>
-                          <div>
-                            <Label htmlFor="apiKey">API Key</Label>
-                            <Input
-                              id="apiKey"
-                              type="password"
-                              placeholder="Enter your API key"
-                              value={aiConfig.apiKey}
-                              onChange={(e) => {
-                                console.log('API key changed');
-                                setAiConfig(prev => ({...prev, apiKey: e.target.value}));
-                              }}
-                            />
-                          </div>
-                          <div>
-                            <Label htmlFor="model">Model (optional)</Label>
-                            <Input
-                              id="model"
-                              placeholder={aiConfig.provider === 'openai' ? 'gpt-4o-mini' : aiConfig.provider === 'anthropic' ? 'claude-3-haiku-20240307' : 'llama-3.1-sonar-small-128k-online'}
-                              value={aiConfig.model}
-                              onChange={(e) => setAiConfig(prev => ({...prev, model: e.target.value}))}
-                            />
-                          </div>
-                          <div className="flex gap-2 pt-4">
-                            <Button onClick={saveAiConfig} className="flex-1">
-                              Save Configuration
-                            </Button>
-                            <Button variant="outline" onClick={() => setShowAiConfig(false)}>
-                              Cancel
-                            </Button>
-                          </div>
-                        </div>
-                      </DialogContent>
-                    </Dialog>
-                  </div>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="flex gap-4">
-                    <Input
-                      placeholder="https://www.youtube.com/watch?v=..."
-                      value={videoUrl}
-                      onChange={(e) => setVideoUrl(e.target.value)}
-                      className="flex-1"
-                    />
-                    <Button 
-                      onClick={loadVideo}
-                      disabled={isLoading}
-                      className="bg-blue-600 hover:bg-blue-700 text-white px-8"
-                    >
-                      {isLoading ? 'Loading...' : 'Load Video'}
-                    </Button>
-                  </div>
-                  {!aiConfig.apiKey && (
-                    <div className="flex items-center gap-2 text-orange-600 bg-orange-50 p-3 rounded-lg border border-orange-200">
-                      <Settings className="h-4 w-4" />
-                      <span className="text-sm">Configure your AI settings to enable transcript summarization</span>
-                    </div>
-                  )}
-                </CardContent>
-              </Card>
-
-              {/* Right Side - Video Preview */}
-              {videoMetadata && (
+            {/* Main Layout - Left Controls, Right Cards */}
+            <div className="grid grid-cols-1 xl:grid-cols-5 gap-6">
+              {/* Left Side - Controls (2/5 width) */}
+              <div className="xl:col-span-2 space-y-6">
+                {/* URL Input Section */}
                 <Card className="bg-white border-2 border-gray-100 shadow-lg hover:shadow-xl transition-shadow duration-200 rounded-lg">
-                  <CardHeader>
+                  <CardHeader className="pb-4">
                     <div className="flex items-center justify-between">
-                      <CardTitle className="flex items-center gap-2 text-lg">
-                        <Youtube className="h-5 w-5 text-red-500" />
-                        {videoMetadata.title}
+                      <CardTitle className="flex items-center gap-2 text-lg font-semibold">
+                        <Play className="h-5 w-5 text-blue-600" />
+                        Enter YouTube Video URL
                       </CardTitle>
-                      <Button 
-                        variant="ghost" 
-                        size="sm" 
-                        onClick={unloadVideo}
-                        className="text-red-500 hover:text-red-700 hover:bg-red-50"
-                      >
-                        <X className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="aspect-video bg-slate-100 rounded-lg mb-4 flex items-center justify-center">
-                      <iframe
-                        src={`https://www.youtube.com/embed/${videoMetadata.videoId}`}
-                        className="w-full h-full rounded-lg"
-                        allowFullScreen
-                      />
-                    </div>
-                    <div className="mb-4">
-                      <p className="text-sm text-slate-600">Channel: {videoMetadata.channel}</p>
-                      <p className="text-sm text-slate-600">Transcript segments: {transcriptSegments.length}</p>
-                    </div>
-                    <Button 
-                      onClick={generateSummaryCards}
-                      disabled={isGeneratingSummary || !aiConfig.apiKey}
-                      className="w-full bg-gradient-to-r from-green-500 to-blue-500 hover:from-green-600 hover:to-blue-600 text-white py-3"
-                    >
-                      {isGeneratingSummary ? (
-                        <>
-                          <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                          Generating...
-                        </>
-                      ) : (
-                        '🤖 Generate AI Summary Cards'
-                      )}
-                    </Button>
-                  </CardContent>
-                </Card>
-              )}
-            </div>
-
-            {/* Generated Summary Cards */}
-            {summaryCards.length > 0 && (
-              <div>
-                <h2 className="text-2xl font-bold text-slate-800 mb-6">AI-Generated Summary Cards</h2>
-                <div className="space-y-6">
-                  {summaryCards.map((card) => (
-                    <Card key={card.id} className="bg-white border-2 border-gray-100 shadow-lg hover:shadow-xl transition-shadow duration-200 rounded-lg">
-                      <CardHeader className="pb-3">
-                        <div className="flex items-start justify-between">
-                          <div>
-                            <CardTitle className="text-xl mb-2">{card.title}</CardTitle>
-                            <div className="flex items-center gap-3 text-sm text-slate-600">
-                              <Badge variant="outline">Video Summary</Badge>
-                              <span>{card.timestamp}</span>
+                      <Dialog open={showAiConfig} onOpenChange={setShowAiConfig}>
+                        <DialogTrigger asChild>
+                          <Button variant="outline" size="sm" className="gap-2">
+                            <Settings className="h-4 w-4" />
+                          </Button>
+                        </DialogTrigger>
+                        <DialogContent className="bg-white">
+                          <DialogHeader>
+                            <DialogTitle className="flex items-center gap-2">
+                              <Settings className="h-5 w-5" />
+                              AI Configuration
+                            </DialogTitle>
+                          </DialogHeader>
+                          <div className="space-y-4">
+                            <div>
+                              <Label htmlFor="provider">AI Provider</Label>
+                              <Select 
+                                value={aiConfig.provider} 
+                                onValueChange={(value: 'openai' | 'anthropic' | 'perplexity') => {
+                                  console.log('Provider changed to:', value);
+                                  setAiConfig(prev => ({...prev, provider: value}));
+                                }}
+                              >
+                                <SelectTrigger>
+                                  <SelectValue />
+                                </SelectTrigger>
+                                <SelectContent>
+                                  <SelectItem value="openai">OpenAI</SelectItem>
+                                  <SelectItem value="anthropic">Anthropic</SelectItem>
+                                  <SelectItem value="perplexity">Perplexity</SelectItem>
+                                </SelectContent>
+                              </Select>
+                            </div>
+                            <div>
+                              <Label htmlFor="apiKey">API Key</Label>
+                              <Input
+                                id="apiKey"
+                                type="password"
+                                placeholder="Enter your API key"
+                                value={aiConfig.apiKey}
+                                onChange={(e) => {
+                                  console.log('API key changed');
+                                  setAiConfig(prev => ({...prev, apiKey: e.target.value}));
+                                }}
+                              />
+                            </div>
+                            <div>
+                              <Label htmlFor="model">Model (optional)</Label>
+                              <Input
+                                id="model"
+                                placeholder={aiConfig.provider === 'openai' ? 'gpt-4o-mini' : aiConfig.provider === 'anthropic' ? 'claude-3-haiku-20240307' : 'llama-3.1-sonar-small-128k-online'}
+                                value={aiConfig.model}
+                                onChange={(e) => setAiConfig(prev => ({...prev, model: e.target.value}))}
+                              />
+                            </div>
+                            <div className="flex gap-2 pt-4">
+                              <Button onClick={saveAiConfig} className="flex-1">
+                                Save Configuration
+                              </Button>
+                              <Button variant="outline" onClick={() => setShowAiConfig(false)}>
+                                Cancel
+                              </Button>
                             </div>
                           </div>
-                          <div className="flex gap-2">
-                            <Button variant="ghost" size="sm" onClick={() => copyCard(card)}>
-                              <Copy className="h-4 w-4" />
-                            </Button>
-                            <Button variant="ghost" size="sm" onClick={() => deleteCard(card.id)}>
-                              <Trash2 className="h-4 w-4" />
-                            </Button>
-                          </div>
-                        </div>
-                      </CardHeader>
-                      <CardContent>
-                        <div className="prose prose-sm max-w-none">
-                          <pre className="whitespace-pre-wrap text-sm text-slate-700 leading-relaxed">
-                            {card.content}
-                          </pre>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  ))}
-                </div>
+                        </DialogContent>
+                      </Dialog>
+                    </div>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div className="flex gap-4">
+                      <Input
+                        placeholder="https://www.youtube.com/watch?v=..."
+                        value={videoUrl}
+                        onChange={(e) => setVideoUrl(e.target.value)}
+                        className="flex-1"
+                      />
+                      <Button 
+                        onClick={loadVideo}
+                        disabled={isLoading}
+                        className="bg-blue-600 hover:bg-blue-700 text-white px-6"
+                      >
+                        {isLoading ? 'Loading...' : 'Load'}
+                      </Button>
+                    </div>
+                    {!aiConfig.apiKey && (
+                      <div className="flex items-center gap-2 text-orange-600 bg-orange-50 p-3 rounded-lg border border-orange-200">
+                        <Settings className="h-4 w-4" />
+                        <span className="text-sm">Configure your AI settings to enable summarization</span>
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
+
+                {/* Video Preview */}
+                {videoMetadata && (
+                  <Card className="bg-white border-2 border-gray-100 shadow-lg hover:shadow-xl transition-shadow duration-200 rounded-lg">
+                    <CardHeader>
+                      <div className="flex items-center justify-between">
+                        <CardTitle className="flex items-center gap-2 text-lg">
+                          <Youtube className="h-5 w-5 text-red-500" />
+                          {videoMetadata.title.length > 30 ? `${videoMetadata.title.substring(0, 30)}...` : videoMetadata.title}
+                        </CardTitle>
+                        <Button 
+                          variant="ghost" 
+                          size="sm" 
+                          onClick={unloadVideo}
+                          className="text-red-500 hover:text-red-700 hover:bg-red-50"
+                        >
+                          <X className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="aspect-video bg-slate-100 rounded-lg mb-4 flex items-center justify-center">
+                        <iframe
+                          src={`https://www.youtube.com/embed/${videoMetadata.videoId}`}
+                          className="w-full h-full rounded-lg"
+                          allowFullScreen
+                        />
+                      </div>
+                      <div className="mb-4">
+                        <p className="text-sm text-slate-600">Channel: {videoMetadata.channel}</p>
+                        <p className="text-sm text-slate-600">Transcript segments: {transcriptSegments.length}</p>
+                      </div>
+                      <Button 
+                        onClick={generateSummaryCards}
+                        disabled={isGeneratingSummary || !aiConfig.apiKey}
+                        className="w-full bg-gradient-to-r from-green-500 to-blue-500 hover:from-green-600 hover:to-blue-600 text-white py-3"
+                      >
+                        {isGeneratingSummary ? (
+                          <>
+                            <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                            Generating...
+                          </>
+                        ) : (
+                          '🤖 Generate AI Summary Cards'
+                        )}
+                      </Button>
+                    </CardContent>
+                  </Card>
+                )}
               </div>
-            )}
+
+              {/* Right Side - Generated Summary Cards (3/5 width) */}
+              <div className="xl:col-span-3">
+                {summaryCards.length > 0 && (
+                  <div>
+                    <h2 className="text-2xl font-bold text-slate-800 mb-6">AI-Generated Summary Cards</h2>
+                    <div className="space-y-6 max-h-screen overflow-y-auto pr-2">
+                      {summaryCards.map((card) => (
+                        <Card key={card.id} className="bg-white border-2 border-gray-100 shadow-lg hover:shadow-xl transition-shadow duration-200 rounded-lg">
+                          <CardHeader className="pb-3">
+                            <div className="flex items-start justify-between">
+                              <div>
+                                <CardTitle className="text-xl mb-2">{card.title}</CardTitle>
+                                <div className="flex items-center gap-3 text-sm text-slate-600">
+                                  <Badge variant="outline">Video Summary</Badge>
+                                  <span>{card.timestamp}</span>
+                                </div>
+                              </div>
+                              <div className="flex gap-2">
+                                <Button 
+                                  variant="ghost" 
+                                  size="sm" 
+                                  onClick={() => saveCard(card)}
+                                  className="text-green-600 hover:text-green-700 hover:bg-green-50"
+                                >
+                                  <BookmarkPlus className="h-4 w-4" />
+                                </Button>
+                                <Button variant="ghost" size="sm" onClick={() => copyCard(card)}>
+                                  <Copy className="h-4 w-4" />
+                                </Button>
+                                <Button variant="ghost" size="sm" onClick={() => deleteCard(card.id)}>
+                                  <Trash2 className="h-4 w-4" />
+                                </Button>
+                              </div>
+                            </div>
+                          </CardHeader>
+                          <CardContent>
+                            <div className="prose prose-sm max-w-none">
+                              <pre className="whitespace-pre-wrap text-sm text-slate-700 leading-relaxed">
+                                {card.content}
+                              </pre>
+                            </div>
+                          </CardContent>
+                        </Card>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
           </TabsContent>
 
           {/* Saved Cards Tab */}
@@ -427,35 +538,36 @@ const YouTubeNoteTakerPage = () => {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <Save className="h-5 w-5 text-slate-600" />
-                  Saved Cards ({summaryCards.length})
+                  Saved Cards ({savedCards.length})
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                {summaryCards.length === 0 ? (
+                {savedCards.length === 0 ? (
                   <div className="text-center py-12">
                     <Save className="h-16 w-16 text-slate-300 mx-auto mb-4" />
                     <h3 className="text-lg font-medium text-slate-600 mb-2">No Saved Cards</h3>
-                    <p className="text-slate-500">Generate some summaries and save them to see them here.</p>
+                    <p className="text-slate-500">Generate and save some summaries to see them here.</p>
                   </div>
                 ) : (
                   <div className="space-y-4">
                     <Input placeholder="Search saved cards..." className="mb-4" />
                     <div className="grid gap-4 md:grid-cols-2">
-                      {summaryCards.map((card) => (
+                      {savedCards.map((card) => (
                         <Card key={card.id} className="bg-gray-50 border border-gray-200 hover:shadow-sm transition-shadow duration-200">
                           <CardHeader className="pb-3">
-                            <CardTitle className="text-lg">{card.title}</CardTitle>
-                            <p className="text-sm text-slate-600">{card.timestamp}</p>
+                            <CardTitle className="text-lg">{card.card_title}</CardTitle>
+                            <p className="text-sm text-slate-600">{card.timestamp_display}</p>
+                            <p className="text-xs text-slate-500">From: {card.video_title}</p>
                           </CardHeader>
                           <CardContent>
                             <p className="text-sm text-slate-700 line-clamp-3 mb-3">
-                              {card.content.substring(0, 150)}...
+                              {card.card_content.substring(0, 150)}...
                             </p>
                             <div className="flex items-center justify-between">
                               <Badge variant="secondary" className="text-xs">
-                                Summary
+                                Saved Summary
                               </Badge>
-                              <Button variant="ghost" size="sm" onClick={() => deleteCard(card.id)}>
+                              <Button variant="ghost" size="sm" onClick={() => deleteSavedCard(card.id)}>
                                 <Trash2 className="h-4 w-4 text-red-500" />
                               </Button>
                             </div>
