@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import MainLayout from '@/components/Layout/MainLayout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -8,7 +8,7 @@ import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Label } from '@/components/ui/label';
-import { Youtube, Play, Settings, Copy, Save, Trash2 } from 'lucide-react';
+import { Youtube, Play, Settings, Copy, Save, Trash2, X } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
 
 const YouTubeNoteTakerPage = () => {
@@ -23,6 +23,26 @@ const YouTubeNoteTakerPage = () => {
     model: 'gpt-4o-mini'
   });
   const [showAiConfig, setShowAiConfig] = useState(false);
+
+  // Load AI config from localStorage on component mount
+  useEffect(() => {
+    const savedConfig = localStorage.getItem('youtubeNoteTaker_aiConfig');
+    if (savedConfig) {
+      try {
+        const parsedConfig = JSON.parse(savedConfig);
+        setAiConfig(parsedConfig);
+      } catch (error) {
+        console.error('Failed to parse saved AI config:', error);
+      }
+    }
+  }, []);
+
+  // Save AI config to localStorage whenever it changes
+  useEffect(() => {
+    if (aiConfig.apiKey) {
+      localStorage.setItem('youtubeNoteTaker_aiConfig', JSON.stringify(aiConfig));
+    }
+  }, [aiConfig]);
 
   const loadVideo = async () => {
     if (!videoUrl.trim()) {
@@ -72,6 +92,15 @@ const YouTubeNoteTakerPage = () => {
       });
     }
     setIsLoading(false);
+  };
+
+  const unloadVideo = () => {
+    setVideoData(null);
+    setVideoUrl('');
+    toast({
+      title: "Video Unloaded",
+      description: "Video has been removed successfully.",
+    });
   };
 
   const extractVideoId = (url) => {
@@ -289,10 +318,20 @@ const YouTubeNoteTakerPage = () => {
             {videoData && (
               <Card className="bg-white border-2 border-gray-100 shadow-lg hover:shadow-xl transition-shadow duration-200 rounded-lg">
                 <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Youtube className="h-5 w-5 text-red-500" />
-                    {videoData.title}
-                  </CardTitle>
+                  <div className="flex items-center justify-between">
+                    <CardTitle className="flex items-center gap-2">
+                      <Youtube className="h-5 w-5 text-red-500" />
+                      {videoData.title}
+                    </CardTitle>
+                    <Button 
+                      variant="ghost" 
+                      size="sm" 
+                      onClick={unloadVideo}
+                      className="text-red-500 hover:text-red-700 hover:bg-red-50"
+                    >
+                      <X className="h-4 w-4" />
+                    </Button>
+                  </div>
                 </CardHeader>
                 <CardContent>
                   <div className="aspect-video bg-slate-100 rounded-lg mb-4 flex items-center justify-center">
