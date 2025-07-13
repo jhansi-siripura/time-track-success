@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import MainLayout from '@/components/Layout/MainLayout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -10,8 +11,10 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Label } from '@/components/ui/label';
 import { Youtube, Play, Settings, Copy, Save, Trash2, X, Loader2 } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
-import { YouTubeService, VideoTranscriptData, SummaryData } from '@/services/youtubeService';
 import { useAuth } from '@/contexts/AuthContext';
+import { NewYouTubeService } from '@/services/newYoutubeService';
+import { AIService } from '@/services/aiService';
+import { VideoMetadata, TranscriptSegment, SummaryCard, AIConfig } from '@/types/youtube';
 
 const YouTubeNoteTakerPage = () => {
   const { user } = useAuth();
@@ -19,10 +22,11 @@ const YouTubeNoteTakerPage = () => {
   const [videoUrl, setVideoUrl] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [isGeneratingSummary, setIsGeneratingSummary] = useState(false);
-  const [videoData, setVideoData] = useState<VideoTranscriptData | null>(null);
-  const [summaryCards, setSummaryCards] = useState<SummaryData[]>([]);
-  const [aiConfig, setAiConfig] = useState({
-    provider: 'OpenAI',
+  const [videoMetadata, setVideoMetadata] = useState<VideoMetadata | null>(null);
+  const [transcriptSegments, setTranscriptSegments] = useState<TranscriptSegment[]>([]);
+  const [summaryCards, setSummaryCards] = useState<SummaryCard[]>([]);
+  const [aiConfig, setAiConfig] = useState<AIConfig>({
+    provider: 'openai',
     apiKey: '',
     model: 'gpt-4o-mini'
   });
@@ -41,30 +45,12 @@ const YouTubeNoteTakerPage = () => {
     }
   }, []);
 
-  // Load saved summaries when component mounts or when user changes
-  useEffect(() => {
-    if (user) {
-      loadSavedSummaries();
-    }
-  }, [user]);
-
   // Save AI config to localStorage whenever it changes
   useEffect(() => {
     if (aiConfig.apiKey) {
       localStorage.setItem('youtubeNoteTaker_aiConfig', JSON.stringify(aiConfig));
     }
   }, [aiConfig]);
-
-  const loadSavedSummaries = async () => {
-    if (!user) return;
-    
-    try {
-      const summaries = await YouTubeService.getSavedSummaries(user.id);
-      setSummaryCards(summaries);
-    } catch (error) {
-      console.error('Failed to load saved summaries:', error);
-    }
-  };
 
   const loadVideo = async () => {
     if (!videoUrl.trim()) {
@@ -76,10 +62,26 @@ const YouTubeNoteTakerPage = () => {
       return;
     }
 
+    const videoId = NewYouTubeService.extractVideoId(videoUrl);
+    if (!videoId) {
+      toast({
+        title: "Error",
+        description: "Invalid YouTube URL",
+        variant: "destructive"
+      });
+      return;
+    }
+
     setIsLoading(true);
     try {
-      const transcriptData = await YouTubeService.extractTranscript(videoUrl);
-      setVideoData(transcriptData);
+      // Get video metadata and transcript
+      const [metadata, transcript] = await Promise.all([
+        NewYouTubeService.getVideoMetadata(videoId),
+        NewYouTubeService.getTranscript(videoId)
+      ]);
+
+      setVideoMetadata(metadata);
+      setTranscriptSegments(transcript);
 
       toast({
         title: "Video Loaded",
@@ -96,7 +98,8 @@ const YouTubeNoteTakerPage = () => {
   };
 
   const unloadVideo = () => {
-    setVideoData(null);
+    setVideoMetadata(null);
+    setTranscriptSegments([]);
     setVideoUrl('');
     toast({
       title: "Video Unloaded",
@@ -104,17 +107,20 @@ const YouTubeNoteTakerPage = () => {
     });
   };
 
-  const extractVideoId = (url) => {
-    const regex = /(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([^&\n?#]+)/;
-    const match = url.match(regex);
-    return match ? match[1] : null;
-  };
-
   const generateSummaryCards = async () => {
-    if (!videoData || !user) {
+    if (!videoMetadata || !transcriptSegments.length) {
       toast({
         title: "Error",
-        description: "Please ensure you're logged in and a video is loaded",
+        description: "Please load a video first",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    if (!aiConfig.apiKey) {
+      toast({
+        title: "Error",
+        description: "Please configure your AI settings first",
         variant: "destructive"
       });
       return;
@@ -122,18 +128,15 @@ const YouTubeNoteTakerPage = () => {
 
     setIsGeneratingSummary(true);
     try {
-      const result = await YouTubeService.generateSummary(
-        videoData.transcript,
-        videoData,
-        user.id
-      );
+      const aiService = new AIService(aiConfig);
+      const transcriptText = NewYouTubeService.formatTranscriptText(transcriptSegments);
+      const summaryCards = await aiService.generateSummaryCards(transcriptText, transcriptSegments);
 
-      // Add the new summary to the list
-      setSummaryCards(prev => [result.summary, ...prev]);
+      setSummaryCards(prev => [...summaryCards, ...prev]);
       
       toast({
         title: "Summary Generated",
-        description: "AI summary created and saved successfully!",
+        description: "AI summary created successfully!",
       });
     } catch (error) {
       toast({
@@ -162,29 +165,20 @@ const YouTubeNoteTakerPage = () => {
     });
   };
 
-  const copyCard = (card: SummaryData) => {
-    navigator.clipboard.writeText(card.summary);
+  const copyCard = (card: SummaryCard) => {
+    navigator.clipboard.writeText(card.content);
     toast({
       title: "Copied",
       description: "Summary copied to clipboard",
     });
   };
 
-  const deleteCard = async (cardId: string) => {
-    try {
-      await YouTubeService.deleteSummary(cardId);
-      setSummaryCards(prev => prev.filter(card => card.id !== cardId));
-      toast({
-        title: "Deleted",
-        description: "Card removed from your collection",
-      });
-    } catch (error) {
-      toast({
-        title: "Error",
-        description: "Failed to delete card",
-        variant: "destructive"
-      });
-    }
+  const deleteCard = (cardId: string) => {
+    setSummaryCards(prev => prev.filter(card => card.id !== cardId));
+    toast({
+      title: "Deleted",
+      description: "Card removed from your collection",
+    });
   };
 
   return (
@@ -254,12 +248,14 @@ const YouTubeNoteTakerPage = () => {
                       <div className="space-y-4">
                         <div>
                           <Label htmlFor="provider">AI Provider</Label>
-                          <Select value={aiConfig.provider} onValueChange={(value) => setAiConfig(prev => ({...prev, provider: value}))}>
+                          <Select value={aiConfig.provider} onValueChange={(value: 'openai' | 'anthropic' | 'perplexity') => setAiConfig(prev => ({...prev, provider: value}))}>
                             <SelectTrigger>
                               <SelectValue />
                             </SelectTrigger>
                             <SelectContent>
-                              <SelectItem value="OpenAI">OpenAI</SelectItem>
+                              <SelectItem value="openai">OpenAI</SelectItem>
+                              <SelectItem value="anthropic">Anthropic</SelectItem>
+                              <SelectItem value="perplexity">Perplexity</SelectItem>
                             </SelectContent>
                           </Select>
                         </div>
@@ -277,7 +273,7 @@ const YouTubeNoteTakerPage = () => {
                           <Label htmlFor="model">Model (optional)</Label>
                           <Input
                             id="model"
-                            placeholder="Default: gpt-4o-mini"
+                            placeholder={aiConfig.provider === 'openai' ? 'gpt-4o-mini' : aiConfig.provider === 'anthropic' ? 'claude-3-haiku-20240307' : 'llama-3.1-sonar-small-128k-online'}
                             value={aiConfig.model}
                             onChange={(e) => setAiConfig(prev => ({...prev, model: e.target.value}))}
                           />
@@ -321,13 +317,13 @@ const YouTubeNoteTakerPage = () => {
             </Card>
 
             {/* Video Preview */}
-            {videoData && (
+            {videoMetadata && (
               <Card className="bg-white border-2 border-gray-100 shadow-lg hover:shadow-xl transition-shadow duration-200 rounded-lg">
                 <CardHeader>
                   <div className="flex items-center justify-between">
                     <CardTitle className="flex items-center gap-2">
                       <Youtube className="h-5 w-5 text-red-500" />
-                      {videoData.title}
+                      {videoMetadata.title}
                     </CardTitle>
                     <Button 
                       variant="ghost" 
@@ -342,14 +338,18 @@ const YouTubeNoteTakerPage = () => {
                 <CardContent>
                   <div className="aspect-video bg-slate-100 rounded-lg mb-4 flex items-center justify-center">
                     <iframe
-                      src={`https://www.youtube.com/embed/${videoData.videoId}`}
+                      src={`https://www.youtube.com/embed/${videoMetadata.videoId}`}
                       className="w-full h-full rounded-lg"
                       allowFullScreen
                     />
                   </div>
+                  <div className="mb-4">
+                    <p className="text-sm text-slate-600">Channel: {videoMetadata.channel}</p>
+                    <p className="text-sm text-slate-600">Transcript segments: {transcriptSegments.length}</p>
+                  </div>
                   <Button 
                     onClick={generateSummaryCards}
-                    disabled={isGeneratingSummary}
+                    disabled={isGeneratingSummary || !aiConfig.apiKey}
                     className="w-full bg-gradient-to-r from-green-500 to-blue-500 hover:from-green-600 hover:to-blue-600 text-white py-3"
                   >
                     {isGeneratingSummary ? (
@@ -375,10 +375,10 @@ const YouTubeNoteTakerPage = () => {
                       <CardHeader className="pb-3">
                         <div className="flex items-start justify-between">
                           <div>
-                            <CardTitle className="text-xl mb-2">{card.video_title}</CardTitle>
+                            <CardTitle className="text-xl mb-2">{card.title}</CardTitle>
                             <div className="flex items-center gap-3 text-sm text-slate-600">
                               <Badge variant="outline">Video Summary</Badge>
-                              <span>Saved: {new Date(card.created_at).toLocaleDateString()}</span>
+                              <span>{card.timestamp}</span>
                             </div>
                           </div>
                           <div className="flex gap-2">
@@ -394,15 +394,8 @@ const YouTubeNoteTakerPage = () => {
                       <CardContent>
                         <div className="prose prose-sm max-w-none">
                           <pre className="whitespace-pre-wrap text-sm text-slate-700 leading-relaxed">
-                            {card.summary}
+                            {card.content}
                           </pre>
-                        </div>
-                        <div className="flex gap-2 mt-4">
-                          {card.tags.map((tag) => (
-                            <Badge key={tag} variant="secondary" className="text-xs">
-                              {tag}
-                            </Badge>
-                          ))}
                         </div>
                       </CardContent>
                     </Card>
@@ -435,21 +428,17 @@ const YouTubeNoteTakerPage = () => {
                       {summaryCards.map((card) => (
                         <Card key={card.id} className="bg-gray-50 border border-gray-200 hover:shadow-sm transition-shadow duration-200">
                           <CardHeader className="pb-3">
-                            <CardTitle className="text-lg">{card.video_title}</CardTitle>
-                            <p className="text-sm text-slate-600">Created: {new Date(card.created_at).toLocaleDateString()}</p>
+                            <CardTitle className="text-lg">{card.title}</CardTitle>
+                            <p className="text-sm text-slate-600">{card.timestamp}</p>
                           </CardHeader>
                           <CardContent>
                             <p className="text-sm text-slate-700 line-clamp-3 mb-3">
-                              {card.summary.substring(0, 150)}...
+                              {card.content.substring(0, 150)}...
                             </p>
                             <div className="flex items-center justify-between">
-                              <div className="flex gap-2">
-                                {card.tags.slice(0, 2).map((tag) => (
-                                  <Badge key={tag} variant="secondary" className="text-xs">
-                                    {tag}
-                                  </Badge>
-                                ))}
-                              </div>
+                              <Badge variant="secondary" className="text-xs">
+                                Summary
+                              </Badge>
                               <Button variant="ghost" size="sm" onClick={() => deleteCard(card.id)}>
                                 <Trash2 className="h-4 w-4 text-red-500" />
                               </Button>
