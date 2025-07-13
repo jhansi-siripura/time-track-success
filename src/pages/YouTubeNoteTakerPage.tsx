@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import MainLayout from '@/components/Layout/MainLayout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -152,36 +153,39 @@ const YouTubeNoteTakerPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 p-8">
-      <div className="max-w-6xl mx-auto">
+    <MainLayout>
+      <div className="p-6 bg-gray-50 min-h-screen">
         {/* Header */}
-        <div className="text-center mb-8">
-          <div className="flex items-center justify-center gap-3 mb-4">
-            <Youtube className="h-8 w-8 text-red-500" />
-            <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-              YouTube NoteTaker
-            </h1>
+        <div className="mb-8">
+          <div className="flex items-center space-x-4 mb-2">
+            <div className="p-2.5 bg-gradient-to-br from-red-500 to-red-600 rounded-xl shadow-sm">
+              <Youtube className="h-5 w-5 text-white" />
+            </div>
+            <div>
+              <h1 className="font-semibold text-slate-800 text-xl">
+                YouTube NoteTaker
+              </h1>
+              <p className="text-slate-600 mt-1 font-normal">
+                Transform any YouTube video into structured, AI-powered summary cards
+              </p>
+            </div>
           </div>
-          <p className="text-lg text-slate-600 max-w-2xl mx-auto">
-            Transform any YouTube video into structured, AI-powered summary cards. Perfect
-            for learning, research, and content review.
-          </p>
         </div>
 
         {/* Navigation Tabs */}
         <Tabs value={activeTab} onValueChange={setActiveTab} className="mb-8">
           <div className="flex justify-center mb-8">
-            <TabsList className="bg-white shadow-lg border border-slate-200 p-1 rounded-xl">
+            <TabsList className="bg-white shadow-sm border border-gray-200 p-1 rounded-lg">
               <TabsTrigger 
                 value="generator" 
-                className="flex items-center gap-2 px-6 py-3 data-[state=active]:bg-slate-900 data-[state=active]:text-white"
+                className="flex items-center gap-2 px-6 py-3 data-[state=active]:bg-gray-900 data-[state=active]:text-white"
               >
                 <Play className="h-4 w-4" />
                 Generator
               </TabsTrigger>
               <TabsTrigger 
                 value="saved-cards"
-                className="flex items-center gap-2 px-6 py-3 data-[state=active]:bg-slate-900 data-[state=active]:text-white"
+                className="flex items-center gap-2 px-6 py-3 data-[state=active]:bg-gray-900 data-[state=active]:text-white"
               >
                 <Save className="h-4 w-4" />
                 Saved Cards
@@ -192,7 +196,7 @@ const YouTubeNoteTakerPage = () => {
           {/* Generator Tab */}
           <TabsContent value="generator" className="space-y-8">
             {/* URL Input Section */}
-            <Card className="bg-white border border-slate-200 shadow-lg rounded-xl">
+            <Card className="bg-white border-2 border-gray-100 shadow-lg hover:shadow-xl transition-shadow duration-200 rounded-lg">
               <CardHeader className="pb-4">
                 <div className="flex items-center justify-between">
                   <CardTitle className="flex items-center gap-2 text-xl font-semibold">
@@ -283,7 +287,7 @@ const YouTubeNoteTakerPage = () => {
 
             {/* Video Preview */}
             {videoData && (
-              <Card className="bg-white border border-slate-200 shadow-lg rounded-xl">
+              <Card className="bg-white border-2 border-gray-100 shadow-lg hover:shadow-xl transition-shadow duration-200 rounded-lg">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
                     <Youtube className="h-5 w-5 text-red-500" />
@@ -315,7 +319,7 @@ const YouTubeNoteTakerPage = () => {
                 <h2 className="text-2xl font-bold text-slate-800 mb-6">AI-Generated Summary Cards</h2>
                 <div className="space-y-6">
                   {summaryCards.map((card) => (
-                    <Card key={card.id} className="bg-white border border-slate-200 shadow-lg rounded-xl">
+                    <Card key={card.id} className="bg-white border-2 border-gray-100 shadow-lg hover:shadow-xl transition-shadow duration-200 rounded-lg">
                       <CardHeader className="pb-3">
                         <div className="flex items-start justify-between">
                           <div>
@@ -361,7 +365,7 @@ const YouTubeNoteTakerPage = () => {
 
           {/* Saved Cards Tab */}
           <TabsContent value="saved-cards">
-            <Card className="bg-white border border-slate-200 shadow-lg rounded-xl">
+            <Card className="bg-white border-2 border-gray-100 shadow-lg hover:shadow-xl transition-shadow duration-200 rounded-lg">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <Save className="h-5 w-5 text-slate-600" />
@@ -380,7 +384,7 @@ const YouTubeNoteTakerPage = () => {
                     <Input placeholder="Search saved cards..." className="mb-4" />
                     <div className="grid gap-4 md:grid-cols-2">
                       {summaryCards.map((card) => (
-                        <Card key={card.id} className="bg-slate-50 border border-slate-200">
+                        <Card key={card.id} className="bg-gray-50 border border-gray-200 hover:shadow-sm transition-shadow duration-200">
                           <CardHeader className="pb-3">
                             <CardTitle className="text-lg">{card.title}</CardTitle>
                             <p className="text-sm text-slate-600">From: {card.videoTitle}</p>
@@ -417,7 +421,7 @@ const YouTubeNoteTakerPage = () => {
           Powered by AI • Transform your video learning experience
         </div>
       </div>
-    </div>
+    </MainLayout>
   );
 };
 
