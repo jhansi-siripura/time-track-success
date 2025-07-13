@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import MainLayout from '@/components/Layout/MainLayout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -9,13 +8,14 @@ import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Label } from '@/components/ui/label';
-import { Youtube, Play, Settings, Copy, Save, Trash2, X, Loader2, BookmarkPlus } from 'lucide-react';
+import { Youtube, Play, Settings, Copy, Save, Trash2, X, Loader2, BookmarkPlus, Eye } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
 import { useAuth } from '@/contexts/AuthContext';
 import { NewYouTubeService } from '@/services/newYoutubeService';
 import { AIService } from '@/services/aiService';
 import { VideoMetadata, TranscriptSegment, SummaryCard, AIConfig } from '@/types/youtube';
 import { supabase } from '@/integrations/supabase/client';
+import { SavedCardModal } from '@/components/YouTubeNoteTaker/SavedCardModal';
 
 const YouTubeNoteTakerPage = () => {
   const { user } = useAuth();
@@ -27,6 +27,8 @@ const YouTubeNoteTakerPage = () => {
   const [transcriptSegments, setTranscriptSegments] = useState<TranscriptSegment[]>([]);
   const [summaryCards, setSummaryCards] = useState<SummaryCard[]>([]);
   const [savedSummaries, setSavedSummaries] = useState<any[]>([]);
+  const [selectedCard, setSelectedCard] = useState<any>(null);
+  const [showCardModal, setShowCardModal] = useState(false);
   const [aiConfig, setAiConfig] = useState<AIConfig>({
     provider: 'openai',
     apiKey: '',
@@ -282,6 +284,11 @@ const YouTubeNoteTakerPage = () => {
         variant: "destructive"
       });
     }
+  };
+
+  const viewCard = (card: any) => {
+    setSelectedCard(card);
+    setShowCardModal(true);
   };
 
   return (
@@ -568,9 +575,23 @@ const YouTubeNoteTakerPage = () => {
                               <Badge variant="secondary" className="text-xs">
                                 Saved Summary
                               </Badge>
-                              <Button variant="ghost" size="sm" onClick={() => deleteSavedSummary(summary.id)}>
-                                <Trash2 className="h-4 w-4 text-red-500" />
-                              </Button>
+                              <div className="flex gap-2">
+                                <Button 
+                                  variant="ghost" 
+                                  size="sm" 
+                                  onClick={() => viewCard(summary)}
+                                  className="text-blue-600 hover:text-blue-700 hover:bg-blue-50"
+                                >
+                                  <Eye className="h-4 w-4" />
+                                </Button>
+                                <Button 
+                                  variant="ghost" 
+                                  size="sm" 
+                                  onClick={() => deleteSavedSummary(summary.id)}
+                                >
+                                  <Trash2 className="h-4 w-4 text-red-500" />
+                                </Button>
+                              </div>
                             </div>
                           </CardContent>
                         </Card>
@@ -582,6 +603,13 @@ const YouTubeNoteTakerPage = () => {
             </Card>
           </TabsContent>
         </Tabs>
+
+        {/* Saved Card Modal */}
+        <SavedCardModal 
+          isOpen={showCardModal}
+          onClose={() => setShowCardModal(false)}
+          card={selectedCard}
+        />
 
         {/* Footer */}
         <div className="text-center text-slate-500 text-sm mt-12">
