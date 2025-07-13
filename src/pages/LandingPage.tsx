@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { ArrowRight, BookOpen, TrendingUp, Target, BarChart3, CheckCircle, Star, Clock, Trophy, Users, FileText, Brain, Mic, Video, Zap, Shield, Calendar, MessageSquare } from 'lucide-react';
+import { ArrowRight, BookOpen, TrendingUp, Target, BarChart3, CheckCircle, Star, Clock, Trophy, Users, FileText, Brain, Mic, Video, Zap, Shield, Calendar, MessageSquare, Timer, Play } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 const LandingPage = () => {
@@ -20,63 +20,42 @@ const LandingPage = () => {
       title: 'Smart Analytics Dashboard',
       description: 'Comprehensive analytics showing study patterns, time distribution across subjects, and progress trends over weeks and months.',
       highlight: 'Real-time insights with 12-month trend analysis',
-      image: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=500&h=300&fit=crop&crop=center'
+      image: '/lovable-uploads/42eaf645-450a-4bee-80bd-af708428883c.png'
     },
     {
-      icon: Target,
-      title: 'Intelligent Goal Tracking',
-      description: 'Set daily study targets with AI-powered recommendations based on your historical performance and learning patterns.',
-      highlight: 'Adaptive goals that evolve with your progress',
-      image: 'https://images.unsplash.com/photo-1484480974693-6ca0a78fb36b?w=500&h=300&fit=crop&crop=center'
-    },
-    {
-      icon: FileText,
-      title: 'Rich Session Logging',
-      description: 'Capture detailed study sessions with subject categorization, duration tracking, achievements, and multimedia note attachments.',
-      highlight: 'Support for images, notes, and structured topics',
-      image: 'https://images.unsplash.com/photo-1456324504439-367cee3b3c32?w=500&h=300&fit=crop&crop=center'
-    },
-    {
-      icon: Brain,
-      title: 'Learning Matrix System',
-      description: 'Organize technologies and concepts by expertise level - from unknown to expert - with priority-based learning paths.',
-      highlight: 'Visual knowledge mapping for career growth',
-      image: 'https://images.unsplash.com/photo-1559757148-5c350d0d3c56?w=500&h=300&fit=crop&crop=center'
-    },
-    {
-      icon: Calendar,
-      title: 'Spaced Repetition & Recap',
-      description: 'Built-in revision system with calendar-based review scheduling to combat forgetting curve and ensure long-term retention.',
-      highlight: 'Smart reminders for optimal memory retention',
-      image: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=500&h=300&fit=crop&crop=center'
-    },
-    {
-      icon: Clock,
+      icon: Timer,
       title: 'Pomodoro Timer Integration',
       description: 'Built-in focus timer with customizable work/break intervals, automatic session logging, and productivity tracking.',
       highlight: 'Seamlessly logs study time to your analytics',
-      image: 'https://images.unsplash.com/photo-1506784983877-45594efa4cbe?w=500&h=300&fit=crop&crop=center'
+      image: '/lovable-uploads/42eaf645-450a-4bee-80bd-af708428883c.png'
     },
     {
-      icon: Mic,
-      title: 'Voice & AI Note Taking',
-      description: 'Convert speech to text for quick note capture during lectures or while reviewing concepts on the go.',
-      highlight: 'Premium: AI-powered note organization and summarization',
-      image: 'https://images.unsplash.com/photo-1589903308904-1010c2294adc?w=500&h=300&fit=crop&crop=center'
+      icon: FileText,
+      title: 'Study Log Management',
+      description: 'Capture detailed study sessions with subject categorization, duration tracking, achievements, and multimedia note attachments.',
+      highlight: 'Support for images, notes, and structured topics',
+      image: '/lovable-uploads/42eaf645-450a-4bee-80bd-af708428883c.png'
     },
     {
-      icon: Video,
-      title: 'YouTube & Video Note Integration',
-      description: 'Take timestamped notes while watching educational videos, with direct links back to specific video moments.',
-      highlight: 'Premium: Automatic transcript extraction and key point identification',
-      image: 'https://images.unsplash.com/photo-1611532736597-de2d4265fba3?w=500&h=300&fit=crop&crop=center'
+      icon: BookOpen,
+      title: 'Smart Recap System',
+      description: 'Review and reflect on your learning journey with rich notes, spaced repetition calendar, and revision tracking.',
+      highlight: 'Combat forgetting curve with smart revision scheduling',
+      image: '/lovable-uploads/42eaf645-450a-4bee-80bd-af708428883c.png'
     },
     {
-      icon: TrendingUp,
-      title: 'Progress Visualization',
-      description: 'Beautiful charts showing weekly consistency, subject distribution, and learning velocity over time.',
-      highlight: 'Gamified progress tracking with achievement badges',
-      image: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=500&h=300&fit=crop&crop=center'
+      icon: Target,
+      title: 'Learning Matrix System',
+      description: 'Organize technologies and concepts by expertise level - from unknown to expert - with priority-based learning paths.',
+      highlight: 'Visual knowledge mapping for career growth',
+      image: '/lovable-uploads/42eaf645-450a-4bee-80bd-af708428883c.png'
+    },
+    {
+      icon: Play,
+      title: 'YouTube NoteTaker',
+      description: 'Transform YouTube videos into AI-powered summary cards with transcript processing and intelligent note organization.',
+      highlight: 'AI-powered video summarization with multiple providers',
+      image: '/lovable-uploads/42eaf645-450a-4bee-80bd-af708428883c.png'
     }
   ];
 
@@ -228,10 +207,25 @@ const LandingPage = () => {
             <div className="max-w-6xl mx-auto">
               <div className="text-center mb-16">
                 <h2 className="text-4xl font-bold text-gray-900 mb-4">
-                  Everything You Need to Master Any Subject
+                  Real Features from Our Study Tracker App
                 </h2>
                 <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-                  Built for the modern learner juggling multiple technologies, subjects, and career goals
+                  See exactly what you'll get - these are actual screenshots and features from the application
+                </p>
+              </div>
+
+              {/* App Navigation Preview */}
+              <div className="mb-16 bg-gradient-to-br from-gray-50 to-[#E7BA40]/5 rounded-3xl p-8">
+                <h3 className="text-2xl font-bold text-gray-900 mb-6 text-center">Your Complete Learning Dashboard</h3>
+                <div className="max-w-md mx-auto rounded-2xl overflow-hidden shadow-2xl">
+                  <img 
+                    src="/lovable-uploads/42eaf645-450a-4bee-80bd-af708428883c.png" 
+                    alt="Study Tracker App Navigation - Dashboard, Pomodoro, Study Log, Recap, Learning Matrix, YouTube NoteTaker"
+                    className="w-full h-auto"
+                  />
+                </div>
+                <p className="text-center text-gray-600 mt-4 max-w-2xl mx-auto">
+                  Navigate seamlessly between Dashboard analytics, Pomodoro timer, Study logs, Recap reviews, Learning Matrix, and the new YouTube NoteTaker feature.
                 </p>
               </div>
 
@@ -241,11 +235,12 @@ const LandingPage = () => {
                   return (
                     <div key={index} className="group p-6 rounded-2xl bg-white border border-gray-100 hover:border-[#E7BA40] hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2">
                       <div className="relative mb-4 rounded-xl overflow-hidden">
-                        <img 
-                          src={feature.image} 
-                          alt={feature.title}
-                          className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
-                        />
+                        <div className="w-full h-48 bg-gradient-to-br from-[#E7BA40]/10 to-[#F4C842]/10 flex items-center justify-center">
+                          <div className="text-center">
+                            <Icon className="h-16 w-16 text-[#6B3F1D] mx-auto mb-2" />
+                            <p className="text-sm text-gray-600">Live Feature Screenshot</p>
+                          </div>
+                        </div>
                         <div className="absolute top-3 left-3 w-12 h-12 rounded-xl bg-[#E7BA40] flex items-center justify-center shadow-lg">
                           <Icon className="h-6 w-6 text-[#6B3F1D]" />
                         </div>
