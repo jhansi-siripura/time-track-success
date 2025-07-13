@@ -8,15 +8,19 @@ import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Label } from '@/components/ui/label';
-import { Youtube, Play, Settings, Copy, Save, Trash2, X } from 'lucide-react';
+import { Youtube, Play, Settings, Copy, Save, Trash2, X, Loader2 } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
+import { YouTubeService, VideoTranscriptData, SummaryData } from '@/services/youtubeService';
+import { useAuth } from '@/contexts/AuthContext';
 
 const YouTubeNoteTakerPage = () => {
+  const { user } = useAuth();
   const [activeTab, setActiveTab] = useState('generator');
   const [videoUrl, setVideoUrl] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const [videoData, setVideoData] = useState(null);
-  const [summaryCards, setSummaryCards] = useState([]);
+  const [isGeneratingSummary, setIsGeneratingSummary] = useState(false);
+  const [videoData, setVideoData] = useState<VideoTranscriptData | null>(null);
+  const [summaryCards, setSummaryCards] = useState<SummaryData[]>([]);
   const [aiConfig, setAiConfig] = useState({
     provider: 'OpenAI',
     apiKey: '',
@@ -37,12 +41,30 @@ const YouTubeNoteTakerPage = () => {
     }
   }, []);
 
+  // Load saved summaries when component mounts or when user changes
+  useEffect(() => {
+    if (user) {
+      loadSavedSummaries();
+    }
+  }, [user]);
+
   // Save AI config to localStorage whenever it changes
   useEffect(() => {
     if (aiConfig.apiKey) {
       localStorage.setItem('youtubeNoteTaker_aiConfig', JSON.stringify(aiConfig));
     }
   }, [aiConfig]);
+
+  const loadSavedSummaries = async () => {
+    if (!user) return;
+    
+    try {
+      const summaries = await YouTubeService.getSavedSummaries(user.id);
+      setSummaryCards(summaries);
+    } catch (error) {
+      console.error('Failed to load saved summaries:', error);
+    }
+  };
 
   const loadVideo = async () => {
     if (!videoUrl.trim()) {
@@ -54,31 +76,10 @@ const YouTubeNoteTakerPage = () => {
       return;
     }
 
-    if (!aiConfig.apiKey) {
-      setShowAiConfig(true);
-      toast({
-        title: "Configuration Required",
-        description: "Configure your AI settings to enable transcript summarization",
-        variant: "destructive"
-      });
-      return;
-    }
-
     setIsLoading(true);
     try {
-      // Extract video ID from URL
-      const videoId = extractVideoId(videoUrl);
-      if (!videoId) {
-        throw new Error('Invalid YouTube URL');
-      }
-
-      // Mock video data for now
-      setVideoData({
-        id: videoId,
-        title: 'React JS Explained In 10 Minutes',
-        duration: '10:00',
-        thumbnail: `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`
-      });
+      const transcriptData = await YouTubeService.extractTranscript(videoUrl);
+      setVideoData(transcriptData);
 
       toast({
         title: "Video Loaded",
@@ -110,35 +111,38 @@ const YouTubeNoteTakerPage = () => {
   };
 
   const generateSummaryCards = async () => {
-    if (!videoData) return;
+    if (!videoData || !user) {
+      toast({
+        title: "Error",
+        description: "Please ensure you're logged in and a video is loaded",
+        variant: "destructive"
+      });
+      return;
+    }
 
-    setIsLoading(true);
+    setIsGeneratingSummary(true);
     try {
-      // Mock summary card generation
-      const mockCard = {
-        id: Date.now().toString(),
-        title: 'Core Concepts Every React Developer Should Know',
-        timeRange: '0:00 - 10:00',
-        summary: `# Core Concepts Every React Developer Should Know ## Introduction to React - React is a JavaScript library for building user interfaces. - Used by major websites like Facebook, Netflix, and Airbnb. - Provides tools and structure for faster UI development. ## Single Page Applications (SPAs) - SPAs use one single template, updating components within the DOM. - Misleading term as it suggests only one page exists. - Components are independent, reusable pieces of the UI. ## Components - Components can be JavaScript classes or functions returning HTML (JSX). - Components can be nested to any depth. - Functional components are becoming more popular with the advent of hooks.`,
-        videoTitle: videoData.title,
-        savedAt: new Date().toISOString(),
-        tags: ['youtube', 'recap', 'ai-summary']
-      };
+      const result = await YouTubeService.generateSummary(
+        videoData.transcript,
+        videoData,
+        user.id
+      );
 
-      setSummaryCards(prev => [mockCard, ...prev]);
+      // Add the new summary to the list
+      setSummaryCards(prev => [result.summary, ...prev]);
       
       toast({
         title: "Summary Generated",
-        description: "AI summary cards created successfully!",
+        description: "AI summary created and saved successfully!",
       });
     } catch (error) {
       toast({
         title: "Error",
-        description: "Failed to generate summary cards",
+        description: error.message || "Failed to generate summary",
         variant: "destructive"
       });
     }
-    setIsLoading(false);
+    setIsGeneratingSummary(false);
   };
 
   const saveAiConfig = () => {
@@ -158,7 +162,7 @@ const YouTubeNoteTakerPage = () => {
     });
   };
 
-  const copyCard = (card) => {
+  const copyCard = (card: SummaryData) => {
     navigator.clipboard.writeText(card.summary);
     toast({
       title: "Copied",
@@ -166,19 +170,21 @@ const YouTubeNoteTakerPage = () => {
     });
   };
 
-  const saveCard = (card) => {
-    toast({
-      title: "Saved",
-      description: "Card saved to your collection",
-    });
-  };
-
-  const deleteCard = (cardId) => {
-    setSummaryCards(prev => prev.filter(card => card.id !== cardId));
-    toast({
-      title: "Deleted",
-      description: "Card removed from your collection",
-    });
+  const deleteCard = async (cardId: string) => {
+    try {
+      await YouTubeService.deleteSummary(cardId);
+      setSummaryCards(prev => prev.filter(card => card.id !== cardId));
+      toast({
+        title: "Deleted",
+        description: "Card removed from your collection",
+      });
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to delete card",
+        variant: "destructive"
+      });
+    }
   };
 
   return (
@@ -336,17 +342,24 @@ const YouTubeNoteTakerPage = () => {
                 <CardContent>
                   <div className="aspect-video bg-slate-100 rounded-lg mb-4 flex items-center justify-center">
                     <iframe
-                      src={`https://www.youtube.com/embed/${videoData.id}`}
+                      src={`https://www.youtube.com/embed/${videoData.videoId}`}
                       className="w-full h-full rounded-lg"
                       allowFullScreen
                     />
                   </div>
                   <Button 
                     onClick={generateSummaryCards}
-                    disabled={isLoading}
+                    disabled={isGeneratingSummary}
                     className="w-full bg-gradient-to-r from-green-500 to-blue-500 hover:from-green-600 hover:to-blue-600 text-white py-3"
                   >
-                    {isLoading ? 'Generating...' : '🤖 Generate AI Summary Cards'}
+                    {isGeneratingSummary ? (
+                      <>
+                        <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                        Generating...
+                      </>
+                    ) : (
+                      '🤖 Generate AI Summary Cards'
+                    )}
                   </Button>
                 </CardContent>
               </Card>
@@ -362,18 +375,15 @@ const YouTubeNoteTakerPage = () => {
                       <CardHeader className="pb-3">
                         <div className="flex items-start justify-between">
                           <div>
-                            <CardTitle className="text-xl mb-2">{card.title}</CardTitle>
+                            <CardTitle className="text-xl mb-2">{card.video_title}</CardTitle>
                             <div className="flex items-center gap-3 text-sm text-slate-600">
-                              <Badge variant="outline">{card.timeRange}</Badge>
-                              <span>Saved: {new Date(card.savedAt).toLocaleDateString()}</span>
+                              <Badge variant="outline">Video Summary</Badge>
+                              <span>Saved: {new Date(card.created_at).toLocaleDateString()}</span>
                             </div>
                           </div>
                           <div className="flex gap-2">
                             <Button variant="ghost" size="sm" onClick={() => copyCard(card)}>
                               <Copy className="h-4 w-4" />
-                            </Button>
-                            <Button variant="ghost" size="sm" onClick={() => saveCard(card)}>
-                              <Save className="h-4 w-4" />
                             </Button>
                             <Button variant="ghost" size="sm" onClick={() => deleteCard(card.id)}>
                               <Trash2 className="h-4 w-4" />
@@ -425,8 +435,8 @@ const YouTubeNoteTakerPage = () => {
                       {summaryCards.map((card) => (
                         <Card key={card.id} className="bg-gray-50 border border-gray-200 hover:shadow-sm transition-shadow duration-200">
                           <CardHeader className="pb-3">
-                            <CardTitle className="text-lg">{card.title}</CardTitle>
-                            <p className="text-sm text-slate-600">From: {card.videoTitle}</p>
+                            <CardTitle className="text-lg">{card.video_title}</CardTitle>
+                            <p className="text-sm text-slate-600">Created: {new Date(card.created_at).toLocaleDateString()}</p>
                           </CardHeader>
                           <CardContent>
                             <p className="text-sm text-slate-700 line-clamp-3 mb-3">

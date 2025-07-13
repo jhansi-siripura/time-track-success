@@ -235,6 +235,51 @@ export type Database = {
           },
         ]
       }
+      youtube_summaries: {
+        Row: {
+          created_at: string
+          duration: number | null
+          id: string
+          summary: string
+          tags: string[] | null
+          transcript: string
+          updated_at: string
+          user_id: string
+          video_id: string
+          video_thumbnail: string | null
+          video_title: string
+          video_url: string
+        }
+        Insert: {
+          created_at?: string
+          duration?: number | null
+          id?: string
+          summary: string
+          tags?: string[] | null
+          transcript: string
+          updated_at?: string
+          user_id: string
+          video_id: string
+          video_thumbnail?: string | null
+          video_title: string
+          video_url: string
+        }
+        Update: {
+          created_at?: string
+          duration?: number | null
+          id?: string
+          summary?: string
+          tags?: string[] | null
+          transcript?: string
+          updated_at?: string
+          user_id?: string
+          video_id?: string
+          video_thumbnail?: string | null
+          video_title?: string
+          video_url?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
