@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { BarChart3, FileText, Plus, BookOpen, Home, Settings, Timer, Target } from 'lucide-react';
+import { BarChart3, FileText, Plus, BookOpen, Home, Settings, Timer, Target, Youtube } from 'lucide-react';
 import { Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent, SidebarGroupLabel, SidebarMenu, SidebarMenuButton, SidebarMenuItem, useSidebar } from '@/components/ui/sidebar';
 
 const AppSidebar = () => {
@@ -12,6 +12,7 @@ const AppSidebar = () => {
     { path: '/home', label: 'Home', icon: Home },
     { path: '/dashboard', label: 'Dashboard', icon: BarChart3 },
     { path: '/learning-matrix', label: 'Learning Matrix', icon: Target },
+    { path: '/youtube-notetaker', label: 'YouTube NoteTaker', icon: Youtube },
     { path: '/pomodoro', label: 'Pomodoro', icon: Timer },
     { path: '/add-session', label: 'Add Study Log', icon: Plus },
     { path: '/study-logs', label: 'View Logs', icon: FileText },

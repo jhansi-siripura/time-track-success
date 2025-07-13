@@ -15,6 +15,7 @@ import StudyLogsPage from '@/pages/StudyLogsPage';
 import AddSessionPage from '@/pages/AddSessionPage';
 import PomodoroPage from '@/pages/PomodoroPage';
 import LearningMatrixPage from '@/pages/LearningMatrixPage';
+import YouTubeNoteTakerPage from '@/pages/YouTubeNoteTakerPage';
 import RecapPage from '@/pages/RecapPage';
 import SettingsPage from '@/pages/SettingsPage';
 import ChangelogPage from '@/pages/ChangelogPage';
@@ -38,6 +39,7 @@ function App() {
               <Route path="/add-session" element={<ProtectedRoute><AddSessionPage /></ProtectedRoute>} />
               <Route path="/pomodoro" element={<ProtectedRoute><PomodoroPage /></ProtectedRoute>} />
               <Route path="/learning-matrix" element={<ProtectedRoute><LearningMatrixPage /></ProtectedRoute>} />
+              <Route path="/youtube-notetaker" element={<ProtectedRoute><YouTubeNoteTakerPage /></ProtectedRoute>} />
               <Route path="/recap" element={<ProtectedRoute><RecapPage /></ProtectedRoute>} />
               <Route path="/settings" element={<ProtectedRoute><SettingsPage /></ProtectedRoute>} />
               <Route path="/changelog" element={<ProtectedRoute><ChangelogPage /></ProtectedRoute>} />
