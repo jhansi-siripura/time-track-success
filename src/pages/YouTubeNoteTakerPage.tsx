@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import MainLayout from '@/components/Layout/MainLayout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -229,155 +228,158 @@ const YouTubeNoteTakerPage = () => {
 
           {/* Generator Tab */}
           <TabsContent value="generator" className="space-y-8">
-            {/* URL Input Section */}
-            <Card className="bg-white border-2 border-gray-100 shadow-lg hover:shadow-xl transition-shadow duration-200 rounded-lg">
-              <CardHeader className="pb-4">
-                <div className="flex items-center justify-between">
-                  <CardTitle className="flex items-center gap-2 text-xl font-semibold">
-                    <Play className="h-5 w-5 text-blue-600" />
-                    Enter YouTube Video URL
-                  </CardTitle>
-                  <Dialog open={showAiConfig} onOpenChange={setShowAiConfig}>
-                    <DialogTrigger asChild>
-                      <Button variant="outline" size="sm" className="gap-2">
-                        <Settings className="h-4 w-4" />
-                      </Button>
-                    </DialogTrigger>
-                    <DialogContent className="bg-white">
-                      <DialogHeader>
-                        <DialogTitle className="flex items-center gap-2">
-                          <Settings className="h-5 w-5" />
-                          AI Configuration
-                        </DialogTitle>
-                      </DialogHeader>
-                      <div className="space-y-4">
-                        <div>
-                          <Label htmlFor="provider">AI Provider</Label>
-                          <Select 
-                            value={aiConfig.provider} 
-                            onValueChange={(value: 'openai' | 'anthropic' | 'perplexity') => {
-                              console.log('Provider changed to:', value);
-                              setAiConfig(prev => ({...prev, provider: value}));
-                            }}
-                          >
-                            <SelectTrigger>
-                              <SelectValue />
-                            </SelectTrigger>
-                            <SelectContent>
-                              <SelectItem value="openai">OpenAI</SelectItem>
-                              <SelectItem value="anthropic">Anthropic</SelectItem>
-                              <SelectItem value="perplexity">Perplexity</SelectItem>
-                            </SelectContent>
-                          </Select>
-                        </div>
-                        <div>
-                          <Label htmlFor="apiKey">API Key</Label>
-                          <Input
-                            id="apiKey"
-                            type="password"
-                            placeholder="Enter your API key"
-                            value={aiConfig.apiKey}
-                            onChange={(e) => {
-                              console.log('API key changed');
-                              setAiConfig(prev => ({...prev, apiKey: e.target.value}));
-                            }}
-                          />
-                        </div>
-                        <div>
-                          <Label htmlFor="model">Model (optional)</Label>
-                          <Input
-                            id="model"
-                            placeholder={aiConfig.provider === 'openai' ? 'gpt-4o-mini' : aiConfig.provider === 'anthropic' ? 'claude-3-haiku-20240307' : 'llama-3.1-sonar-small-128k-online'}
-                            value={aiConfig.model}
-                            onChange={(e) => setAiConfig(prev => ({...prev, model: e.target.value}))}
-                          />
-                        </div>
-                        <div className="flex gap-2 pt-4">
-                          <Button onClick={saveAiConfig} className="flex-1">
-                            Save Configuration
-                          </Button>
-                          <Button variant="outline" onClick={() => setShowAiConfig(false)}>
-                            Cancel
-                          </Button>
-                        </div>
-                      </div>
-                    </DialogContent>
-                  </Dialog>
-                </div>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="flex gap-4">
-                  <Input
-                    placeholder="https://www.youtube.com/watch?v=..."
-                    value={videoUrl}
-                    onChange={(e) => setVideoUrl(e.target.value)}
-                    className="flex-1"
-                  />
-                  <Button 
-                    onClick={loadVideo}
-                    disabled={isLoading}
-                    className="bg-blue-600 hover:bg-blue-700 text-white px-8"
-                  >
-                    {isLoading ? 'Loading...' : 'Load Video'}
-                  </Button>
-                </div>
-                {!aiConfig.apiKey && (
-                  <div className="flex items-center gap-2 text-orange-600 bg-orange-50 p-3 rounded-lg border border-orange-200">
-                    <Settings className="h-4 w-4" />
-                    <span className="text-sm">Configure your AI settings to enable transcript summarization</span>
-                  </div>
-                )}
-              </CardContent>
-            </Card>
-
-            {/* Video Preview */}
-            {videoMetadata && (
+            {/* Side by Side Layout - URL Input and Video Preview */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              {/* Left Side - URL Input Section */}
               <Card className="bg-white border-2 border-gray-100 shadow-lg hover:shadow-xl transition-shadow duration-200 rounded-lg">
-                <CardHeader>
+                <CardHeader className="pb-4">
                   <div className="flex items-center justify-between">
-                    <CardTitle className="flex items-center gap-2">
-                      <Youtube className="h-5 w-5 text-red-500" />
-                      {videoMetadata.title}
+                    <CardTitle className="flex items-center gap-2 text-xl font-semibold">
+                      <Play className="h-5 w-5 text-blue-600" />
+                      Enter YouTube Video URL
                     </CardTitle>
-                    <Button 
-                      variant="ghost" 
-                      size="sm" 
-                      onClick={unloadVideo}
-                      className="text-red-500 hover:text-red-700 hover:bg-red-50"
-                    >
-                      <X className="h-4 w-4" />
-                    </Button>
+                    <Dialog open={showAiConfig} onOpenChange={setShowAiConfig}>
+                      <DialogTrigger asChild>
+                        <Button variant="outline" size="sm" className="gap-2">
+                          <Settings className="h-4 w-4" />
+                        </Button>
+                      </DialogTrigger>
+                      <DialogContent className="bg-white">
+                        <DialogHeader>
+                          <DialogTitle className="flex items-center gap-2">
+                            <Settings className="h-5 w-5" />
+                            AI Configuration
+                          </DialogTitle>
+                        </DialogHeader>
+                        <div className="space-y-4">
+                          <div>
+                            <Label htmlFor="provider">AI Provider</Label>
+                            <Select 
+                              value={aiConfig.provider} 
+                              onValueChange={(value: 'openai' | 'anthropic' | 'perplexity') => {
+                                console.log('Provider changed to:', value);
+                                setAiConfig(prev => ({...prev, provider: value}));
+                              }}
+                            >
+                              <SelectTrigger>
+                                <SelectValue />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="openai">OpenAI</SelectItem>
+                                <SelectItem value="anthropic">Anthropic</SelectItem>
+                                <SelectItem value="perplexity">Perplexity</SelectItem>
+                              </SelectContent>
+                            </Select>
+                          </div>
+                          <div>
+                            <Label htmlFor="apiKey">API Key</Label>
+                            <Input
+                              id="apiKey"
+                              type="password"
+                              placeholder="Enter your API key"
+                              value={aiConfig.apiKey}
+                              onChange={(e) => {
+                                console.log('API key changed');
+                                setAiConfig(prev => ({...prev, apiKey: e.target.value}));
+                              }}
+                            />
+                          </div>
+                          <div>
+                            <Label htmlFor="model">Model (optional)</Label>
+                            <Input
+                              id="model"
+                              placeholder={aiConfig.provider === 'openai' ? 'gpt-4o-mini' : aiConfig.provider === 'anthropic' ? 'claude-3-haiku-20240307' : 'llama-3.1-sonar-small-128k-online'}
+                              value={aiConfig.model}
+                              onChange={(e) => setAiConfig(prev => ({...prev, model: e.target.value}))}
+                            />
+                          </div>
+                          <div className="flex gap-2 pt-4">
+                            <Button onClick={saveAiConfig} className="flex-1">
+                              Save Configuration
+                            </Button>
+                            <Button variant="outline" onClick={() => setShowAiConfig(false)}>
+                              Cancel
+                            </Button>
+                          </div>
+                        </div>
+                      </DialogContent>
+                    </Dialog>
                   </div>
                 </CardHeader>
-                <CardContent>
-                  <div className="aspect-video bg-slate-100 rounded-lg mb-4 flex items-center justify-center">
-                    <iframe
-                      src={`https://www.youtube.com/embed/${videoMetadata.videoId}`}
-                      className="w-full h-full rounded-lg"
-                      allowFullScreen
+                <CardContent className="space-y-4">
+                  <div className="flex gap-4">
+                    <Input
+                      placeholder="https://www.youtube.com/watch?v=..."
+                      value={videoUrl}
+                      onChange={(e) => setVideoUrl(e.target.value)}
+                      className="flex-1"
                     />
+                    <Button 
+                      onClick={loadVideo}
+                      disabled={isLoading}
+                      className="bg-blue-600 hover:bg-blue-700 text-white px-8"
+                    >
+                      {isLoading ? 'Loading...' : 'Load Video'}
+                    </Button>
                   </div>
-                  <div className="mb-4">
-                    <p className="text-sm text-slate-600">Channel: {videoMetadata.channel}</p>
-                    <p className="text-sm text-slate-600">Transcript segments: {transcriptSegments.length}</p>
-                  </div>
-                  <Button 
-                    onClick={generateSummaryCards}
-                    disabled={isGeneratingSummary || !aiConfig.apiKey}
-                    className="w-full bg-gradient-to-r from-green-500 to-blue-500 hover:from-green-600 hover:to-blue-600 text-white py-3"
-                  >
-                    {isGeneratingSummary ? (
-                      <>
-                        <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                        Generating...
-                      </>
-                    ) : (
-                      '🤖 Generate AI Summary Cards'
-                    )}
-                  </Button>
+                  {!aiConfig.apiKey && (
+                    <div className="flex items-center gap-2 text-orange-600 bg-orange-50 p-3 rounded-lg border border-orange-200">
+                      <Settings className="h-4 w-4" />
+                      <span className="text-sm">Configure your AI settings to enable transcript summarization</span>
+                    </div>
+                  )}
                 </CardContent>
               </Card>
-            )}
+
+              {/* Right Side - Video Preview */}
+              {videoMetadata && (
+                <Card className="bg-white border-2 border-gray-100 shadow-lg hover:shadow-xl transition-shadow duration-200 rounded-lg">
+                  <CardHeader>
+                    <div className="flex items-center justify-between">
+                      <CardTitle className="flex items-center gap-2 text-lg">
+                        <Youtube className="h-5 w-5 text-red-500" />
+                        {videoMetadata.title}
+                      </CardTitle>
+                      <Button 
+                        variant="ghost" 
+                        size="sm" 
+                        onClick={unloadVideo}
+                        className="text-red-500 hover:text-red-700 hover:bg-red-50"
+                      >
+                        <X className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="aspect-video bg-slate-100 rounded-lg mb-4 flex items-center justify-center">
+                      <iframe
+                        src={`https://www.youtube.com/embed/${videoMetadata.videoId}`}
+                        className="w-full h-full rounded-lg"
+                        allowFullScreen
+                      />
+                    </div>
+                    <div className="mb-4">
+                      <p className="text-sm text-slate-600">Channel: {videoMetadata.channel}</p>
+                      <p className="text-sm text-slate-600">Transcript segments: {transcriptSegments.length}</p>
+                    </div>
+                    <Button 
+                      onClick={generateSummaryCards}
+                      disabled={isGeneratingSummary || !aiConfig.apiKey}
+                      className="w-full bg-gradient-to-r from-green-500 to-blue-500 hover:from-green-600 hover:to-blue-600 text-white py-3"
+                    >
+                      {isGeneratingSummary ? (
+                        <>
+                          <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                          Generating...
+                        </>
+                      ) : (
+                        '🤖 Generate AI Summary Cards'
+                      )}
+                    </Button>
+                  </CardContent>
+                </Card>
+              )}
+            </div>
 
             {/* Generated Summary Cards */}
             {summaryCards.length > 0 && (
