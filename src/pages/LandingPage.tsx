@@ -297,7 +297,7 @@ const LandingPage = () => {
                           {step.details}
                         </div>
                         <div className="rounded-xl overflow-hidden shadow-lg">
-                          <img src={step.image} alt={step.title} className="w-full h-40 object-cover hover:scale-105 transition-transform duration-300" />
+                          
                         </div>
                       </div>
                     </div>
