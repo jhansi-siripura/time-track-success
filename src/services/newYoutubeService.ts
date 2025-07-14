@@ -42,7 +42,8 @@ export class NewYouTubeService {
   static async getTranscript(videoId: string): Promise<TranscriptSegment[]> {
     try {
       const response = await fetch(
-        `https://51479b1d-d8ee-42b4-a76c-12e5aa9ffc57-00-vf94yjagbeq9.pike.replit.dev/transcript?video_id=${videoId}`
+        
+        `https://8b62a8e1-2179-417d-ba6e-fbd005e34411-00-19r1v2dshk7ui.sisko.replit.dev/transcript?video_id=${videoId}`
       );
 
       if (!response.ok) {
