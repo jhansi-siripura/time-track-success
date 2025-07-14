@@ -181,35 +181,7 @@ const LandingPage = () => {
       case 'features':
         return <section className="py-20 px-4">
             <div className="max-w-6xl mx-auto">
-              <div className="text-center mb-16">
-                <h2 className="text-4xl font-bold text-gray-900 mb-4">
-                  See Your Real Study Tracker in Action
-                </h2>
-                <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-                  These are actual screenshots from our app - no mock-ups or placeholders. This is exactly what you'll see when you start tracking your learning journey.
-                </p>
-              </div>
-
-              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
-                {features.map((feature, index) => {
-                const Icon = feature.icon;
-                return <div key={index} className="group p-6 rounded-2xl border border-gray-100 hover:border-[#E7BA40] hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 bg-yellow-300">
-                      <div className="relative mb-4 rounded-xl overflow-hidden border border-gray-200">
-                        <img src={feature.image} alt={feature.title} className="w-full h-48 object-cover object-top group-hover:scale-105 transition-transform duration-300" />
-                        <div className="absolute top-3 left-3 w-12 h-12 rounded-xl bg-[#E7BA40] flex items-center justify-center shadow-lg">
-                          <Icon className="h-6 w-6 text-[#6B3F1D]" />
-                        </div>
-                      </div>
-                      <h3 className="text-xl font-semibold text-gray-900 mb-2">{feature.title}</h3>
-                      <p className="text-gray-600 leading-relaxed mb-3">{feature.description}</p>
-                      <div className="text-sm font-medium text-[#6B3F1D] bg-[#E7BA40]/10 px-3 py-1 rounded-full">
-                        {feature.highlight}
-                      </div>
-                    </div>;
-              })}
-              </div>
-
-              {/* Enhanced Target Audience Section */}
+               {/* Enhanced Target Audience Section */}
               <div className="bg-gradient-to-br from-gray-50 to-[#E7BA40]/5 rounded-3xl p-8 mb-8">
                 <div className="text-center mb-12">
                   <h3 className="text-3xl font-bold text-gray-900 mb-4">
@@ -268,6 +240,35 @@ const LandingPage = () => {
                   </p>
                 </div>
               </div>
+              <div className="text-center mb-16">
+                <h2 className="text-4xl font-bold text-gray-900 mb-4">
+                  See Your Real Study Tracker in Action
+                </h2>
+                <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+                  These are actual screenshots from our app - no mock-ups or placeholders. This is exactly what you'll see when you start tracking your learning journey.
+                </p>
+              </div>
+
+              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
+                {features.map((feature, index) => {
+                const Icon = feature.icon;
+                return <div key={index} className="group p-6 rounded-2xl border border-gray-100 hover:border-[#E7BA40] hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 bg-yellow-300">
+                      <div className="relative mb-4 rounded-xl overflow-hidden border border-gray-200">
+                        <img src={feature.image} alt={feature.title} className="w-full h-48 object-cover object-top group-hover:scale-105 transition-transform duration-300" />
+                        <div className="absolute top-3 left-3 w-12 h-12 rounded-xl bg-[#E7BA40] flex items-center justify-center shadow-lg">
+                          <Icon className="h-6 w-6 text-[#6B3F1D]" />
+                        </div>
+                      </div>
+                      <h3 className="text-xl font-semibold text-gray-900 mb-2">{feature.title}</h3>
+                      <p className="text-gray-600 leading-relaxed mb-3">{feature.description}</p>
+                      <div className="text-sm font-medium text-[#6B3F1D] bg-[#E7BA40]/10 px-3 py-1 rounded-full">
+                        {feature.highlight}
+                      </div>
+                    </div>;
+              })}
+              </div>
+
+             
             </div>
           </section>;
       case 'how-it-works':
