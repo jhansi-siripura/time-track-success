@@ -40,8 +40,12 @@ serve(async (req) => {
     console.log(`Processing video ID: ${videoId}`);
 
     if (!YOUTUBE_API_KEY) {
+      console.error('YouTube API key not found in environment variables');
       return new Response(
-        JSON.stringify({ success: false, error: 'YouTube API key not configured' }),
+        JSON.stringify({ 
+          success: false, 
+          error: 'YouTube API key not configured. Please add YOUTUBE_API_KEY to Supabase Edge Function Secrets.' 
+        }),
         { 
           status: 500, 
           headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
