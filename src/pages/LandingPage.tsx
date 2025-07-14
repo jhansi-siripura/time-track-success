@@ -304,49 +304,7 @@ const LandingPage = () => {
                   </div>)}
               </div>
 
-              {/* Pain Points Section */}
-              <div className="bg-gradient-to-r from-[#E7BA40]/10 to-[#F4C842]/10 rounded-3xl p-8">
-                <h3 className="text-3xl font-bold text-gray-900 mb-8 text-center">The Problems We Solve</h3>
-                <div className="grid md:grid-cols-2 gap-8">
-                  
-                  <div className="space-y-6">
-                    <div className="flex items-start gap-4 p-4 bg-white rounded-lg shadow-sm">
-                      <div className="w-3 h-3 bg-red-500 rounded-full mt-2 flex-shrink-0"></div>
-                      <div>
-                        <h4 className="font-semibold text-gray-900 mb-1">Information Overload</h4>
-                        <p className="text-gray-600">It's not enough to know "AWS" — you need Lambda, S3, ECS, and more. Tech evolves fast, making it easy to lose track.</p>
-                      </div>
-                    </div>
-                    
-                    <div className="flex items-start gap-4 p-4 bg-white rounded-lg shadow-sm">
-                      <div className="w-3 h-3 bg-red-500 rounded-full mt-2 flex-shrink-0"></div>
-                      <div>
-                        <h4 className="font-semibold text-gray-900 mb-1">Forgetting What You Learned</h4>
-                        <p className="text-gray-600">Without a revision system, even well-understood concepts fade from memory over time.</p>
-                      </div>
-                    </div>
-                  </div>
-                  
-                  <div className="space-y-6">
-                    <div className="flex items-start gap-4 p-4 bg-white rounded-lg shadow-sm">
-                      <div className="w-3 h-3 bg-red-500 rounded-full mt-2 flex-shrink-0"></div>
-                      <div>
-                        <h4 className="font-semibold text-gray-900 mb-1">Parallel Subject Chaos</h4>
-                        <p className="text-gray-600">Learning multiple subjects simultaneously makes traditional note-taking ineffective.</p>
-                      </div>
-                    </div>
-                    <div className="flex items-start gap-4 p-4 bg-white rounded-lg shadow-sm">
-                      <div className="w-3 h-3 bg-red-500 rounded-full mt-2 flex-shrink-0"></div>
-                      <div>
-                        <h4 className="font-semibold text-gray-900 mb-1">No Strategic Learning Path</h4>
-                        <p className="text-gray-600">Without prioritization, you end up learning nice-to-know skills instead of job-critical ones.</p>
-                      </div>
-                    </div>
-                  </div>
-                  
-                </div>
-                
-              </div>
+             
 
               
             </div>
