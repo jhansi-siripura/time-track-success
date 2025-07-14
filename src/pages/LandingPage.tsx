@@ -272,7 +272,9 @@ const LandingPage = () => {
           </section>;
       case 'how-it-works':
         return <section className="py-20 px-4">
-             {/* Pain Points Section starts*/}
+             
+            <div className="max-w-6xl mx-auto">
+              {/* Pain Points Section starts*/}
               <div className="bg-gradient-to-r from-[#E7BA40]/10 to-[#F4C842]/10 rounded-3xl p-8">
                 <h3 className="text-3xl font-bold text-gray-900 mb-8 text-center">The Problems We Solve</h3>
                 <div className="grid md:grid-cols-2 gap-8">
@@ -316,7 +318,6 @@ const LandingPage = () => {
                 
               </div>
           {/* Pain Points Section ends*/}
-            <div className="max-w-6xl mx-auto">
               <div className="text-center mb-16">
                 <h2 className="text-4xl font-bold text-gray-900 mb-4">
                   From Overwhelmed to Organized
