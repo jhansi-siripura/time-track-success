@@ -252,7 +252,7 @@ const LandingPage = () => {
               <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
                 {features.map((feature, index) => {
                 const Icon = feature.icon;
-                return <div key={index} className="group p-6 rounded-2xl border border-gray-100 hover:border-[#E7BA40] hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 bg-yellow-300">
+                return <div key={index} className="group p-6 rounded-2xl border border-gray-100 hover:border-[#E7BA40] hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 bg-yellow-400">
                       <div className="relative mb-4 rounded-xl overflow-hidden border border-gray-200">
                         <img src={feature.image} alt={feature.title} className="w-full h-48 object-cover object-top group-hover:scale-105 transition-transform duration-300" />
                         <div className="absolute top-3 left-3 w-12 h-12 rounded-xl bg-[#E7BA40] flex items-center justify-center shadow-lg">
