@@ -1,7 +1,5 @@
 import { VideoMetadata, TranscriptSegment } from '../types/youtube';
 
-import { YoutubeTranscript } from 'youtube-transcript'; // npm install youtube-transcript
-
 
 
 export class NewYouTubeService {
@@ -116,33 +114,6 @@ export class NewYouTubeService {
 
 
 
-  // ✅ Option 2: Frontend-only using `youtube-transcript`
-
-  static async getTranscriptFromFrontend(videoId: string): Promise<TranscriptSegment[]> {
-
-    try {
-
-      const transcript = await YoutubeTranscript.fetchTranscript(videoId);
-
-      return transcript.map((item: any) => ({
-
-        text: item.text,
-
-        start: item.start,
-
-        duration: item.duration
-
-      }));
-
-    } catch (error) {
-
-      console.error('Frontend transcript fetch failed:', error);
-
-      throw new Error('Could not fetch transcript using frontend method.');
-
-    }
-
-  }
 
 
 
