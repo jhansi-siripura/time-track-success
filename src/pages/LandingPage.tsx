@@ -78,7 +78,7 @@ const LandingPage = () => {
     number: '01',
     title: 'Capture Your Learning',
     description: 'Log study sessions with subject, topic, duration, and rich notes. Attach images, voice memos, or video timestamps.',
-    details: 'Supports multiple subjects simultaneously - perfect for professionals learning AWS, React, and Python in parallel',
+    details: 'Supports multiple subjects simultaneously - perfect for professionals learning muliple subjects parallely',
     image: 'https://images.unsplash.com/photo-1456324504439-367cee3b3c32?w=400&h=250&fit=crop&crop=center'
   }, {
     number: '02',
