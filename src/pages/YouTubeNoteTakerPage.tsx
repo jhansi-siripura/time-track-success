@@ -140,8 +140,9 @@ const YouTubeNoteTakerPage = () => {
     try {
       // Get video metadata and transcript
       const [metadata, transcript] = await Promise.all([
-        NewYouTubeService.getVideoMetadata(videoId),
-        NewYouTubeService.getTranscript(videoId)
+        NewYouTubeService.getVideoMetadata(videoId)
+        //NewYouTubeService.getTranscript(videoId)
+        NewYouTubeService.getTranscriptFromReplit(videoId)
       ]);
 
       setVideoMetadata(metadata);
