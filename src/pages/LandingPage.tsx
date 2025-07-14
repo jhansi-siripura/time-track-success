@@ -8,11 +8,11 @@ const LandingPage = () => {
     id: 'home',
     label: 'Home'
   }, {
-    id: 'features',
-    label: 'Features'
-  }, {
     id: 'how-it-works',
     label: 'How It Works'
+  }, {
+    id: 'features',
+    label: 'Features'
   }, {
     id: 'pricing',
     label: 'Pricing'
