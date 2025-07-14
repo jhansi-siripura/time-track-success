@@ -11,7 +11,7 @@ import { Label } from '@/components/ui/label';
 import { Youtube, Play, Settings, Copy, Save, Trash2, X, Loader2, BookmarkPlus, Eye } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
 import { useAuth } from '@/contexts/AuthContext';
-import { YouTubeService } from '@/services/youtubeService';
+import { NewYouTubeService } from '@/services/newYoutubeService';
 import { AIService } from '@/services/aiService';
 import { VideoMetadata, TranscriptSegment, SummaryCard, AIConfig } from '@/types/youtube';
 import { supabase } from '@/integrations/supabase/client';
@@ -126,7 +126,7 @@ const YouTubeNoteTakerPage = () => {
       return;
     }
 
-    const videoId = YouTubeService.extractVideoId(videoUrl);
+    const videoId = NewYouTubeService.extractVideoId(videoUrl);
     if (!videoId) {
       toast({
         title: "Error",
@@ -138,26 +138,14 @@ const YouTubeNoteTakerPage = () => {
 
     setIsLoading(true);
     try {
-      // Extract transcript using YouTube API via edge function
-      const transcriptData = await YouTubeService.extractTranscript(videoUrl);
-      
-      // Convert to expected format
-      setVideoMetadata({
-        videoId: transcriptData.videoId,
-        title: transcriptData.title,
-        channel: 'Unknown', // Channel info not available from current API
-        duration: transcriptData.duration || 'Unknown',
-        thumbnail: transcriptData.thumbnail || '',
-        url: videoUrl
-      });
-      
-      // Convert transcript to segments format for AIService
-      const segments = [{
-        start: 0,
-        duration: 0,
-        text: transcriptData.transcript
-      }];
-      setTranscriptSegments(segments);
+      // Get video metadata and transcript
+      const [metadata, transcript] = await Promise.all([
+        NewYouTubeService.getVideoMetadata(videoId),
+        NewYouTubeService.getTranscript(videoId)
+      ]);
+
+      setVideoMetadata(metadata);
+      setTranscriptSegments(transcript);
 
       toast({
         title: "Video Loaded",
@@ -207,7 +195,7 @@ const YouTubeNoteTakerPage = () => {
     setIsGeneratingSummary(true);
     try {
       const aiService = new AIService(aiConfig);
-      const transcriptText = transcriptSegments.map(seg => seg.text).join(' ');
+      const transcriptText = NewYouTubeService.formatTranscriptText(transcriptSegments);
       const summaryCards = await aiService.generateSummaryCards(transcriptText, transcriptSegments);
 
       setSummaryCards(summaryCards);
@@ -238,7 +226,7 @@ const YouTubeNoteTakerPage = () => {
     }
 
     try {
-      const transcriptText = transcriptSegments.map(seg => seg.text).join(' ');
+      const transcriptText = NewYouTubeService.formatTranscriptText(transcriptSegments);
       
       const { error } = await supabase
         .from('youtube_summaries')
