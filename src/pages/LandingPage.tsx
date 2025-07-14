@@ -308,6 +308,7 @@ const LandingPage = () => {
               <div className="bg-gradient-to-r from-[#E7BA40]/10 to-[#F4C842]/10 rounded-3xl p-8">
                 <h3 className="text-3xl font-bold text-gray-900 mb-8 text-center">The Problems We Solve</h3>
                 <div className="grid md:grid-cols-2 gap-8">
+                  
                   <div className="space-y-6">
                     <div className="flex items-start gap-4 p-4 bg-white rounded-lg shadow-sm">
                       <div className="w-3 h-3 bg-red-500 rounded-full mt-2 flex-shrink-0"></div>
@@ -316,6 +317,7 @@ const LandingPage = () => {
                         <p className="text-gray-600">It's not enough to know "AWS" — you need Lambda, S3, ECS, and more. Tech evolves fast, making it easy to lose track.</p>
                       </div>
                     </div>
+                    
                     <div className="flex items-start gap-4 p-4 bg-white rounded-lg shadow-sm">
                       <div className="w-3 h-3 bg-red-500 rounded-full mt-2 flex-shrink-0"></div>
                       <div>
@@ -324,6 +326,7 @@ const LandingPage = () => {
                       </div>
                     </div>
                   </div>
+                  
                   <div className="space-y-6">
                     <div className="flex items-start gap-4 p-4 bg-white rounded-lg shadow-sm">
                       <div className="w-3 h-3 bg-red-500 rounded-full mt-2 flex-shrink-0"></div>
@@ -340,8 +343,12 @@ const LandingPage = () => {
                       </div>
                     </div>
                   </div>
+                  
                 </div>
+                
               </div>
+
+              
             </div>
           </section>;
       case 'pricing':
