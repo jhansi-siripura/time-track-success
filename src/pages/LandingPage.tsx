@@ -322,6 +322,9 @@ const LandingPage = () => {
               <br></br>
               </div>
               <div className="text-center mb-16">
+                 <br></br>
+                 <br></br>
+                 <br></br>
                 <h2 className="text-4xl font-bold text-gray-900 mb-4">
                   From Overwhelmed to Organized
                 </h2>
