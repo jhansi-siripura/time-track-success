@@ -205,8 +205,12 @@ export const validateStudyLogData = (data: any): { isValid: boolean; errors: str
     errors.push('Achievements must be less than 500 characters');
   }
   
-  if (data.notes && data.notes.length > 5000) {
-    errors.push('Notes must be less than 5000 characters');
+  if (data.notes && data.notes.length > 0) {
+    // For HTML content, check the text content length, not HTML length
+    const textContent = data.notes.replace(/<[^>]*>/g, '').trim();
+    if (textContent.length > 5000) {
+      errors.push('Notes must be less than 5000 characters');
+    }
   }
   
   // XSS pattern detection
