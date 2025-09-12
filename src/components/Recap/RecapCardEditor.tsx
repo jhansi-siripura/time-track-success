@@ -134,7 +134,7 @@ const RecapCardEditor: React.FC<RecapCardEditorProps> = ({
           {/* Rich Text Notes */}
           <div className="space-y-2">
             <Label htmlFor="edit-notes">Notes</Label>
-            <RichTextEditor value={formData.notes} onChange={value => handleInputChange('notes', value)} placeholder="Write your study notes here..." maxLength={2000} />
+            <RichTextEditor value={formData.notes} onChange={value => handleInputChange('notes', value)} placeholder="Write your study notes here..." maxLength={5000} />
           </div>
 
           {/* Achievements and Images side by side */}

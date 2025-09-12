@@ -270,7 +270,7 @@ const StudyLogForm: React.FC<StudyLogFormProps> = ({
 
             <div className="space-y-2">
               <Label htmlFor="notes">Notes</Label>
-              <RichTextEditor value={formData.notes} onChange={value => handleInputChange('notes', value)} placeholder="Add your study notes, observations, or reflections..." maxLength={1000} />
+              <RichTextEditor value={formData.notes} onChange={value => handleInputChange('notes', value)} placeholder="Add your study notes, observations, or reflections..." maxLength={5000} />
             </div>
 
             {/* Achievements and Images side by side */}
