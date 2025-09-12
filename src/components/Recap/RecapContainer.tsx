@@ -15,6 +15,7 @@ interface StudyLog {
   duration: number;
   subject: string;
   topic?: string;
+  lesson?: string;
   source?: string;
   notes: string;
   achievements: string;

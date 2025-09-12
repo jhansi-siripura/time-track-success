@@ -6,11 +6,14 @@ import { useAuth } from '@/contexts/AuthContext';
 interface UseStudyAutocompleteReturn {
   subjects: string[];
   topics: string[];
+  lessons: string[];
   sources: string[];
   loadingSubjects: boolean;
   loadingTopics: boolean;
+  loadingLessons: boolean;
   loadingSources: boolean;
   fetchTopicsForSubject: (subject: string) => void;
+  fetchLessonsForTopic: (topic: string) => void;
 }
 
 const DEFAULT_SOURCES = [
@@ -20,9 +23,11 @@ const DEFAULT_SOURCES = [
 export function useStudyAutocomplete(): UseStudyAutocompleteReturn {
   const [subjects, setSubjects] = useState<string[]>([]);
   const [topics, setTopics] = useState<string[]>([]);
+  const [lessons, setLessons] = useState<string[]>([]);
   const [sources, setSources] = useState<string[]>(DEFAULT_SOURCES);
   const [loadingSubjects, setLoadingSubjects] = useState(false);
   const [loadingTopics, setLoadingTopics] = useState(false);
+  const [loadingLessons, setLoadingLessons] = useState(false);
   const [loadingSources, setLoadingSources] = useState(false);
   const { user } = useAuth();
 
@@ -64,6 +69,7 @@ export function useStudyAutocomplete(): UseStudyAutocompleteReturn {
   const fetchTopicsForSubject = useCallback(async (subject: string) => {
     if (!user || !subject) {
       setTopics([]);
+      setLessons([]); // Clear lessons when subject changes
       return;
     }
 
@@ -85,11 +91,45 @@ export function useStudyAutocomplete(): UseStudyAutocompleteReturn {
       );
       console.log('Fetched topics for', subject, ':', uniqueTopics);
       setTopics(uniqueTopics);
+      setLessons([]); // Clear lessons when topic list changes
     } catch (error) {
       console.error('Error fetching topics:', error);
       setTopics([]);
+      setLessons([]);
     } finally {
       setLoadingTopics(false);
+    }
+  }, [user]);
+
+  const fetchLessonsForTopic = useCallback(async (topic: string) => {
+    if (!user || !topic) {
+      setLessons([]);
+      return;
+    }
+
+    console.log('Fetching lessons for topic:', topic);
+    setLoadingLessons(true);
+    try {
+      const { data, error } = await supabase
+        .from('study_logs')
+        .select('lesson')
+        .eq('user_id', user.id)
+        .eq('topic', topic)
+        .not('lesson', 'is', null)
+        .order('lesson');
+
+      if (error) throw error;
+
+      const uniqueLessons = Array.from(
+        new Set(data?.map(item => item.lesson).filter(Boolean) || [])
+      );
+      console.log('Fetched lessons for', topic, ':', uniqueLessons);
+      setLessons(uniqueLessons);
+    } catch (error) {
+      console.error('Error fetching lessons:', error);
+      setLessons([]);
+    } finally {
+      setLoadingLessons(false);
     }
   }, [user]);
 
@@ -124,10 +164,13 @@ export function useStudyAutocomplete(): UseStudyAutocompleteReturn {
   return {
     subjects,
     topics,
+    lessons,
     sources,
     loadingSubjects,
     loadingTopics,
+    loadingLessons,
     loadingSources,
     fetchTopicsForSubject,
+    fetchLessonsForTopic,
   };
 }

@@ -17,6 +17,7 @@ interface StudyLog {
   duration: number;
   subject: string;
   topic?: string;
+  lesson?: string;
   source?: string;
   notes: string;
   achievements: string;
@@ -40,6 +41,7 @@ const RecapCardEditor: React.FC<RecapCardEditorProps> = ({
     duration: (log.duration || 0).toString(),
     subject: log.subject || '',
     topic: log.topic || '',
+    lesson: log.lesson || '',
     source: log.source || '',
     notes: log.notes || '',
     achievements: log.achievements || '',
@@ -49,8 +51,10 @@ const RecapCardEditor: React.FC<RecapCardEditorProps> = ({
   const {
     subjects,
     topics,
+    lessons,
     sources,
-    fetchTopicsForSubject
+    fetchTopicsForSubject,
+    fetchLessonsForTopic
   } = useStudyAutocomplete();
 
   // Fetch topics when subject changes
@@ -59,11 +63,33 @@ const RecapCardEditor: React.FC<RecapCardEditorProps> = ({
       fetchTopicsForSubject(formData.subject);
     }
   }, [formData.subject, fetchTopicsForSubject]);
+
+  // Fetch lessons when topic changes
+  useEffect(() => {
+    if (formData.topic) {
+      fetchLessonsForTopic(formData.topic);
+    }
+  }, [formData.topic, fetchLessonsForTopic]);
   const handleInputChange = (field: string, value: string | string[]) => {
-    setFormData(prev => ({
-      ...prev,
-      [field]: value
-    }));
+    if (field === 'subject') {
+      setFormData(prev => ({
+        ...prev,
+        subject: value as string,
+        topic: '',
+        lesson: ''
+      }));
+    } else if (field === 'topic') {
+      setFormData(prev => ({
+        ...prev,
+        topic: value as string,
+        lesson: ''
+      }));
+    } else {
+      setFormData(prev => ({
+        ...prev,
+        [field]: value
+      }));
+    }
   };
   const handleSave = () => {
     const updatedData = {
@@ -72,6 +98,7 @@ const RecapCardEditor: React.FC<RecapCardEditorProps> = ({
       duration: parseInt(formData.duration) || 0,
       subject: formData.subject,
       topic: formData.topic || null,
+      lesson: formData.lesson || null,
       source: formData.source || null,
       notes: formData.notes,
       achievements: formData.achievements,
@@ -113,11 +140,13 @@ const RecapCardEditor: React.FC<RecapCardEditorProps> = ({
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-6">
-          {/* Subject, Topic, Source Row */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          {/* Subject, Topic, Lesson, Source Row */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             <CreatableCombobox value={formData.subject} onValueChange={value => handleInputChange('subject', value)} options={subjects} placeholder="Select or type a subject..." className="w-full" />
             
-            <CreatableCombobox value={formData.topic} onValueChange={value => handleInputChange('topic', value)} options={topics} placeholder="Select or type a topic..." className="w-full" />
+            <CreatableCombobox value={formData.topic} onValueChange={value => handleInputChange('topic', value)} options={topics} placeholder="Select or type a topic..." className="w-full" disabled={!formData.subject} />
+
+            <CreatableCombobox value={formData.lesson} onValueChange={value => handleInputChange('lesson', value)} options={lessons} placeholder="Select or type a lesson..." className="w-full" disabled={!formData.topic} />
             
             <CreatableCombobox value={formData.source} onValueChange={value => handleInputChange('source', value)} options={sources} placeholder="Select or type a source..." className="w-full" />
           </div>

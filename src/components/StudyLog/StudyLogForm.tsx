@@ -28,6 +28,7 @@ const StudyLogForm: React.FC<StudyLogFormProps> = ({
   const [formData, setFormData] = useState({
     subject: '',
     topic: '',
+    lesson: '',
     source: '',
     date: getTodayDate(),
     time: new Date().toLocaleTimeString('en-GB', {
@@ -47,17 +48,21 @@ const StudyLogForm: React.FC<StudyLogFormProps> = ({
   const {
     subjects,
     topics,
+    lessons,
     sources,
     loadingSubjects,
     loadingTopics,
+    loadingLessons,
     loadingSources,
-    fetchTopicsForSubject
+    fetchTopicsForSubject,
+    fetchLessonsForTopic
   } = useStudyAutocomplete();
   useEffect(() => {
     if (editingLog) {
       setFormData({
         subject: editingLog.subject || '',
         topic: editingLog.topic || '',
+        lesson: editingLog.lesson || '',
         source: editingLog.source || '',
         date: editingLog.date || '',
         time: editingLog.time || '',
@@ -69,6 +74,9 @@ const StudyLogForm: React.FC<StudyLogFormProps> = ({
       if (editingLog.subject) {
         fetchTopicsForSubject(editingLog.subject);
       }
+      if (editingLog.topic) {
+        fetchLessonsForTopic(editingLog.topic);
+      }
     }
   }, [editingLog]);
   useEffect(() => {
@@ -76,6 +84,12 @@ const StudyLogForm: React.FC<StudyLogFormProps> = ({
       fetchTopicsForSubject(formData.subject);
     }
   }, [formData.subject, fetchTopicsForSubject, editingLog]);
+  
+  useEffect(() => {
+    if (formData.topic && !editingLog) {
+      fetchLessonsForTopic(formData.topic);
+    }
+  }, [formData.topic, fetchLessonsForTopic, editingLog]);
   const handleInputChange = (field: string, value: string | number | string[]) => {
     if (field === 'duration') {
       const numValue = value.toString().replace(/[^0-9]/g, '');
@@ -107,10 +121,23 @@ const StudyLogForm: React.FC<StudyLogFormProps> = ({
     setFormData(prev => ({
       ...prev,
       subject: sanitizedValue,
-      topic: ''
+      topic: '',
+      lesson: ''
     }));
     if (sanitizedValue) {
       fetchTopicsForSubject(sanitizedValue);
+    }
+  };
+
+  const handleTopicChange = (value: string) => {
+    const sanitizedValue = sanitizeInput(value);
+    setFormData(prev => ({
+      ...prev,
+      topic: sanitizedValue,
+      lesson: ''
+    }));
+    if (sanitizedValue) {
+      fetchLessonsForTopic(sanitizedValue);
     }
   };
   const validateRequiredFields = () => {
@@ -162,6 +189,7 @@ const StudyLogForm: React.FC<StudyLogFormProps> = ({
       ...formData,
       subject: sanitizeInput(formData.subject),
       topic: formData.topic ? sanitizeInput(formData.topic) : 'General',
+      lesson: formData.lesson ? sanitizeInput(formData.lesson) : null,
       source: formData.source ? sanitizeInput(formData.source) : null,
       achievements: formData.achievements ? sanitizeInput(formData.achievements) : null,
       notes: formData.notes ? sanitizeHtml(formData.notes) : null,
@@ -250,11 +278,13 @@ const StudyLogForm: React.FC<StudyLogFormProps> = ({
         </CardHeader>
         <CardContent className="p-6 bg-white">
           <form onSubmit={handleSubmit} className="space-y-6">
-            {/* Subject, Topic, Source Row */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {/* Subject, Topic, Lesson, Source Row */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
               <CreatableCombobox value={formData.subject} onValueChange={handleSubjectChange} options={subjects} placeholder="Select or type a subject... *" emptyMessage="No subjects found." loading={loadingSubjects} />
               
-              <CreatableCombobox value={formData.topic} onValueChange={value => handleInputChange('topic', value)} options={topics} placeholder={formData.subject ? "Select or type a topic..." : "Select a subject first"} emptyMessage={formData.subject ? "No topics found for this subject." : "Select a subject first."} loading={loadingTopics} disabled={!formData.subject} />
+              <CreatableCombobox value={formData.topic} onValueChange={handleTopicChange} options={topics} placeholder={formData.subject ? "Select or type a topic..." : "Select a subject first"} emptyMessage={formData.subject ? "No topics found for this subject." : "Select a subject first."} loading={loadingTopics} disabled={!formData.subject} />
+
+              <CreatableCombobox value={formData.lesson} onValueChange={value => handleInputChange('lesson', value)} options={lessons} placeholder={formData.topic ? "Select or type a lesson..." : "Select a topic first"} emptyMessage={formData.topic ? "No lessons found for this topic." : "Select a topic first."} loading={loadingLessons} disabled={!formData.topic} />
 
               <CreatableCombobox value={formData.source} onValueChange={value => handleInputChange('source', value)} options={sources} placeholder="Select or type a source..." emptyMessage="No sources found." loading={loadingSources} />
             </div>

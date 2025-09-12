@@ -205,12 +205,9 @@ export const validateStudyLogData = (data: any): { isValid: boolean; errors: str
     errors.push('Achievements must be less than 500 characters');
   }
   
-  if (data.notes && data.notes.length > 0) {
-    // For HTML content, check the text content length, not HTML length
-    const textContent = data.notes.replace(/<[^>]*>/g, '').trim();
-    if (textContent.length > 5000) {
-      errors.push('Notes must be less than 5000 characters');
-    }
+  // Validate lesson length if present
+  if (data.lesson && data.lesson.length > 200) {
+    errors.push('Lesson must be less than 200 characters');
   }
   
   // XSS pattern detection
@@ -219,7 +216,7 @@ export const validateStudyLogData = (data: any): { isValid: boolean; errors: str
     /<iframe/i, /<object/i, /<embed/i, /vbscript:/i, /data:\s*text\/html/i
   ];
   
-  const fieldsToCheck = ['subject', 'topic', 'source', 'achievements', 'notes'];
+  const fieldsToCheck = ['subject', 'topic', 'lesson', 'source', 'achievements', 'notes'];
   fieldsToCheck.forEach(field => {
     if (data[field] && typeof data[field] === 'string') {
       if (xssPatterns.some(pattern => pattern.test(data[field]))) {
