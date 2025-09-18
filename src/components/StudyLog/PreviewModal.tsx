@@ -87,14 +87,14 @@ export const PreviewModal: React.FC<PreviewModalProps> = ({
               </div>
               <h3 className="font-semibold text-lg">{formData.subject}</h3>
               {formData.topic && (
-                <div className="text-muted-foreground">
+                <div className="text-muted-foreground mb-2">
                   {formData.topic}
                 </div>
               )}
               
               {/* Lesson Display */}
               {formData.lesson && formData.lesson.toLowerCase() !== 'general' && (
-                <div className="mt-2">
+                <div className="mb-2">
                   <div className="inline-block bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-lg px-3 py-2">
                     <h4 className="text-sm font-semibold text-blue-900 underline decoration-blue-400 decoration-2 underline-offset-2">
                       {formData.lesson}
