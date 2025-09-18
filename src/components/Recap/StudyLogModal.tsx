@@ -106,18 +106,6 @@ const StudyLogModal: React.FC<StudyLogModalProps> = ({
                     {log.subject}
                     {log.topic && <span className="text-gray-600 font-normal"> • {log.topic}</span>}
                   </DialogTitle>
-                  
-                  {/* Lesson Display */}
-                  {log.lesson && log.lesson.toLowerCase() !== 'general' && (
-                    <div className="mt-3 mb-2">
-                      <div className="inline-block bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-lg px-3 py-2">
-                        <h3 className="text-base font-semibold text-blue-900 underline decoration-blue-400 decoration-2 underline-offset-2">
-                          {log.lesson}
-                        </h3>
-                      </div>
-                    </div>
-                  )}
-                  
                   <div className="flex items-center space-x-4 mt-1 text-sm text-gray-500">
                     <div className="flex items-center space-x-1">
                       <Calendar className="h-3.5 w-3.5" />
@@ -147,10 +135,24 @@ const StudyLogModal: React.FC<StudyLogModalProps> = ({
             {isEditing ? <RecapCardEditor log={log} onSave={handleSave} onCancel={() => setIsEditing(false)} /> : <>
                 {/* Study Notes */}
                 {log.notes && <div className="bg-gray-50/80 rounded-lg p-4 border border-gray-200/50 py-[16px]">
-                    <h4 className="text-sm font-medium text-gray-700 mb-3 flex items-center">
-                      <BookOpen className="h-4 w-4 mr-2" />
-                      {log.lesson && log.lesson.toLowerCase() !== 'general' ? log.lesson : 'Notes'}
-                    </h4>
+                    {/* Lesson or Notes Header */}
+                    {log.lesson && log.lesson.toLowerCase() !== 'general' ? (
+                      <div className="mb-4">
+                        <div className="inline-block bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-lg px-3 py-2">
+                          <h3 className="text-base font-semibold text-blue-900 underline decoration-blue-400 decoration-2 underline-offset-2">
+                            {log.lesson}
+                          </h3>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="mb-4">
+                        <div className="inline-block bg-gradient-to-r from-gray-50 to-gray-100 border border-gray-200 rounded-lg px-3 py-2">
+                          <h3 className="text-base font-semibold text-gray-700 underline decoration-gray-400 decoration-2 underline-offset-2">
+                            Notes
+                          </h3>
+                        </div>
+                      </div>
+                    )}
                     <SafeHtml html={log.notes} className="text-gray-800 leading-relaxed" />
                   </div>}
 
