@@ -15,6 +15,7 @@ interface StudyLog {
   duration: number;
   subject: string;
   topic?: string;
+  lesson?: string;
   source?: string;
   notes: string;
   achievements: string;
@@ -175,9 +176,20 @@ const RecapCard: React.FC<RecapCardProps> = ({ log, onUpdate, onDelete }) => {
         {/* Expanded Content */}
         {isExpanded && (
           <CardContent className="pt-0 px-3 pb-3 space-y-3">
+            {/* Lesson Display in Expanded View */}
+            {log.lesson && log.lesson.toLowerCase() !== 'general' && (
+              <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-lg p-3">
+                <h4 className="text-sm font-semibold text-blue-900 underline decoration-blue-400 decoration-2 underline-offset-2">
+                  {log.lesson}
+                </h4>
+              </div>
+            )}
+            
             {log.notes && (
               <div className="bg-gray-50/50 rounded-md p-3">
-                <h4 className="text-xs font-medium text-gray-700 mb-2">Study Notes</h4>
+                <h4 className="text-xs font-medium text-gray-700 mb-2">
+                  {log.lesson && log.lesson.toLowerCase() !== 'general' ? 'Notes' : 'Study Notes'}
+                </h4>
                 <SafeHtml 
                   html={log.notes}
                   className="text-gray-800"

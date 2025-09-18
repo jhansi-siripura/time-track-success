@@ -12,6 +12,7 @@ interface PreviewModalProps {
   formData: {
     subject: string;
     topic: string;
+    lesson?: string;
     date: string;
     time: string;
     notes: string;
@@ -88,6 +89,17 @@ export const PreviewModal: React.FC<PreviewModalProps> = ({
               {formData.topic && (
                 <div className="text-muted-foreground">
                   {formData.topic}
+                </div>
+              )}
+              
+              {/* Lesson Display */}
+              {formData.lesson && formData.lesson.toLowerCase() !== 'general' && (
+                <div className="mt-2">
+                  <div className="inline-block bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-lg px-3 py-2">
+                    <h4 className="text-sm font-semibold text-blue-900 underline decoration-blue-400 decoration-2 underline-offset-2">
+                      {formData.lesson}
+                    </h4>
+                  </div>
                 </div>
               )}
             </div>
