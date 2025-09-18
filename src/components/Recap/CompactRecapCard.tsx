@@ -11,6 +11,7 @@ interface StudyLog {
   duration: number;
   subject: string;
   topic?: string;
+  lesson?: string;
   source?: string;
   notes: string;
   achievements: string;
@@ -86,6 +87,11 @@ const CompactRecapCard: React.FC<CompactRecapCardProps> = ({
 
         {/* Notes Preview */}
         <div className="flex-1 mb-3">
+          {log.lesson && (
+            <div className="mb-2">
+              <h4 className="text-sm font-medium text-gray-800 mb-1">{log.lesson}</h4>
+            </div>
+          )}
           {log.notes && <p className="text-xs text-gray-600 leading-relaxed line-clamp-4">
               {getNotesPreview(log.notes)}
             </p>}
