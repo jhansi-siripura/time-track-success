@@ -6,6 +6,7 @@ import { getTodayDate, getYesterdayDate, getLastNDates, getStartOfWeek, getCurre
 import DailyTargetWidget from './DailyTargetWidget';
 import StudySummaryWidget from './StudySummaryWidget';
 import SubjectBarChartWidget from './SubjectBarChartWidget';
+import StudyHeatMapWidget from './StudyHeatMapWidget';
 import WeeklyDistributionWidget from './WeeklyDistributionWidget';
 import FourWeekConsistencyWidget from './FourWeekConsistencyWidget';
 import TwelveMonthTrendWidget from './TwelveMonthTrendWidget';
@@ -240,7 +241,10 @@ const Dashboard = () => {
         <StudySummaryWidget {...studySummary} />
       </div>
 
-      {/* Second Section - Full width */}
+      {/* Heat Map Section - Full width */}
+      <StudyHeatMapWidget studyLogs={studyLogs} />
+
+      {/* Subject Chart Section - Full width */}
       <SubjectBarChartWidget data={subjectData} />
 
       {/* Third Row - Three equal widgets */}
