@@ -238,7 +238,12 @@ const Dashboard = () => {
       {/* Top Row - Two widgets side by side */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <DailyTargetWidget {...dailyTargets} />
-        <StudySummaryWidget {...studySummary} />
+        <StudySummaryWidget 
+          totalSessions={studySummary.totalSessions}
+          totalHours={studySummary.totalHours}
+          totalSubjects={studySummary.totalSubjects}
+          studyLogs={studyLogs}
+        />
       </div>
 
       {/* Heat Map Section - Full width */}
