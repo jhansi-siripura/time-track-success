@@ -20,6 +20,7 @@ interface StudyLog {
 
 const Dashboard = () => {
   const [studyLogs, setStudyLogs] = useState<StudyLog[]>([]);
+  const [revisionDates, setRevisionDates] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
   const { user } = useAuth();
 
@@ -35,39 +36,72 @@ const Dashboard = () => {
     return subjectColors[index % subjectColors.length];
   };
 
-  useEffect(() => {
-    const fetchStudyLogs = async () => {
-      if (!user) return;
+useEffect(() => {
+  const fetchStudyLogs = async () => {
+    if (!user) return;
 
-      try {
-        const { data, error } = await supabase
-          .from('study_logs')
-          .select('date, subject, topic, duration')
-          .eq('user_id', user.id);
+    try {
+      const { data, error } = await supabase
+        .from('study_logs')
+        .select('date, subject, topic, duration')
+        .eq('user_id', user.id);
 
-        if (error) throw error;
+      if (error) throw error;
 
-        const processedLogs = (data || []).map(log => ({
-          date: log.date || '',
-          subject: log.subject || 'Unknown',
-          topic: log.topic || undefined,
-          duration: log.duration || 0,
-        }));
+      const processedLogs = (data || []).map(log => ({
+        date: log.date || '',
+        subject: log.subject || 'Unknown',
+        topic: log.topic || undefined,
+        duration: log.duration || 0,
+      }));
 
-        setStudyLogs(processedLogs);
-      } catch (error: any) {
-        toast({
-          title: "Error",
-          description: "Failed to fetch study logs",
-          variant: "destructive",
-        });
-      } finally {
-        setLoading(false);
+      setStudyLogs(processedLogs);
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: "Failed to fetch study logs",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchRevisionDates = async () => {
+    if (!user) return;
+    try {
+      const { data, error } = await supabase
+        .from('revision_streaks')
+        .select('date, completed')
+        .eq('user_id', user.id)
+        .eq('completed', true);
+
+      if (error) throw error;
+
+      const dates = (data || [])
+        .map((d: any) => d.date)
+        .filter(Boolean)
+        .sort();
+
+      console.log('Completed dates from DB:', dates);
+      // Log a rolling check around today for visibility
+      const today = new Date();
+      for (let i = -1; i <= 6; i++) {
+        const check = new Date(today);
+        check.setDate(today.getDate() + i);
+        const dateStr = check.toISOString().split('T')[0];
+        console.log('Checking date:', dateStr, 'Is completed:', dates.includes(dateStr));
       }
-    };
 
-    fetchStudyLogs();
-  }, [user]);
+      setRevisionDates(dates);
+    } catch (error) {
+      console.error('Error fetching revision dates:', error);
+    }
+  };
+
+  fetchStudyLogs();
+  fetchRevisionDates();
+}, [user]);
 
   const calculateDailyTargets = () => {
     const today = getTodayDate();
@@ -243,6 +277,7 @@ const Dashboard = () => {
           totalHours={studySummary.totalHours}
           totalSubjects={studySummary.totalSubjects}
           studyLogs={studyLogs}
+          revisionDates={revisionDates}
         />
       </div>
 

@@ -16,9 +16,10 @@ interface StudySummaryWidgetProps {
   totalHours: number;
   totalSubjects: number;
   studyLogs?: StudyLog[];
+  revisionDates?: string[]; // ISO YYYY-MM-DD dates from revision_streaks
 }
 
-const StudySummaryWidget = ({ totalSessions, totalHours, totalSubjects, studyLogs = [] }: StudySummaryWidgetProps) => {
+const StudySummaryWidget = ({ totalSessions, totalHours, totalSubjects, studyLogs = [], revisionDates = [] }: StudySummaryWidgetProps) => {
   // Calculate study streaks (excluding revision)
   const calculateStreaks = () => {
     const today = getTodayDate();
@@ -30,20 +31,23 @@ const StudySummaryWidget = ({ totalSessions, totalHours, totalSubjects, studyLog
         .map(log => log.date)
     )].sort();
     
-    // Get unique revision dates
-    const revisionDates = [...new Set(
-      studyLogs
-        .filter(log => log.subject.toLowerCase() === 'revision')
-        .map(log => log.date)
-    )].sort();
+    // Get unique revision dates - prefer prop from DB
+    const revisionDatesSource = revisionDates.length
+      ? [...new Set(revisionDates)]
+      : [...new Set(
+          studyLogs
+            .filter(log => log.subject.toLowerCase() === 'revision')
+            .map(log => log.date)
+        )];
+    const revisionDatesSorted = [...revisionDatesSource].sort();
     
     console.log('Study dates:', studyDates);
-    console.log('Revision dates:', revisionDates);
+    console.log('Revision dates (source):', revisionDatesSorted);
     console.log('Today:', today);
     
     // Calculate study streaks
     const studyStreaks = calculateStreakData(studyDates, today);
-    const revisionStreaks = calculateStreakData(revisionDates, today);
+    const revisionStreaks = calculateStreakData(revisionDatesSorted, today);
     
     console.log('Study streaks result:', studyStreaks);
     console.log('Revision streaks result:', revisionStreaks);
