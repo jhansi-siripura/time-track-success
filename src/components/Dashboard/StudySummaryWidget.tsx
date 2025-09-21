@@ -47,14 +47,17 @@ const StudySummaryWidget = ({ totalSessions, totalHours, totalSubjects, studyLog
   const calculateStreakData = (dates: string[], today: string) => {
     if (dates.length === 0) return { longest: 0, current: 0 };
     
+    // Sort dates to ensure proper order
+    const sortedDates = [...dates].sort();
+    
     let longestStreak = 0;
     let currentStreak = 0;
     let tempStreak = 1;
     
     // Calculate longest streak
-    for (let i = 1; i < dates.length; i++) {
-      const prevDate = new Date(dates[i - 1]);
-      const currDate = new Date(dates[i]);
+    for (let i = 1; i < sortedDates.length; i++) {
+      const prevDate = new Date(sortedDates[i - 1] + 'T00:00:00');
+      const currDate = new Date(sortedDates[i] + 'T00:00:00');
       const dayDiff = Math.floor((currDate.getTime() - prevDate.getTime()) / (1000 * 60 * 60 * 24));
       
       if (dayDiff === 1) {
@@ -67,12 +70,19 @@ const StudySummaryWidget = ({ totalSessions, totalHours, totalSubjects, studyLog
     longestStreak = Math.max(longestStreak, tempStreak);
     
     // Calculate current streak (working backwards from today)
-    const todayDate = new Date(today);
+    const todayDate = new Date(today + 'T00:00:00');
     let checkDate = new Date(todayDate);
     
+    // Create a Set for faster lookup
+    const dateSet = new Set(dates);
+    
     while (true) {
-      const dateStr = checkDate.toISOString().split('T')[0];
-      if (dates.includes(dateStr)) {
+      const year = checkDate.getFullYear();
+      const month = String(checkDate.getMonth() + 1).padStart(2, '0');
+      const day = String(checkDate.getDate()).padStart(2, '0');
+      const dateStr = `${year}-${month}-${day}`;
+      
+      if (dateSet.has(dateStr)) {
         currentStreak++;
         checkDate.setDate(checkDate.getDate() - 1);
       } else {
