@@ -37,9 +37,16 @@ const StudySummaryWidget = ({ totalSessions, totalHours, totalSubjects, studyLog
         .map(log => log.date)
     )].sort();
     
+    console.log('Study dates:', studyDates);
+    console.log('Revision dates:', revisionDates);
+    console.log('Today:', today);
+    
     // Calculate study streaks
     const studyStreaks = calculateStreakData(studyDates, today);
     const revisionStreaks = calculateStreakData(revisionDates, today);
+    
+    console.log('Study streaks result:', studyStreaks);
+    console.log('Revision streaks result:', revisionStreaks);
     
     return { studyStreaks, revisionStreaks };
   };
@@ -47,8 +54,11 @@ const StudySummaryWidget = ({ totalSessions, totalHours, totalSubjects, studyLog
   const calculateStreakData = (dates: string[], today: string) => {
     if (dates.length === 0) return { longest: 0, current: 0 };
     
+    console.log('calculateStreakData input:', { dates, today });
+    
     // Sort dates to ensure proper order
     const sortedDates = [...dates].sort();
+    console.log('Sorted dates:', sortedDates);
     
     let longestStreak = 0;
     let currentStreak = 0;
@@ -56,9 +66,11 @@ const StudySummaryWidget = ({ totalSessions, totalHours, totalSubjects, studyLog
     
     // Calculate longest streak
     for (let i = 1; i < sortedDates.length; i++) {
-      const prevDate = new Date(sortedDates[i - 1] + 'T00:00:00');
-      const currDate = new Date(sortedDates[i] + 'T00:00:00');
+      const prevDate = new Date(sortedDates[i - 1]);
+      const currDate = new Date(sortedDates[i]);
       const dayDiff = Math.floor((currDate.getTime() - prevDate.getTime()) / (1000 * 60 * 60 * 24));
+      
+      console.log(`Comparing ${sortedDates[i - 1]} to ${sortedDates[i]}, diff: ${dayDiff}`);
       
       if (dayDiff === 1) {
         tempStreak++;
@@ -70,25 +82,22 @@ const StudySummaryWidget = ({ totalSessions, totalHours, totalSubjects, studyLog
     longestStreak = Math.max(longestStreak, tempStreak);
     
     // Calculate current streak (working backwards from today)
-    const todayDate = new Date(today + 'T00:00:00');
-    let checkDate = new Date(todayDate);
+    const sortedDatesSet = new Set(sortedDates);
+    let checkDate = today;
     
-    // Create a Set for faster lookup
-    const dateSet = new Set(dates);
+    console.log('Calculating current streak starting from:', checkDate);
     
-    while (true) {
-      const year = checkDate.getFullYear();
-      const month = String(checkDate.getMonth() + 1).padStart(2, '0');
-      const day = String(checkDate.getDate()).padStart(2, '0');
-      const dateStr = `${year}-${month}-${day}`;
+    while (sortedDatesSet.has(checkDate)) {
+      currentStreak++;
+      console.log(`Found date ${checkDate}, streak now: ${currentStreak}`);
       
-      if (dateSet.has(dateStr)) {
-        currentStreak++;
-        checkDate.setDate(checkDate.getDate() - 1);
-      } else {
-        break;
-      }
+      // Move to previous day
+      const date = new Date(checkDate);
+      date.setDate(date.getDate() - 1);
+      checkDate = date.toISOString().split('T')[0];
     }
+    
+    console.log('Final streak calculation result:', { longest: longestStreak, current: currentStreak });
     
     return { longest: longestStreak, current: currentStreak };
   };
